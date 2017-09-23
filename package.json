@@ -10,8 +10,10 @@
   "author": "aunnnn",
   "license": "MIT",
   "dependencies": {
+    "moment": "^2.18.1",
     "next": "^3.2.2",
     "react": "^15.6.1",
+    "react-apollo": "^1.4.15",
     "react-dom": "^15.6.1"
   }
 }
