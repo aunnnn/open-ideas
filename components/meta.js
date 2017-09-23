@@ -13,7 +13,32 @@ export default () => (
       box-sizing: border-box;
     }
     body {
-      font: 14px "Courier New";
+      font: 16px "Courier New";
+    }
+    
+    a {
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: blue;
+    }
+
+    .primary-button {
+      display: inline-block !important;
+      padding: 2px 4px !important;
+      background-color: blue;
+      color: white !important;
+      cursor: pointer;
+      border: none;
+      outline: inherit;
+      font: 18px "Courier New";
+    }
+
+    .primary-button:disabled, 
+    .primary-button[disabled] {
+      background-color: grey;
+      cursor: default;
     }
   `}</style>
   </div>

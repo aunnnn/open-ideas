@@ -7,11 +7,7 @@ export default () => (
       <title>open ideas</title>
     </Head>
     <div>
-        <h3>About open ideas</h3>
-        <br />
-        <p>
-            A place to talk.
-        </p>
+      A place to talk.
     </div>
   </Page>
 )

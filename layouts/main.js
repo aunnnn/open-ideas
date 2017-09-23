@@ -1,10 +1,10 @@
 import Meta from '../components/meta'
-import Link from 'next/prefetch'
+import Link from 'next/link'
 
 export default ({ children }) => (
   <div className="main">
     <div className="logo">
-      <Link href="/"><a>open ideas</a></Link>
+      <Link prefetch href="/"><a>open ideas</a></Link>
     </div>
 
     { children }
@@ -19,7 +19,10 @@ export default ({ children }) => (
       }
 
       .logo {
-        padding-bottom: 50px;
+        padding-bottom: 20px;
+      }
+      .logo a:hover {
+        color: black;
       }
 
       a {
