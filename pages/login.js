@@ -54,7 +54,7 @@ class LoginPage extends Component {
         alert('👋 Successfully created account.')        
       }
       Router.push({
-        pathname: '/home'        
+        pathname: '/'        
       })
     } catch(err) {
       console.log(err);
