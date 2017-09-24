@@ -1,48 +1,59 @@
-import Meta from '../components/meta'
+import React, { Component } from 'react';
 import Link from 'next/link'
+import Menu from '../components/Menu'
+import Meta from '../components/meta'
+import { GC_USER_ID } from '../constants'
 
-export default ({ children }) => (
-  <div className="main">
-    <div className="logo">
-      <Link prefetch href="/"><a>open ideas</a></Link>
-    </div>
+class MainLayout extends Component {
 
-    { children }
+  render() { 
+    return (
+      <div className="main">
+        <div className="logo">
+          <Link prefetch href="/"><a>open ideas</a></Link>
+        </div>
 
-    { /* global styles and meta tags */ }
-    <Meta />
+        { this.props.children }
 
-    { /* local styles */ }
-    <style jsx>{`
-      .main {
-        padding: 25px 50px;
-      }
+        { /* global styles and meta tags */ }
+        <Meta />
 
-      .logo {
-        padding-bottom: 20px;
-      }
-      .logo a:hover {
-        color: black;
-      }
+        { /* local styles */ }
+        <style jsx>{`
+          .main {
+            padding: 25px 50px;
+          }
 
-      a {
-        text-decoration: none;
-        font-size: 2em;
-      }
+          .logo {
+            padding-bottom: 20px;
+          }
 
-      a:active {
-        color: black;
-      }
+          .logo a:hover {
+            color: black;
+          }
 
-      @media (max-width: 500px) {
-        .main {
-          padding: 25px 15px;
-        }
+          a {
+            text-decoration: none;
+            font-size: 2em;
+          }
 
-        .logo {
-          padding-bottom: 20px;
-        }
-      }
-    `}</style>
-  </div>
-)
+          a:active {
+            color: black;
+          }
+
+          @media (max-width: 500px) {
+            .main {
+              padding: 25px 15px;
+            }
+
+            .logo {
+              padding-bottom: 20px;
+            }
+          }
+        `}</style>
+      </div>
+    )
+  }
+}
+  
+export default MainLayout;

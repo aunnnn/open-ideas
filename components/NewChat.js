@@ -44,7 +44,6 @@ class NewChat extends Component {
         },
         update: (store, { data: { createChatroom }}) => {
 
-          console.log('update triggered')
           // Update the store (so that the graphql components across the app will get updated)
 
           // 1. read from store
@@ -71,33 +70,37 @@ class NewChat extends Component {
   }
 
   render() { 
+    const confirmDisabled = !this.state.title
     return (
-      <form onSubmit={this.onCreateChat}>
-        <input
-            value={this.state.title}
-            onChange={e => this.setState({ title: e.target.value})}
-            placeholder="insert a topic here"
-            type="text"
-            className="add-chat-input"
-        >
-        </input>
-        
-        <button
-            className="primary-button"
-            type="submit"
-        >
-            Create chat
-        </button>
-        <style jsx>{`
-          .add-chat-input {
-            height: 26px;
-            margin-right: 8px;
-          }
-          .primary-button {
-            border: none;
-          }
-        `}</style>
-      </form>)
+      <div>
+        <form onSubmit={this.onCreateChat}>
+          <input
+              value={this.state.title}
+              onChange={e => this.setState({ title: e.target.value})}
+              placeholder="insert a topic here"
+              type="text"
+              className="add-chat-input"
+          >
+          </input>
+          
+          <button
+              className="primary-button"
+              type="submit"
+              disabled={confirmDisabled}
+          >
+              Create chat
+          </button>
+          <style jsx>{`
+            .add-chat-input {
+              height: 26px;
+              margin-right: 8px;
+            }
+            .primary-button {
+              border: none;
+            }
+          `}</style>
+        </form>
+      </div>)
     }
 }
 
