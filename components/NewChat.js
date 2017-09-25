@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { graphql, gql } from 'react-apollo'
 import withData from '../lib/withData'
 import { GC_USER_ID, GC_USERNAME } from '../constants'
-import { ALL_CHATS_QUERY } from './ChatList'
+import { ALL_CHATROOMS_QUERY } from './ChatList'
 
 class NewChat extends Component {
   
@@ -48,7 +48,7 @@ class NewChat extends Component {
 
           // 1. read from store
           const data = store.readQuery({
-            query: ALL_CHATS_QUERY,
+            query: ALL_CHATROOMS_QUERY,
           })
 
           // 2. append at first position
@@ -56,7 +56,7 @@ class NewChat extends Component {
 
           // 3. write back
           store.writeQuery({
-            query: ALL_CHATS_QUERY,
+            query: ALL_CHATROOMS_QUERY,
             data
           })
         },

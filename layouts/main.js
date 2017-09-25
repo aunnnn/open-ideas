@@ -22,6 +22,8 @@ class MainLayout extends Component {
         <style jsx>{`
           .main {
             padding: 25px 50px;
+            height: 100%;
+            display: block;
           }
 
           .logo {
