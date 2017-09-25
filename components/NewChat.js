@@ -21,7 +21,7 @@ class NewChat extends Component {
       return
     }
     try {
-      await this.props.createChatMutation({
+      const { data: { createChatroom: { id } } } = await this.props.createChatMutation({
         variables: {
           title: this.state.title,
           userIds: [userId],
@@ -61,9 +61,11 @@ class NewChat extends Component {
           })
         },
       })
+
       this.setState({
         title: '',
       })
+      this.props.onCreateNewChatroom(id)
     } catch(err) {
       alert("Oops: " + err.graphQLErrors[0].message);
     }
