@@ -17,8 +17,8 @@ class ChatList extends Component {
             {allChatrooms.map((chat, index) => {
               const isActive = chat.id === currentRoomId
               return (
-                <div>
-                  <li key={chat.id} className='li-default' onClick={() => onClickChatroom(chat.id)}>
+                <div key={chat.id}>
+                  <li className='li-default' onClick={() => onClickChatroom(chat.id)}>
                     <p>{chat.title} ({chat.messages && chat.messages.length || 0})</p>
                     {/* <p>Users: {chat.users.map(u => u.username)}</p> */}
                     <p></p>
