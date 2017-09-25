@@ -13,6 +13,9 @@ const Chatroom = ({ data: { loading, error, Chatroom }, roomId  }) => {
         <p>Id = {roomId}</p>
         <p>Users count = {Chatroom.users.length}</p>
         <p>Messages count = {Chatroom.messages.length}</p>
+
+        <br/>
+        <p>Finding your match 👀...kidding, not implemented yet</p>
       </div>
     )
   }

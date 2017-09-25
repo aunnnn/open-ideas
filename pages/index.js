@@ -29,7 +29,7 @@ class IndexPage extends Component {
     })
   }
 
-  onClickChatroom = (id) => {
+  goToChatroom = (id) => {
     this.setState({
       currentRoomId: id
     })
@@ -45,15 +45,15 @@ class IndexPage extends Component {
           <Menu />
       
           {this.state.loggedIn ?
-            <NewChat />
+            <NewChat onCreateNewChatroom={this.goToChatroom} />
             :
             <div className="please-login"><Link prefetch href="/login"><a className="login-button">Login</a></Link> to create a chat</div>
           }
           <br/>
 
           <div className="chat-container">
-            <div className="left"><ChatList onClickChatroom={this.onClickChatroom} /></div>
-            { this.state.currentRoomId && <div className="right"><Chatroom roomId={this.state.currentRoomId} /></div>}
+            <div className="left"><ChatList onClickChatroom={this.goToChatroom} /></div>
+            { this.state.currentRoomId && <div className="right"><Chatroom roomId={this.state.currentRoomId} /></div> || 'Select chatroom'}
           </div>
         </div>
         <style jsx>{`
