@@ -7,7 +7,7 @@ import Page from '../layouts/main'
 class ChatList extends Component {
 
   render() {
-    const { data: { loading, error, allChatrooms, _allChatroomsMeta }, currentRoomId, onClickChatroom } = this.props;
+    const { data: { loading, error, allChatrooms, _allChatroomsMeta }, onClickChatroom } = this.props;
     if (error) return <div>Error: {error}</div>
     if (allChatrooms) {
       if (allChatrooms.length === 0) return <div>No chats yet 😂</div>
@@ -15,7 +15,6 @@ class ChatList extends Component {
         <div>
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {allChatrooms.map((chat, index) => {
-              const isActive = chat.id === currentRoomId
               return (
                 <div key={chat.id}>
                   <li className='li-default' onClick={() => onClickChatroom(chat.id)}>
@@ -70,7 +69,6 @@ export const ALL_CHATROOMS_QUERY = gql`
 
 ChatList.propTypes = {
   onClickChatroom: React.PropTypes.func.isRequired,
-  currentRoomId: React.PropTypes.string.isRequired,
 };
 
 export default graphql(ALL_CHATROOMS_QUERY)(ChatList)
