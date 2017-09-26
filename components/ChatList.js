@@ -8,6 +8,7 @@ class ChatList extends Component {
 
   render() {
     const { data: { loading, error, allChatrooms, _allChatroomsMeta }, onClickChatroom } = this.props;
+    if (loading) return <div>Loading</div>
     if (error) return <div>Error: {error}</div>
     if (allChatrooms) {
       if (allChatrooms.length === 0) return <div>No chats yet 😂</div>
@@ -18,9 +19,7 @@ class ChatList extends Component {
               return (
                 <div key={chat.id}>
                   <li className='li-default' onClick={() => onClickChatroom(chat.id)}>
-                    <p>{chat.title} ({chat.messages && chat.messages.length || 0})</p>
-                    {/* <p>Users: {chat.users.map(u => u.username)}</p> */}
-                    <p></p>
+                    <p>{chat.title} ({chat._messagesMeta.count})</p>
                     <p style={{ fontStyle: 'italic', marginTop: '8px', fontSize: '12px' }}>{moment(chat.createdAt).fromNow()}</p>
                     <style jsx>{`
                       .li-default {
@@ -59,6 +58,9 @@ export const ALL_CHATROOMS_QUERY = gql`
       createdAt
       users {
         username
+      }
+      _messagesMeta {
+        count
       }
     },
     _allChatroomsMeta {

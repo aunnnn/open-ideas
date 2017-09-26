@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Head from 'next/head'
 import Link from 'next/link'
+import { graphql, gql } from 'react-apollo'
 
 import withData from '../lib/withData'
 import { GC_USER_ID } from '../constants';
@@ -36,26 +37,43 @@ class IndexPage extends Component {
   }
 
   render() {
+        
+    const currentUser = this.props.currentUserQuery.user || null
+    let currentUserId;
+    let currentUsername;
+    if (currentUser) {
+      currentUserId = currentUser.id
+      currentUsername = currentUser.username
+    }
     return (
       <Page style={{ overflow: 'auto' }}>
         <Head>
           <title>open ideas</title>
         </Head>
         <div className="container">
+
           <Menu />
-      
-          {this.state.loggedIn ?
-            <NewChat onCreateNewChatroom={this.goToChatroom} />
+
+          {/* DISPLAY CURRENT USER  */}
+          {currentUsername && <div><b>Hi, {currentUsername}</b></div>}
+
+          {/* NEW CHAT INPUT */}
+          {currentUserId ?
+            <NewChat onCreateNewChatroom={this.goToChatroom} currentUserId={currentUserId} />
             :
             <div className="please-login"><Link prefetch href="/login"><a className="login-button">Login</a></Link> to create a chat</div>
           }
+
           <br/>
 
+          {/* CHAT PANEL  */}
           <div className="chat-container">
             <div className="left"><ChatList onClickChatroom={this.goToChatroom} /></div>
-            { this.state.currentRoomId && <div className="right"><Chatroom roomId={this.state.currentRoomId} /></div> || 'Select chatroom'}
+            { this.state.currentRoomId && <div className="right"><Chatroom roomId={this.state.currentRoomId} currentUserId={currentUserId} /></div> || 'Select chatroom'}
           </div>
+          
         </div>
+
         <style jsx>{`
           .login-button {
             color: blue;
@@ -94,4 +112,13 @@ class IndexPage extends Component {
   }
 } 
 
-export default withData(IndexPage)
+const CURRENT_USER_QUERY = gql`
+query {
+  user {
+    id,
+    username
+  }
+}
+`
+
+export default withData(graphql(CURRENT_USER_QUERY, { name: "currentUserQuery" })(IndexPage))

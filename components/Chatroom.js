@@ -1,25 +1,99 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { graphql, gql } from 'react-apollo'
+import { graphql, gql, compose } from 'react-apollo'
 
 import withData from '../lib/withData'
+import MessageList from './MessageList'
 
-const Chatroom = ({ data: { loading, error, Chatroom }, roomId  }) => {
-  if (error) return <div>Error: {error}</div>
-  if (Chatroom) {
-    return (
-      <div>        
-        <h2>{Chatroom.title}</h2>
-        <p>Id = {roomId}</p>
-        <p>Users count = {Chatroom.users.length}</p>
-        <p>Messages count = {Chatroom.messages.length}</p>
-
-        <br/>
-        <p>Finding your match 👀...kidding, not implemented yet</p>
-      </div>
-    )
+class Chatroom extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      textInput: '',
+    }
   }
-  return <div>Loading</div>
+
+  
+  componentWillMount() {
+    this.subscribeToNewMessages()
+  }
+  
+
+  subscribeToNewMessages = () => {
+    this.props.chatroomMessageQuery.subscribeToMore({
+      document: CHATROOM_MESSAGE_SUBSCRIPTION,
+      updateQuery: (previous, { subscriptionData }) => {
+        const newMessage = subscriptionData.data.Message.node
+        const newAllMessages = previous.allMessages.slice()
+        newAllMessages[previous.allMessages.length] = newMessage
+        const result = {
+          ...previous,
+          allMessages: newAllMessages
+        }
+        return result
+      }
+    })
+  }
+  
+  
+  onCreateMessage = async (e) => {
+    e.preventDefault()
+    try {
+      const { createMessageMutation, roomId, currentUserId } = this.props
+
+      const data = await createMessageMutation({
+        variables: {
+          text: this.state.textInput,
+          chatroomId: roomId,
+          createdByUserId: currentUserId,
+        }
+      })
+      this.setState({
+        textInput: ''
+      })
+    } catch (err) {
+      alert("Oops: " + err.graphQLErrors[0].message);
+    }
+  }
+
+  render() {
+    const { chatroomQuery: { loading, error }, chatroomMessageQuery, roomId, currentUserId } = this.props
+
+    if (loading || chatroomMessageQuery.loading) return <div>Loading</div>
+    console.log('render chatroom')
+    
+    const messages = chatroomMessageQuery.allMessages
+    const chatroom = this.props.chatroomQuery.Chatroom
+    const usersInChat = chatroom.users
+    const canChat = currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id
+    
+    if (error) return <div>Error: {error}</div>
+    if (chatroom) {
+      return (
+        <div>        
+          <h2>{chatroom.title}</h2>
+          <p>Id = {roomId}</p>
+          <p>Messages count = {messages.length}</p>
+  
+          <br/>
+          
+          <MessageList messages={messages} currentUserId={currentUserId} />
+
+          {canChat &&
+            <form onSubmit={this.onCreateMessage}>
+              <input 
+                type="text"
+                onChange={(e) => this.setState({ textInput: e.target.value })}
+                placeholder="Type here..."
+                value={this.state.textInput}
+              />
+            </form>
+          }
+        </div>
+      )
+    }
+    return <div>Loading</div>
+  }
 }
 
 Chatroom.propTypes = {
@@ -31,9 +105,10 @@ const CHATROOM_QUERY = gql`
     Chatroom(id: $roomId) {
       title
       messages {
+        id
         text
         createdAt
-        createdByUsername
+        createdByUserId
       }
       users {
         id
@@ -42,4 +117,66 @@ const CHATROOM_QUERY = gql`
     }
   }
 `
-export default graphql(CHATROOM_QUERY)(Chatroom)
+
+const CHATROOM_MESSAGE_QUERY = gql`
+  query allMessages($chatroomId: ID!) {
+    allMessages(
+      filter: {
+        chatroom: {
+          id: $chatroomId
+        }
+      }
+    ) {
+      id
+      text
+      createdAt
+      createdByUserId
+    }
+  }
+`
+
+const CHATROOM_MESSAGE_SUBSCRIPTION= gql`
+  subscription onNewMessages {
+    Message(
+      filter: {
+        mutation_in: [CREATED]
+      }
+    ) {
+      node {
+        id
+        text
+        createdAt
+        createdByUserId
+      }
+    }
+  }
+`
+
+const CREATE_MESSAGE_MUTATION = gql`
+  mutation createMessage($text: String!, $chatroomId: ID!, $createdByUserId: String!) {
+    createMessage (
+      text: $text,
+      chatroomId: $chatroomId,
+      createdByUserId: $createdByUserId,
+    ) {
+      id
+      text
+      createdAt
+      createdByUserId
+    }
+  }
+`
+export default compose(
+  graphql(CHATROOM_QUERY, { name: 'chatroomQuery' }),
+  graphql(CREATE_MESSAGE_MUTATION, { name: 'createMessageMutation' }),
+  graphql(CHATROOM_MESSAGE_QUERY, { 
+    name: 'chatroomMessageQuery', 
+    options: (props) => {
+      return {
+        variables: {
+          chatroomId: props.roomId
+        }
+      }
+    }
+}),
+)(Chatroom)

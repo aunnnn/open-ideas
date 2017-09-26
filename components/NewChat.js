@@ -17,8 +17,10 @@ class NewChat extends Component {
 
   onCreateChat = async (e) => {
     e.preventDefault()
-    const userId = localStorage.getItem(GC_USER_ID)
-    if(!userId) {
+
+    const currentUserId = this.props.currentUserId
+
+    if(!currentUserId) {
       alert('You must log in first.')
       return
     }
@@ -39,22 +41,12 @@ class NewChat extends Component {
         }
       })).data.allUsers.map(u => u.id)
 
-
-      const currentUser = await this.props.client.query({
-        query: CURRENT_USER_QUERY
-      })
-
-      if (!currentUser) {
-        alert('You are not logged in.')
-        return
-      }
-
-      const anotherUserId = twoRandomUserIds[0] !== currentUser ? twoRandomUserIds[0] : twoRandomUserIds[1]
+      const anotherUserId = twoRandomUserIds[0] !== currentUserId ? twoRandomUserIds[0] : twoRandomUserIds[1]
       const { data: { createChatroom: { id } } } = await this.props.client.mutate({
         mutation: CREATE_CHAT_MUTATION,
         variables: {
           title: this.state.title,
-          userIds: [userId, anotherUserId],
+          userIds: [currentUserId, anotherUserId],
         },
         optimisticResponse: {
           __typename: 'Mutation',
@@ -92,7 +84,6 @@ class NewChat extends Component {
         },
       })
 
-      console.log('#user', userCount)
       this.setState({
         title: '',
       })
@@ -113,8 +104,7 @@ class NewChat extends Component {
               placeholder="insert a topic here"
               type="text"
               className="add-chat-input"
-          >
-          </input>
+          />
           
           <button
               className="primary-button"
@@ -167,12 +157,8 @@ const GET_USERS_QUERY =  gql`
   }
 `
 
-const CURRENT_USER_QUERY = gql`
-  query {
-    user {
-      id,
-      username
-    }
-  }
-`
+NewChat.propTypes = {
+  currentUserId: React.PropTypes.string.isRequired,
+}
+
 export default withData(withApollo(NewChat))
