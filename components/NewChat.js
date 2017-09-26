@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-import { graphql, gql } from 'react-apollo'
+import { withApollo, gql } from 'react-apollo'
+import _ from 'lodash'
+
 import withData from '../lib/withData'
 import { GC_USER_ID, GC_USERNAME } from '../constants'
 import { ALL_CHATROOMS_QUERY } from './ChatList'
@@ -20,11 +22,39 @@ class NewChat extends Component {
       alert('You must log in first.')
       return
     }
+
     try {
-      const { data: { createChatroom: { id } } } = await this.props.createChatMutation({
+      const userCount = (await this.props.client.query({ query: USER_COUNT_QUERY })).data._allUsersMeta.count
+      const randomSkip = _.random(0, userCount - 2)
+      if(userCount - 2 < 0) {
+        alert("Oops, can't find any users.")
+        return
+      }
+
+      const twoRandomUserIds  = (await this.props.client.query({
+        query: GET_USERS_QUERY,
+        variables: {
+          first: 2,
+          skip: randomSkip,
+        }
+      })).data.allUsers.map(u => u.id)
+
+
+      const currentUser = await this.props.client.query({
+        query: CURRENT_USER_QUERY
+      })
+
+      if (!currentUser) {
+        alert('You are not logged in.')
+        return
+      }
+
+      const anotherUserId = twoRandomUserIds[0] !== currentUser ? twoRandomUserIds[0] : twoRandomUserIds[1]
+      const { data: { createChatroom: { id } } } = await this.props.client.mutate({
+        mutation: CREATE_CHAT_MUTATION,
         variables: {
           title: this.state.title,
-          userIds: [userId],
+          userIds: [userId, anotherUserId],
         },
         optimisticResponse: {
           __typename: 'Mutation',
@@ -62,6 +92,7 @@ class NewChat extends Component {
         },
       })
 
+      console.log('#user', userCount)
       this.setState({
         title: '',
       })
@@ -120,6 +151,28 @@ const CREATE_CHAT_MUTATION = gql`
   }
 `
 
-export default withData(graphql(CREATE_CHAT_MUTATION, {
-  name: 'createChatMutation',
-})(NewChat))
+const USER_COUNT_QUERY = gql`
+  query UserCountQuery {
+    _allUsersMeta {
+      count
+    }
+  }
+`
+
+const GET_USERS_QUERY =  gql`
+  query GetUsersQuery($first: Int!, $skip: Int!) {
+    allUsers(first: $first, skip: $skip) {
+      id,
+    }
+  }
+`
+
+const CURRENT_USER_QUERY = gql`
+  query {
+    user {
+      id,
+      username
+    }
+  }
+`
+export default withData(withApollo(NewChat))
