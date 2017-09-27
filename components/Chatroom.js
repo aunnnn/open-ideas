@@ -112,7 +112,6 @@ const CHATROOM_QUERY = gql`
       }
       users {
         id
-        username
       }
     }
   }

@@ -73,6 +73,12 @@ class NewChat extends Component {
             query: ALL_CHATROOMS_QUERY,
           })
 
+          // Must update messagesMeta manually, since the newly added object doesn't has one
+          createChatroom._messagesMeta = {
+            count: 0,
+            __typename: '_QueryMeta',
+          }
+
           // 2. append at first position
           data.allChatrooms.splice(0,0,createChatroom)
           data._allChatroomsMeta.count += 1

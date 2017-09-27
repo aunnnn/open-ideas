@@ -14,12 +14,13 @@ class ChatList extends Component {
       if (allChatrooms.length === 0) return <div>No chats yet 😂</div>
       return (
         <div>
+          <div><b>Total chats: {_allChatroomsMeta.count}</b></div>
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {allChatrooms.map((chat, index) => {
               return (
                 <div key={chat.id}>
                   <li className='li-default' onClick={() => onClickChatroom(chat.id)}>
-                    <p>{chat.title} ({chat._messagesMeta.count})</p>
+                    <p>{chat.title}({chat._messagesMeta.count})</p>
                     <p style={{ fontStyle: 'italic', marginTop: '8px', fontSize: '12px' }}>{moment(chat.createdAt).fromNow()}</p>
                     <style jsx>{`
                       .li-default {
@@ -45,6 +46,7 @@ class ChatList extends Component {
         </div>
       )
     }
+    console.log('bottom loading, null?', allChatrooms)
     return <div>Loading</div>  
   }
 }
@@ -56,13 +58,11 @@ export const ALL_CHATROOMS_QUERY = gql`
       id
       title
       createdAt
-      users {
-        username
-      }
       _messagesMeta {
         count
       }
-    },
+    }    
+
     _allChatroomsMeta {
       count
     }
