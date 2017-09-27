@@ -46,7 +46,6 @@ class ChatList extends Component {
         </div>
       )
     }
-    console.log('bottom loading, null?', allChatrooms)
     return <div>Loading</div>  
   }
 }
