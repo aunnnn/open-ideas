@@ -6,7 +6,7 @@ class MessageList extends Component {
   render() {        
     const { messages, currentUserId } = this.props
     console.log('render message list', messages.length)
-    if (messages.length === 0) return <div>Type something to start the chat</div>
+    if (messages.length === 0) return <div>This room is empty 😭</div>
     return (
       <div>
         {messages.map(m => (
