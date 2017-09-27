@@ -33,15 +33,31 @@ class NewChat extends Component {
         return
       }
 
-      const twoRandomUserIds  = (await this.props.client.query({
+      // alert('random skip is' + randomSkip)
+
+      // To prevent duplicate, get two random users, at least one will never be a duplicate.
+      const twoRandomUsers  = (await this.props.client.query({
         query: GET_USERS_QUERY,
         variables: {
           first: 2,
           skip: randomSkip,
         }
-      })).data.allUsers.map(u => u.id)
+      })).data.allUsers
 
-      const anotherUserId = twoRandomUserIds[0] !== currentUserId ? twoRandomUserIds[0] : twoRandomUserIds[1]
+      const twoRandomUserIds = twoRandomUsers.map(u => u.id)
+
+      // alert('fetched users are' + twoRandomUsers.map(u => u.username).join(' '))
+
+      let anotherUserId;
+
+      // if both not same as current user id, can random
+      if (twoRandomUserIds[0] !== currentUserId && twoRandomUserIds[1] !== currentUserId) {
+        anotherUserId = _.sample(twoRandomUserIds)
+      } else {
+        // some is duplicate, choose one that's not
+        anotherUserId = twoRandomUserIds[0] !== currentUserId ? twoRandomUserIds[0] : twoRandomUserIds[1]
+      }
+
       const { data: { createChatroom: { id } } } = await this.props.client.mutate({
         mutation: CREATE_CHAT_MUTATION,
         variables: {
@@ -160,6 +176,7 @@ const GET_USERS_QUERY =  gql`
   query GetUsersQuery($first: Int!, $skip: Int!) {
     allUsers(first: $first, skip: $skip) {
       id,
+      username,
     }
   }
 `
