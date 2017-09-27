@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { graphql, gql } from 'react-apollo'
 
 import withData from '../lib/withData'
-import { GC_USER_ID } from '../constants';
+import { GC_USER_ID, GC_USERNAME } from '../constants';
 
 import Page from '../layouts/main'
 
@@ -19,32 +19,30 @@ class IndexPage extends Component {
     super(props)
     this.state = {
       title: '',
-      loggedIn: false,
       currentRoomId: null,
+      currentUserId: null,
+      currentUsername: null,
     }
   }
 
   componentDidMount() {
     this.setState({
-      loggedIn: localStorage.getItem(GC_USER_ID),
+      currentUserId: localStorage.getItem(GC_USER_ID),
+      currentUsername: localStorage.getItem(GC_USERNAME),
     })
   }
 
   goToChatroom = (id) => {
     this.setState({
-      currentRoomId: id
+      currentRoomId: id,
     })
   }
 
   render() {
-        
-    const currentUser = this.props.currentUserQuery.user || null
-    let currentUserId;
-    let currentUsername;
-    if (currentUser) {
-      currentUserId = currentUser.id
-      currentUsername = currentUser.username
-    }
+
+    // This works after redirect to first page after login
+    const { currentUserId, currentUsername } = this.state
+    
     return (
       <Page style={{ overflow: 'auto' }}>
         <Head>
