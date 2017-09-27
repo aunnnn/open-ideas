@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "start": "next start -p 3002"
   },
   "author": "aunnnn",
   "license": "MIT",
