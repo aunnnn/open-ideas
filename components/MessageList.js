@@ -26,9 +26,12 @@ class MessageList extends Component {
       <div>
         {messages.map(m => (
           <div key={m.id}>
-            <div style={{ marginLeft: m.createdByUserId === currentUserId ? '50%' : '0' }}>
+            <div style={{ marginLeft: m.createdByUserId === currentUserId ? '50%' : '0', marginBottom: '10px' }}>
               <p>{m.text}</p>
-              <p style={{ fontSize: '10px' }}>{moment(m.createdAt).fromNow()}</p>
+              <p style={{ fontSize: '10px' }} >
+                {/* Maybe using this for reactivity? https://gist.github.com/aortbals/48fa1e3526e42698f24dc58c2f03bf74 */}
+                {moment(m.createdAt).fromNow()}
+              </p> 
             </div> 
           </div>          
         ))}
