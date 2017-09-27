@@ -3,9 +3,24 @@ import moment from 'moment'
 
 class MessageList extends Component {
 
+  arraysEqual(arr1, arr2) {
+    if(arr1.length !== arr2.length)
+      return false;
+    for(var i = arr1.length; i--;) {
+      if(arr1[i] !== arr2[i])
+        return false;
+    }
+    return true;
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const newMessages = nextProps.messages
+    const messages = this.props.messages
+    return !this.arraysEqual(newMessages, messages)
+  }
+  
   render() {        
     const { messages, currentUserId } = this.props
-    console.log('render message list', messages.length)
     if (messages.length === 0) return <div>This room is empty 😭</div>
     return (
       <div>
