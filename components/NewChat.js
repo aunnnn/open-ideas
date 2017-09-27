@@ -75,6 +75,7 @@ class NewChat extends Component {
 
           // 2. append at first position
           data.allChatrooms.splice(0,0,createChatroom)
+          data._allChatroomsMeta.count += 1
 
           // 3. write back
           store.writeQuery({
