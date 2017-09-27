@@ -68,8 +68,19 @@ class IndexPage extends Component {
 
           {/* CHAT PANEL  */}
           <div className="chat-container">
-            <div className="left"><ChatList onClickChatroom={this.goToChatroom} /></div>
-            { this.state.currentRoomId && <div className="right"><Chatroom roomId={this.state.currentRoomId} currentUserId={currentUserId} /></div> || 'Select chatroom'}
+            <div className="left">
+              <ChatList onClickChatroom={this.goToChatroom} />
+            </div>
+            
+            { 
+                this.state.currentRoomId 
+              && 
+                <div className="right">
+                  <Chatroom roomId={this.state.currentRoomId} currentUserId={currentUserId} />
+                </div> 
+              || 
+                'Select chatroom'
+            }
           </div>
           
         </div>
