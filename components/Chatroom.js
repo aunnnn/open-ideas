@@ -13,14 +13,29 @@ class Chatroom extends Component {
     }
   }
 
-  
-  componentWillMount() {
-    this.subscribeToNewMessages()
+  componentWillReceiveProps(nextProps) {
+    if(!nextProps.chatroomMessageQuery.loading) {
+
+      console.log('params', this.props.roomId, 'and', nextProps.roomId)
+      // Check for existing subscription      
+      if (this.unsubscribe) {
+        // Check if props have changed and, if necessary, stop the subscription
+        if (this.props.roomId !== nextProps.roomId) {
+          this.unsubscribe();
+          console.log('-> unsubscribe')
+        } else {
+          console.log('-> same roomId, do nothing')
+          return;
+        }
+      }
+      // Subscribe
+      console.log('...subscribe')
+      this.unsubscribe = this.subscribeToNewMessages()
+    }
   }
-  
 
   subscribeToNewMessages = () => {
-    this.props.chatroomMessageQuery.subscribeToMore({
+    return this.props.chatroomMessageQuery.subscribeToMore({
       document: CHATROOM_MESSAGE_SUBSCRIPTION,
       updateQuery: (previous, { subscriptionData }) => {
         const newMessage = subscriptionData.data.Message.node
@@ -71,9 +86,8 @@ class Chatroom extends Component {
     if (chatroom) {
       return (
         <div>        
-          <h2>{chatroom.title}</h2>
-          <p>Id = {roomId}</p>
-          <p>Messages count = {messages.length}</p>
+          <h2>{chatroom.title}<span style={{ fontSize: '13px' }}> ({messages.length})</span></h2>
+          <p style={{ fontSize: '13px', fontStyle: 'italic' }}>{usersInChat.map(u => u.username).join(', ')}</p>
   
           <br/>
           
@@ -112,6 +126,7 @@ const CHATROOM_QUERY = gql`
       }
       users {
         id
+        username
       }
     }
   }

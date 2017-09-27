@@ -57,7 +57,6 @@ class LoginPage extends Component {
         pathname: '/'        
       })
     } catch(err) {
-      console.log(err);
       alert("Oops: " + err.graphQLErrors[0].message);      
       this.setState({
         loading: false
