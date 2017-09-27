@@ -1,5 +1,5 @@
 # open-ideas
-A place to talk
+A place to talk.
 
 Built with Next.js + Apollo + GraphQL(graphcool)
 
