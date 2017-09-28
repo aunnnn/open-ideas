@@ -91,7 +91,7 @@ class Chatroom extends Component {
   
           <br/>
           
-          <MessageList messages={messages} currentUserId={currentUserId} />
+          <MessageList messages={messages} currentUserId={currentUserId} userIds={usersInChat.map(u => u.id)} />
 
           {canChat &&
             <form onSubmit={this.onCreateMessage}>

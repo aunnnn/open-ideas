@@ -20,14 +20,15 @@ class MessageList extends Component {
   }
   
   render() {        
-    const { messages, currentUserId } = this.props
+    const { messages, currentUserId, userIds } = this.props
     if (messages.length === 0) return <div>This room is empty 😭</div>
+    const authorId = userIds[0]
     return (
       <div>
         {messages.map(m => (
           <div key={m.id}>
             <div style={{ marginLeft: m.createdByUserId === currentUserId ? '50%' : '0', marginBottom: '10px' }}>
-              <p>{m.text}</p>
+              <p style={{ color: m.createdByUserId === authorId ? 'purple' : 'black' }}>{m.text}</p>
               <p style={{ fontSize: '10px' }} >
                 {/* Maybe using this for reactivity? https://gist.github.com/aortbals/48fa1e3526e42698f24dc58c2f03bf74 */}
                 {moment(m.createdAt).fromNow()}
@@ -41,6 +42,7 @@ class MessageList extends Component {
 }
 
 MessageList.propTypes = {
+  userIds: React.PropTypes.array.isRequired,
   messages: React.PropTypes.array.isRequired,
   currentUserId: React.PropTypes.string,
 }
