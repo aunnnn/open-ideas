@@ -4,7 +4,7 @@ import Head from 'next/head'
 export default () => (
   <Page>
     <Head>
-      <title>open ideas</title>
+      <title>Platonos</title>
     </Head>
     <div>
       A place to talk.

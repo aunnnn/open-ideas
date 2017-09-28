@@ -46,7 +46,7 @@ class IndexPage extends Component {
     return (
       <Page style={{ overflow: 'auto' }}>
         <Head>
-          <title>open ideas</title>
+          <title>Platonos</title>
         </Head>
         <div className="container">
 
