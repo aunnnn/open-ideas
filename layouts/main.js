@@ -10,7 +10,7 @@ class MainLayout extends Component {
     return (
       <div className="main">
         <div className="logo">
-          <Link prefetch href="/"><a>open ideas</a></Link>
+          <Link prefetch href="/"><a>Platonos</a></Link>
         </div>
 
         { this.props.children }
@@ -37,6 +37,7 @@ class MainLayout extends Component {
           a {
             text-decoration: none;
             font-size: 2em;
+            color: purple;
           }
 
           a:active {
