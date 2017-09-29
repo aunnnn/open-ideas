@@ -9,49 +9,36 @@ class MainLayout extends Component {
   render() { 
     return (
       <div className="main">
-        <div className="logo">
-          <Link prefetch href="/"><a>Platonos</a></Link>
-        </div>
-
-        { this.props.children }
-
         { /* global styles and meta tags */ }
         <Meta />
+
+        {/* Site content */}
+        <div className="sidebar">
+          hey
+        </div>
+        <div className="world">
+          { this.props.children }
+        </div>
+        {/* <div className="logo">
+          <Link prefetch href="/"><a>Platonos</a></Link>
+        </div> */}
 
         { /* local styles */ }
         <style jsx>{`
           .main {
-            padding: 25px 50px;
-            height: 100%;
-            display: block;
+            display: flex;
+            flex-direction: row;
+            background-color: blue;
+            height: 100vh;
           }
-
-          .logo {
-            padding-bottom: 20px;
+          .sidebar {
+            flex-basis: 85px;
+            min-width: 85px;
+            border-left: 1px solid #ddd;
           }
-
-          .logo a:hover {
-            color: black;
-          }
-
-          a {
-            text-decoration: none;
-            font-size: 2em;
-            color: purple;
-          }
-
-          a:active {
-            color: black;
-          }
-
-          @media (max-width: 500px) {
-            .main {
-              padding: 25px 15px;
-            }
-
-            .logo {
-              padding-bottom: 20px;
-            }
+          .world {
+            background-color: red;
+            flex: 1 1 auto;
           }
         `}</style>
       </div>
