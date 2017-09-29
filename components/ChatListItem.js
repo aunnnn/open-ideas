@@ -14,7 +14,7 @@ const ChatListItem = ({ title, count, createdAt }) => {
 ChatListItem.propTypes = {
   title: PropTypes.string.isRequired,
   count: PropTypes.number,
-  createdAt: PropTypes.instanceOf(Date),
+  createdAt: PropTypes.string.isRequired,
 };
 
 export default ChatListItem
