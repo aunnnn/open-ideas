@@ -55,7 +55,7 @@ class ChatList extends Component {
   }
 }
 
-export const ALL_CHATROOMS_QUERY = gql`
+export const FIRSTLOAD_CHATROOMS_QUERY = gql`
   query allChatrooms {
     allChatrooms(
       first: ${N_CHATROOMS_FIRSTLOAD},
@@ -96,7 +96,7 @@ ChatList.propTypes = {
   onClickChatroom: React.PropTypes.func.isRequired,
 };
 
-export default graphql(ALL_CHATROOMS_QUERY, {
+export default graphql(FIRSTLOAD_CHATROOMS_QUERY, {
 
   props({ data: { loading, error, allChatrooms, _allChatroomsMeta, fetchMore } }) {
 
