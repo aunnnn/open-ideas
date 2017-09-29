@@ -4,6 +4,7 @@ import moment from 'moment'
 
 import { N_CHATROOMS_FIRSTLOAD, N_CHATROOMS_LOADMORE } from '../constants'
 import Page from '../layouts/main'
+import ChatListItem from './ChatListItem'
 
 // Change number of chats first load/ loadmore in constants.js
 class ChatList extends Component {
@@ -20,25 +21,24 @@ class ChatList extends Component {
             {allChatrooms.map((chat, index) => {
               return (
                 <div key={chat.id}>
-                  <li className='li-default' onClick={() => onClickChatroom(chat.id)}>
-                    <p>{chat.title}({chat._messagesMeta.count})</p>
-                    <p style={{ fontStyle: 'italic', marginTop: '8px', fontSize: '12px' }}>{moment(chat.createdAt).fromNow()}</p>
-                    <style jsx>{`
-                      .li-default {
-                        cursor: pointer;
-                        background-color: white;
-                        padding: 8px;
-                      }
-      
-                      .li-default:hover {
-                        background-color: gray;
-                      }
-      
-                      .li-active {
-                        background-color: red;
-                      }
-                    `}</style>
+                  <li className="main" onClick={() => onClickChatroom(chat.id)}>
+                    <ChatListItem 
+                      title={chat.title}
+                      count={chat._messagesMeta.count}
+                      createdAt={chat.createdAt}
+                    />
                   </li>
+                  <style jsx>{`
+                    .main {
+                      cursor: pointer;
+                      background-color: white;
+                      padding: 8px;
+                    }
+
+                    .main:hover {
+                      background-color: gray;
+                    }
+                  `}</style>  
                   <hr/>
               </div>
               )

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Head from 'next/head'
 import Link from 'next/link'
+import Router from 'next/router'
+
 import { graphql, gql } from 'react-apollo'
 
 import withData from '../lib/withData'
@@ -15,11 +17,16 @@ import Chatroom from '../components/Chatroom'
 
 class IndexPage extends Component {
 
+  static async getInitialProps({ query }) {
+    // for those who enters from link platonos.com/chatrooms/chatroomId
+    return { chatroomId: query.chatroomId }
+  }
+
   constructor(props) {
     super(props)
     this.state = {
       title: '',
-      currentRoomId: null,
+      currentRoomId: this.props.chatroomId || null,
       currentUserId: null,
       currentUsername: null,
     }
@@ -33,6 +40,8 @@ class IndexPage extends Component {
   }
 
   goToChatroom = (id) => {
+    // Router.push(`/chatrooms/${id}`)
+    console.log('room', id)
     this.setState({
       currentRoomId: id,
     })
@@ -41,7 +50,8 @@ class IndexPage extends Component {
   render() {
 
     // This works after redirect to first page after login
-    const { currentUserId, currentUsername } = this.state
+    const { currentUserId, currentUsername, currentRoomId } = this.state
+    console.log('roomd', currentRoomId)
     
     return (
       <Page style={{ overflow: 'auto' }}>
@@ -74,7 +84,7 @@ class IndexPage extends Component {
                 this.state.currentRoomId 
               && 
                 <div className="right">
-                  <Chatroom roomId={this.state.currentRoomId} currentUserId={currentUserId} />
+                  <Chatroom roomId={currentRoomId} currentUserId={currentUserId} />
                 </div> 
               || 
                 'Select chatroom'

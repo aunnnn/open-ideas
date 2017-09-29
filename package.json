@@ -3,15 +3,16 @@
   "version": "1.0.0",
   "description": "a place to talk",
   "scripts": {
-    "dev": "next",
+    "dev": "PORT=3000 node server.js",
     "build": "next build",
-    "start": "next start -p 3002"
+    "start": "NODE_ENV=production PORT=3002 node server.js"
   },
   "author": "aunnnn",
   "license": "MIT",
   "dependencies": {
     "moment": "^2.18.1",
     "next": "^3.2.2",
+    "next-routes": "^1.0.40",
     "react": "^15.6.1",
     "react-apollo": "^1.4.15",
     "react-dom": "^15.6.1",
