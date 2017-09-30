@@ -3,30 +3,31 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Router from 'next/router'
 
-import { graphql, gql } from 'react-apollo'
+import { graphql, gql, compose } from 'react-apollo'
 
 import withData from '../lib/withData'
 import { GC_USER_ID, GC_USERNAME } from '../constants';
 
 import Page from '../layouts/main'
-
 import Menu from '../components/Menu'
 import NewChat from '../components/NewChat'
 import ChatList from '../components/ChatList'
+import ChatListItem from '../components/ChatListItem'
 import Chatroom from '../components/Chatroom'
+
+import { CHATROOM_QUERY } from '../components/Chatroom'
 
 class IndexPage extends Component {
 
   static async getInitialProps({ query }) {
     // for those who enters from link platonos.com/chatrooms/chatroomId
-    return { chatroomId: query.chatroomId }
+    return { initialChatroomId: query.chatroomId }
   }
 
   constructor(props) {
     super(props)
     this.state = {
       title: '',
-      currentRoomId: this.props.chatroomId || null,
       currentUserId: null,
       currentUsername: null,
     }
@@ -40,19 +41,21 @@ class IndexPage extends Component {
   }
 
   goToChatroom = (id) => {
-    // Router.push(`/chatrooms/${id}`)
-    console.log('room', id)
-    this.setState({
-      currentRoomId: id,
-    })
+    Router.push(`/?chatroomId=${id}`, `/chatrooms/${id}`, { shallow: true })
   }
 
   render() {
-
     // This works after redirect to first page after login
-    const { currentUserId, currentUsername, currentRoomId } = this.state
-    console.log('roomd', currentRoomId)
-    
+    const { currentUserId, currentUsername } = this.state
+    const currentRoomId = this.props.url.query.chatroomId || this.props.initialChatroomId
+
+    const initialChatroom = this.props.initialChatroom
+    let initialChatroomLoading, initialChatroomError, initialChat
+    if (initialChatroom) {
+      initialChatroomLoading = initialChatroom.loading
+      initialChatroomError = initialChatroom.error
+      initialChat = initialChatroom.Chatroom
+    }
     return (
       <Page style={{ overflow: 'auto' }}>
         <Head>
@@ -77,11 +80,22 @@ class IndexPage extends Component {
           {/* CHAT PANEL  */}
           <div className="chat-container">
             <div className="left">
+              { initialChatroom && (initialChat ? 
+                <div>
+                  <h4>Directed</h4>
+                  <div className="initial-chat" onClick={() => this.goToChatroom(currentRoomId)}>
+                    <ChatListItem title={initialChat.title} count={initialChat.messages.length} createdAt={initialChat.createdAt} />
+                  </div>
+                </div>
+                :
+                initialChatroomError ? <div>Error: {initialChatroomError}</div> : <div>Loading</div>)
+              }
+              { initialChatroom && <h4>Latest</h4> }
               <ChatList onClickChatroom={this.goToChatroom} />
             </div>
             
             { 
-                this.state.currentRoomId 
+                currentRoomId 
               && 
                 <div className="right">
                   <Chatroom roomId={currentRoomId} currentUserId={currentUserId} />
@@ -125,6 +139,16 @@ class IndexPage extends Component {
             min-width: 0;
             padding-left: 12px;
           }
+
+          .initial-chat {
+            background: #88a;
+            margin-bottom: 32px;
+            cursor: pointer;
+            padding: 8px;
+          }
+          .initial-chat:hover {
+            background: #99f;
+          }          
         `}</style>
       </Page>
     )
@@ -140,4 +164,19 @@ query {
 }
 `
 
-export default withData(graphql(CURRENT_USER_QUERY, { name: "currentUserQuery" })(IndexPage))
+export default withData(compose(
+  graphql(CURRENT_USER_QUERY, { name: "currentUserQuery" }),
+  graphql(CHATROOM_QUERY, { 
+    name: "initialChatroom",
+    options: ({ initialChatroomId }) => {
+      return {
+        variables: {
+          roomId: initialChatroomId,
+        }
+      }
+    },
+    skip: ({ initialChatroomId }) => {
+      return initialChatroomId ? false : true
+    }
+  }),
+)(IndexPage))

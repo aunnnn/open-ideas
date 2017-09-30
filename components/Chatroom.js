@@ -15,8 +15,6 @@ class Chatroom extends Component {
 
   componentWillReceiveProps(nextProps) {
     if(!nextProps.chatroomMessageQuery.loading) {
-
-      console.log('params', this.props.roomId, 'and', nextProps.roomId)
       // Check for existing subscription      
       if (this.unsubscribe) {
         // Check if props have changed and, if necessary, stop the subscription
@@ -114,7 +112,7 @@ Chatroom.propTypes = {
   roomId: PropTypes.string.isRequired,
 };
 
-const CHATROOM_QUERY = gql`
+export const CHATROOM_QUERY = gql`
   query Chatroom($roomId: ID!) {
     Chatroom(id: $roomId) {
       title
@@ -128,6 +126,7 @@ const CHATROOM_QUERY = gql`
         id
         username
       }
+      createdAt
     }
   }
 `
