@@ -65,6 +65,7 @@ class MainLayout extends Component {
             margin-top: 20px;
           }
           .button-wrapper a {
+            height: 50px;
             color: #000;
             display: block;
             text-align: center;
