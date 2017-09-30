@@ -5,7 +5,7 @@ export default ({ loggedIn }) => (
     {loggedIn ? 
       <span><Link prefetch href="/logout"><a>logout</a></Link>{" | "}</span>
       :
-      <span><Link prefetch href="/login"><a>login</a></Link>{" | "}</span>
+      <span><Link prefetch href="/join"><a>login</a></Link>{" | "}</span>
     }
     <Link prefetch href="/about"><a>about</a></Link>
     <style jsx>{`
