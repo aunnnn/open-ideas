@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 import withData from '../lib/withData'
 import { GC_USER_ID, GC_USERNAME } from '../constants'
-import { ALL_CHATROOMS_QUERY } from './ChatList'
+import { FIRSTLOAD_CHATROOMS_QUERY } from './ChatList'
 
 class NewChat extends Component {
   
@@ -69,7 +69,7 @@ class NewChat extends Component {
           createChatroom: {
             __typename: 'Chatroom',
             id: '',
-            createdAt: +new Date,
+            createdAt: (new Date()).toISOString(),
             title: this.state.title,
             users: [
               {
@@ -84,9 +84,10 @@ class NewChat extends Component {
 
           // Update the store (so that the graphql components across the app will get updated)
 
+          console.log('should update!')
           // 1. read from store
           const data = store.readQuery({
-            query: ALL_CHATROOMS_QUERY,
+            query: FIRSTLOAD_CHATROOMS_QUERY,
           })
 
           // Must update messagesMeta manually, since the newly added object doesn't has one
@@ -101,7 +102,7 @@ class NewChat extends Component {
 
           // 3. write back
           store.writeQuery({
-            query: ALL_CHATROOMS_QUERY,
+            query: FIRSTLOAD_CHATROOMS_QUERY,
             data
           })
         },
