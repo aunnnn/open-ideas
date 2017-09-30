@@ -85,9 +85,9 @@ class IndexPage extends Component {
                   </div>
                 </div>
                 :
-                initialChatroomError ? <div>Error: {initialChatroomError}</div> : <div>Loading</div>)
+                initialChatroomError ? <div>Error: {initialChatroomError}</div> : null)
               }
-              { initialChatroom && <h4>Latest</h4> }
+              <h5>Latest</h5>
               <ChatList onClickChatroom={this.goToChatroom} />
             </div>
             
