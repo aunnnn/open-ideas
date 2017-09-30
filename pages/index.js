@@ -72,7 +72,7 @@ class IndexPage extends Component {
           {currentUserId ?
             <NewChat onCreateNewChatroom={this.goToChatroom} currentUserId={currentUserId} />
             :
-            <div className="please-login"><Link prefetch href="/login"><a className="login-button">Login</a></Link> to create a chat</div>
+            <div className="please-login"><Link prefetch href="/join"><a className="login-button">Login</a></Link> to create a chat</div>
           }
 
           <br/>
