@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import Link from 'next/link'
 import { withRouter } from 'next/router'
-import Menu from '../components/Menu'
 import Meta from '../components/meta'
 import { GC_USER_ID } from '../constants'
 
@@ -26,6 +25,7 @@ class MainLayout extends Component {
             <Link prefetch href="/"><a className={pathname === '/' && 'active'}>Read</a></Link>
             <Link prefetch href="/talk"><a className={pathname === '/talk' && 'active'}>Talk</a></Link>
             <Link prefetch href="/join"><a className={pathname === '/join' && 'active'}>Join</a></Link>
+            <Link prefetch href="/about"><a className="about">about</a></Link>
           </div>
         </div>
         <div className="world">
@@ -82,6 +82,7 @@ class MainLayout extends Component {
           }
           .world {
             flex: 1 1 auto;
+            margin: 12px 8px;
           }
         `}</style>
       </div>

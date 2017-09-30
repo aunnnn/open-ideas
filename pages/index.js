@@ -9,7 +9,6 @@ import withData from '../lib/withData'
 import { GC_USER_ID, GC_USERNAME } from '../constants';
 
 import Page from '../layouts/main'
-import Menu from '../components/Menu'
 import NewChat from '../components/NewChat'
 import ChatList from '../components/ChatList'
 import ChatListItem from '../components/ChatListItem'
@@ -63,8 +62,6 @@ class IndexPage extends Component {
         </Head>
         <div className="container">
 
-          <Menu />
-
           {/* DISPLAY CURRENT USER  */}
           {currentUsername && <div><b>Hi, {currentUsername}</b></div>}
 
@@ -83,7 +80,7 @@ class IndexPage extends Component {
               { initialChatroom && (initialChat ? 
                 <div>
                   <h4>Directed</h4>
-                  <div className="initial-chat" onClick={() => this.goToChatroom(currentRoomId)}>
+                  <div className="initial-chat" onClick={() => this.goToChatroom(this.props.initialChatroomId)}>
                     <ChatListItem title={initialChat.title} count={initialChat.messages.length} createdAt={initialChat.createdAt} />
                   </div>
                 </div>
