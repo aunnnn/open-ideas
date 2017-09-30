@@ -18,7 +18,7 @@ class MainLayout extends Component {
         <div className="sidebar">
           <Link prefetch href="/">
             <a className="logo">
-              <img src="static/plato-red.jpg" className="logo-img"/>
+              <img src="/static/plato-red.jpg" className="logo-img"/>
               <h1 className="logo-text">Platonos</h1>
             </a>
           </Link>
