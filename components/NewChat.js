@@ -3,7 +3,6 @@ import { withApollo, gql } from 'react-apollo'
 import _ from 'lodash'
 
 import withData from '../lib/withData'
-import { GC_USER_ID, GC_USERNAME } from '../constants'
 import { FIRSTLOAD_CHATROOMS_QUERY } from './ChatList'
 
 class NewChat extends Component {
@@ -19,6 +18,7 @@ class NewChat extends Component {
     e.preventDefault()
 
     const currentUserId = this.props.currentUserId
+    const currentUsername = this.props.currentUsername
 
     if(!currentUserId) {
       alert('You must log in first.')
@@ -49,14 +49,18 @@ class NewChat extends Component {
       // alert('fetched users are' + twoRandomUsers.map(u => u.username).join(' '))
 
       let anotherUserId;
+      let anotherUsername;
 
       // if both not same as current user id, can random
       if (twoRandomUserIds[0] !== currentUserId && twoRandomUserIds[1] !== currentUserId) {
         anotherUserId = _.sample(twoRandomUserIds)
+        anotherUsername = anotherUserId === twoRandomUserIds[0] ? twoRandomUsers[0].username : twoRandomUsers[1].username
       } else {
         // some is duplicate, choose one that's not
         anotherUserId = twoRandomUserIds[0] !== currentUserId ? twoRandomUserIds[0] : twoRandomUserIds[1]
+        anotherUsername = twoRandomUserIds[0] !== currentUserId ? twoRandomUsers[0].username : twoRandomUsers[1].username
       }
+
 
       const { data: { createChatroom: { id } } } = await this.props.client.mutate({
         mutation: CREATE_CHAT_MUTATION,
@@ -75,7 +79,12 @@ class NewChat extends Component {
               {
                 __typename: 'User',
                 id: '',
-                username: localStorage.getItem(GC_USERNAME),
+                username: currentUsername,
+              }, 
+              {
+                __typename: 'User',
+                id: '',
+                username: anotherUsername,
               }
             ],
           }
@@ -83,7 +92,7 @@ class NewChat extends Component {
         update: (store, { data: { createChatroom }}) => {
 
           // Update the store (so that the graphql components across the app will get updated)
-          
+
           // 1. read from store
           const data = store.readQuery({
             query: FIRSTLOAD_CHATROOMS_QUERY,
@@ -183,6 +192,7 @@ const GET_USERS_QUERY =  gql`
 
 NewChat.propTypes = {
   currentUserId: React.PropTypes.string.isRequired,
+  currentUsername: React.PropTypes.string.isRequired,
 }
 
 export default withApollo(NewChat)
