@@ -59,11 +59,13 @@ class IndexPage extends Component {
           {/* {currentUsername && <div><b>Hi, {currentUsername}</b></div>} */}
 
           {/* NEW CHAT INPUT */}
-          {/* {currentUserId ?
-            <NewChat onCreateNewChatroom={this.goToChatroom} currentUserId={currentUserId} />
+          {currentUserId ?
+            <div className="new-chat">
+              <NewChat onCreateNewChatroom={this.goToChatroom} currentUserId={currentUserId} currentUsername={currentUsername} />
+            </div>
             :
             <div className="please-login"><Link prefetch href="/join"><a className="login-button">Login</a></Link> to create a chat</div>
-          } */}
+          }
 
           {/* <br/> */}
 
@@ -110,7 +112,16 @@ class IndexPage extends Component {
             font-size: 14px;
           }
 
+          .new-chat {
+            position: fixed;
+            left: 110px;
+            top: 12px;
+            z-index: 2;
+          }
+
           .chat-list {
+            z-index: 1;
+            margin-top: 60px;
             flex: 0 0 calc(50vw - 98px);
             overflow-y: scroll;
             position: relative;
