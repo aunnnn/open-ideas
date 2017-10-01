@@ -73,7 +73,7 @@ class IndexPage extends Component {
           <div className="chat-list">
             { initialChatroom && (initialChat ? 
               <div>
-                <h4>Directed</h4>
+                <h5>Directed</h5>
                 <div className="initial-chat" onClick={() => this.goToChatroom(this.props.initialChatroomId)}>
                   <ChatListItem title={initialChat.title} count={initialChat.messages.length} createdAt={initialChat.createdAt} />
                 </div>
@@ -115,17 +115,19 @@ class IndexPage extends Component {
           .new-chat {
             position: fixed;
             left: 110px;
-            top: 12px;
+            top: 12px;            
             z-index: 2;
           }
 
           .chat-list {
             z-index: 1;
             margin-top: 60px;
+            padding-top: 8px;
             flex: 0 0 calc(50vw - 98px);
             overflow-y: scroll;
             position: relative;
             border-right: 1px solid rgba(0, 0, 0, .20);
+            border-top: 1px solid rgba(0, 0, 0, .20);
           }
 
           .chat-room {
