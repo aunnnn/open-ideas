@@ -62,7 +62,7 @@ class LoginPage extends Component {
         pathname: '/'        
       })
     } catch(err) {
-      alert("Oops: " + err.graphQLErrors[0].message);      
+      alert("Oops: " + (err.graphQLErrors && err.graphQLErrors.length >= 1 && err.graphQLErrors[0].message) || err); 
       this.setState({
         loading: false
       })
