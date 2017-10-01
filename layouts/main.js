@@ -1,19 +1,25 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import Link from 'next/link'
 import { withRouter } from 'next/router'
+
 import Meta from '../components/meta'
-import withAuth from '../lib/withAuth'
-import { GC_USER_ID, GC_AUTH_TOKEN } from '../constants'
+import { loggedOut } from '../lib/authActions'
+
+import { GC_AUTH_TOKEN, GC_USER_ID, GC_USERNAME } from '../constants'
 
 class MainLayout extends Component {
 
   onClickLogout = (e) => {
     e.preventDefault()
-    this.props.auth.logout()
+    localStorage.removeItem(GC_AUTH_TOKEN)
+    localStorage.removeItem(GC_USER_ID)
+    localStorage.removeItem(GC_USERNAME)
+    this.props.onLoggedout()   
   }
 
   render() {    
-    const { isLoggedIn } = this.props.auth
+    const isLoggedIn = this.props.isLoggedIn    
     const { pathname } = this.props.router
     return (
       <div className="main">
@@ -95,10 +101,28 @@ class MainLayout extends Component {
             flex: 1 1 auto;
             margin: 12px 8px;
           }
-        `}</style>
+        `}</style>µ
       </div>
     )
   }
 }
+
+// MainLayout.propTypes = {
+//   auth: React.PropTypes.object.isRequired,
+// }
   
-export default withAuth(withRouter(MainLayout));
+const MainLayoutWithRouter = withRouter(MainLayout)
+
+export default connect(
+  (state) => {
+    return { 
+      isLoggedIn: state.authReducers.isLoggedIn,
+    }
+  },
+  (dispatch) => ({
+    onLoggedout() {
+      dispatch(loggedOut())
+    }
+  }),
+)(MainLayoutWithRouter)
+
