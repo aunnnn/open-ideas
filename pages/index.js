@@ -50,55 +50,57 @@ class IndexPage extends Component {
       initialChat = initialChatroom.Chatroom
     }
     return (
-      <Page style={{ overflow: 'auto' }}>
+      <Page>
         <Head>
           <title>Platonos</title>
         </Head>
         <div className="container">
 
           {/* DISPLAY CURRENT USER  */}
-          {currentUsername && <div><b>Hi, {currentUsername}</b></div>}
+          {/* {currentUsername && <div><b>Hi, {currentUsername}</b></div>} */}
 
           {/* NEW CHAT INPUT */}
-          {currentUserId ?
+          {/* {currentUserId ?
             <NewChat onCreateNewChatroom={this.goToChatroom} currentUserId={currentUserId} />
             :
             <div className="please-login"><Link prefetch href="/join"><a className="login-button">Login</a></Link> to create a chat</div>
-          }
+          } */}
 
-          <br/>
+          {/* <br/> */}
 
           {/* CHAT PANEL  */}
-          <div className="chat-container">
-            <div className="left">
-              { initialChatroom && (initialChat ? 
-                <div>
-                  <h4>Directed</h4>
-                  <div className="initial-chat" onClick={() => this.goToChatroom(this.props.initialChatroomId)}>
-                    <ChatListItem title={initialChat.title} count={initialChat.messages.length} createdAt={initialChat.createdAt} />
-                  </div>
+          <div className="chat-list">
+            { initialChatroom && (initialChat ? 
+              <div>
+                <h4>Directed</h4>
+                <div className="initial-chat" onClick={() => this.goToChatroom(this.props.initialChatroomId)}>
+                  <ChatListItem title={initialChat.title} count={initialChat.messages.length} createdAt={initialChat.createdAt} />
                 </div>
-                :
-                initialChatroomError ? <div>Error: {initialChatroomError}</div> : null)
-              }
-              <h5>Latest</h5>
-              <ChatList onClickChatroom={this.goToChatroom} />
-            </div>
-            
-            { 
-                currentRoomId 
-              && 
-                <div className="right">
-                  <Chatroom roomId={currentRoomId} currentUserId={currentUserId} />
-                </div> 
-              || 
-                'Select chatroom'
+              </div>
+              :
+              initialChatroomError ? <div>Error: {initialChatroomError}</div> : null)
             }
+            <h5>Latest</h5>
+            <ChatList onClickChatroom={this.goToChatroom} />
           </div>
           
+          { 
+              currentRoomId 
+            && 
+              <div className="chat-room">
+                <Chatroom roomId={currentRoomId} currentUserId={currentUserId} />
+              </div> 
+            || 
+              'Select chatroom'
+          }
         </div>
 
         <style jsx>{`
+          .container {
+            display: flex;
+            flex: 1;
+            height: 100vh;
+          }
           .login-button {
             color: blue;
             font-size: 18px;
@@ -109,23 +111,15 @@ class IndexPage extends Component {
             font-size: 14px;
           }
 
-          .chat-container {
-            display: flex;
-            min-width: 500px;
-          }
-
-          .left {
-            flex: 0 0 25%;
-            min-width: 240px;
-            max-width: 420px;
-            overflow-y: hidden;
+          .chat-list {
+            flex: 0 0 calc(50vw - 98px);
+            overflow-y: scroll;
             position: relative;
             border-right: 1px solid rgba(0, 0, 0, .20);
           }
 
-          .right {
-            display: flex;
-            flex: 3;
+          .chat-room {
+            flex: 1
             flex-direction: column;
             min-width: 0;
             padding-left: 12px;
