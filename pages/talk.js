@@ -1,7 +1,8 @@
 import Page from '../layouts/main'
 import Head from 'next/head'
+import withData from '../lib/withData'
 
-export default () => (
+const TalkPage = () => (
   <Page>
     <Head>
       <title>Platonos</title>
@@ -11,3 +12,5 @@ export default () => (
     </div>
   </Page>
 )
+
+export default withData(TalkPage)
