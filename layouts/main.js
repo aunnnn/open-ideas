@@ -6,14 +6,9 @@ import withAuth from '../lib/withAuth'
 import { GC_USER_ID, GC_AUTH_TOKEN } from '../constants'
 
 class MainLayout extends Component {
-
-  onClickLogout = (e) => {
-    e.preventDefault()
-    this.props.auth.logout()
-  }
-
+    
   render() {    
-    const { isLoggedIn } = this.props.auth
+    const isLoggedIn = this.props.auth.isLoggedIn
     const { pathname } = this.props.router
     return (
       <div className="main">
@@ -31,11 +26,8 @@ class MainLayout extends Component {
           <div className="button-wrapper">
             <Link prefetch href="/"><a className={pathname === '/' && 'active'}>Read</a></Link>
             <Link prefetch href="/talk"><a className={pathname === '/talk' && 'active'}>Talk</a></Link>
-            
-            {isLoggedIn ?
-              <a onClick={this.onClickLogout}>Logout</a>
-              :
-              <Link prefetch href="/join"><a className={pathname === '/join' && 'active'}>Join</a></Link>}                        
+            <Link prefetch href="/join"><a className={pathname === '/join' && 'active'}>Join</a></Link>
+            <Link prefetch href="/about"><a className="about">about</a></Link>
           </div>
         </div>
         <div className="world">
@@ -80,7 +72,6 @@ class MainLayout extends Component {
             display: block;
             text-align: center;
             padding: 15px 0;
-            cursor: pointer;
           }
           .button-wrapper a:hover {
             background-color: #fafafa;
