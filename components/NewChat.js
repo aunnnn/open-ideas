@@ -83,8 +83,7 @@ class NewChat extends Component {
         update: (store, { data: { createChatroom }}) => {
 
           // Update the store (so that the graphql components across the app will get updated)
-
-          console.log('should update!')
+          
           // 1. read from store
           const data = store.readQuery({
             query: FIRSTLOAD_CHATROOMS_QUERY,
