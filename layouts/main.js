@@ -2,11 +2,13 @@ import React, { Component } from 'react'
 import Link from 'next/link'
 import { withRouter } from 'next/router'
 import Meta from '../components/meta'
-import { GC_USER_ID } from '../constants'
+import withAuth from '../lib/withAuth'
+import { GC_USER_ID, GC_AUTH_TOKEN } from '../constants'
 
 class MainLayout extends Component {
-
-  render() {
+    
+  render() {    
+    const isLoggedIn = this.props.auth.isLoggedIn
     const { pathname } = this.props.router
     return (
       <div className="main">
@@ -90,4 +92,4 @@ class MainLayout extends Component {
   }
 }
   
-export default withRouter(MainLayout);
+export default withAuth(withRouter(MainLayout));

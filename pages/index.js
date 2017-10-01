@@ -6,6 +6,8 @@ import Router from 'next/router'
 import { graphql, gql, compose } from 'react-apollo'
 
 import withData from '../lib/withData'
+import withAuth from '../lib/withAuth'
+
 import { GC_USER_ID, GC_USERNAME } from '../constants';
 
 import Page from '../layouts/main'
@@ -26,26 +28,18 @@ class IndexPage extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      title: '',
-      currentUserId: null,
-      currentUsername: null,
-    }
-  }
-
-  componentDidMount() {
-    this.setState({
-      currentUserId: localStorage.getItem(GC_USER_ID),
-      currentUsername: localStorage.getItem(GC_USERNAME),
-    })
+      title: '',      
+    }    
   }
 
   goToChatroom = (id) => {
     Router.push(`/?chatroomId=${id}`, `/chatrooms/${id}`, { shallow: true })
   }
 
-  render() {
+  render() {    
     // This works after redirect to first page after login
-    const { currentUserId, currentUsername } = this.state
+    const { currentUserId, currentUsername } = this.props.auth
+    
     const currentRoomId = this.props.url.query.chatroomId || this.props.initialChatroomId
 
     const initialChatroom = this.props.initialChatroom
@@ -176,4 +170,4 @@ export default withData(compose(
       return initialChatroomId ? false : true
     }
   }),
-)(IndexPage))
+)(withAuth(IndexPage)))
