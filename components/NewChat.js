@@ -186,4 +186,4 @@ NewChat.propTypes = {
   currentUserId: React.PropTypes.string.isRequired,
 }
 
-export default withData(withApollo(NewChat))
+export default withApollo(NewChat)
