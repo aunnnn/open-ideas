@@ -3,7 +3,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Router from 'next/router'
 
-import { connect } from 'react-redux'
+import connectAuth from '../lib/connectAuth'
 import { graphql, gql, compose } from 'react-apollo'
 
 import withData from '../lib/withData'
@@ -157,16 +157,6 @@ query {
 }
 `
 
-const IndexPageWithState = connect((state) => {
-  const authData = state.authReducers.authData
-  return {
-    isLoggedIn: state.authReducers.isLoggedIn,
-    authToken: authData && authData.authToken,
-    currentUsername: authData && authData.currentUsername,
-    currentUserId: authData && authData.currentUserId,  
-  }  
-}, null)(IndexPage)
-
 export default withData(compose(
   graphql(CHATROOM_QUERY, { 
     name: "initialChatroom",
@@ -181,4 +171,4 @@ export default withData(compose(
       return initialChatroomId ? false : true
     }
   }),
-)(IndexPageWithState))
+)(connectAuth(IndexPage)))
