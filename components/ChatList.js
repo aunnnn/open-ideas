@@ -51,7 +51,7 @@ class ChatList extends Component {
         </div>
       )
     }
-    return <div>Loading</div>  
+    return <div>Something wrong, this shouldn't show.</div>
   }
 }
 
@@ -106,8 +106,8 @@ export default graphql(FIRSTLOAD_CHATROOMS_QUERY, {
     // (this is called everytime data is changed, so allChatrooms might be undefined at first load)
     let cursor;
     let noMore = false;
-    if (allChatrooms) {
-      cursor = allChatrooms[allChatrooms.length-1].id
+    if (allChatrooms) {      
+      cursor = allChatrooms.length > 0 ? allChatrooms[allChatrooms.length-1].id : null
       noMore = allChatrooms.length === _allChatroomsMeta.count
     }
     return {
