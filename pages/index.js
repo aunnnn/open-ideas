@@ -56,16 +56,16 @@ class IndexPage extends Component {
         <div className="container">
 
           {/* DISPLAY CURRENT USER  */}
-          {/* {currentUsername && <div><b>Hi, {currentUsername}</b></div>} */}
 
           {/* NEW CHAT INPUT */}
-          {currentUserId ?
-            <div className="new-chat">
-              <NewChat onCreateNewChatroom={this.goToChatroom} currentUserId={currentUserId} currentUsername={currentUsername} />
-            </div>
-            :
-            <div className="please-login"><Link prefetch href="/join"><a className="login-button">Login</a></Link> to create a chat</div>
-          }
+          <div className="new-chat">
+          {currentUsername && <div><b>Hi, {currentUsername}</b></div>}
+            {currentUserId ?
+              <NewChat onCreateNewChatroom={this.goToChatroom} currentUserId={currentUserId} currentUsername={currentUsername} />            
+              :
+              <div className="please-login"><Link prefetch href="/join"><a className="login-button">Login</a></Link> to create a chat</div>
+            }            
+          </div>
 
           {/* <br/> */}
 
