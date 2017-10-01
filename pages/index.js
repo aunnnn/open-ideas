@@ -3,10 +3,10 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Router from 'next/router'
 
+import { connect } from 'react-redux'
 import { graphql, gql, compose } from 'react-apollo'
 
 import withData from '../lib/withData'
-import withAuth from '../lib/withAuth'
 
 import { GC_USER_ID, GC_USERNAME } from '../constants';
 
@@ -38,8 +38,7 @@ class IndexPage extends Component {
 
   render() {    
     // This works after redirect to first page after login
-    const { currentUserId, currentUsername } = this.props.auth
-    
+    const { currentUserId, currentUsername } = this.props
     const currentRoomId = this.props.url.query.chatroomId || this.props.initialChatroomId
 
     const initialChatroom = this.props.initialChatroom
@@ -149,8 +148,17 @@ query {
 }
 `
 
+const IndexPageWithState = connect((state) => {
+  const authData = state.authReducers.authData
+  return {
+    isLoggedIn: state.authReducers.isLoggedIn,
+    authToken: authData && authData.authToken,
+    currentUsername: authData && authData.currentUsername,
+    currentUserId: authData && authData.currentUserId,  
+  }  
+}, null)(IndexPage)
+
 export default withData(compose(
-  graphql(CURRENT_USER_QUERY, { name: "currentUserQuery" }),
   graphql(CHATROOM_QUERY, { 
     name: "initialChatroom",
     options: ({ initialChatroomId }) => {
@@ -164,4 +172,4 @@ export default withData(compose(
       return initialChatroomId ? false : true
     }
   }),
-)(withAuth(IndexPage)))
+)(IndexPageWithState))

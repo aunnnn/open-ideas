@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
 import { graphql, gql, compose } from 'react-apollo'
 import Head from 'next/head'
 import Router from 'next/router'
+
+import { loggedIn } from '../lib/authActions'
 
 import Page from '../layouts/main'
 import withData from '../lib/withData'
@@ -25,6 +29,7 @@ class LoginPage extends Component {
     this.setState({
       loading: true
     })
+    
     try {
       if (this.state.loginMode) {
         const { email, password } = this.state
@@ -37,7 +42,7 @@ class LoginPage extends Component {
         const _id = result.data.signinUser.user.id
         const _token = result.data.signinUser.token
         const _username = result.data.signinUser.user.username
-        this._saveUserData(_id, _token, _username)
+        this._saveUserDataToStore(_token, _id, _username)
       } else {
         const { username, email, password } = this.state
         const result = await this.props.createUserMutation({
@@ -50,7 +55,7 @@ class LoginPage extends Component {
         const _id = result.data.signinUser.user.id
         const _token = result.data.signinUser.token
         const _username = result.data.signinUser.user.username
-        this._saveUserData(_id, _token, _username)
+        this._saveUserDataToStore(_token, _id, _username)
         alert('👋 Successfully created account.')        
       }
       Router.push({
@@ -64,10 +69,8 @@ class LoginPage extends Component {
     }
   }
 
-  _saveUserData = (id, token, username) => {
-    localStorage.setItem(GC_USER_ID, id)
-    localStorage.setItem(GC_AUTH_TOKEN, token)
-    localStorage.setItem(GC_USERNAME, username)
+  _saveUserDataToStore = (token, id, username) => {
+    this.props.onLoggedIn(token, id, username)
   }
 
   render() { 
@@ -93,7 +96,7 @@ class LoginPage extends Component {
           <input
             value={this.state.email}
             onChange={(e) => this.setState({ email: e.target.value })}
-            type="email"
+            type="text"
             placeholder="email address"
           />
           <input
@@ -183,7 +186,16 @@ mutation SigninUserMutation($email: String!, $password: String!) {
 }
 `
 
+const LoginPageWithState = connect(
+  null,
+  (dispatch) => ({
+    onLoggedIn(token, id, username) {
+      dispatch(loggedIn(token, id, username))
+    }
+  })
+)(LoginPage)
+
 export default withData(compose(
+  graphql(SIGNIN_USER_MUTATION, { name: 'signinUserMutation'}),
   graphql(CREATE_USER_MUTATION, { name: 'createUserMutation'}),
-  graphql(SIGNIN_USER_MUTATION, { name: 'signinUserMutation'})
-)(LoginPage));
+)(LoginPageWithState))
