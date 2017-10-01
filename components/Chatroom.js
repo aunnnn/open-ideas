@@ -51,12 +51,17 @@ class Chatroom extends Component {
   
   onCreateMessage = async (e) => {
     e.preventDefault()
+    const { textInput } = this.state
+    if (textInput === '') {
+      alert('Please type something.')
+      return
+    }
     try {
       const { createMessageMutation, roomId, currentUserId } = this.props
 
       const data = await createMessageMutation({
         variables: {
-          text: this.state.textInput,
+          text: textInput,
           chatroomId: roomId,
           createdByUserId: currentUserId,
         }
@@ -104,7 +109,7 @@ class Chatroom extends Component {
         </div>
       )
     }
-    return <div>Loading</div>
+    return <div>Something wrong, this shouldn't show.</div>
   }
 }
 
