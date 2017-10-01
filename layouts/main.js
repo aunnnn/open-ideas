@@ -12,9 +12,6 @@ class MainLayout extends Component {
 
   onClickLogout = (e) => {
     e.preventDefault()
-    localStorage.removeItem(GC_AUTH_TOKEN)
-    localStorage.removeItem(GC_USER_ID)
-    localStorage.removeItem(GC_USERNAME)
     this.props.onLoggedout()   
   }
 
