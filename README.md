@@ -1,6 +1,6 @@
 # open-ideas
-A place to talk.
+A place of wisdom.
 
 Built with Next.js + Apollo + GraphQL(graphcool)
 
-[Demo](http://platonos.com/)
+[Check it out.](http://platonos.com/)
