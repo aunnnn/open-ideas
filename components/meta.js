@@ -13,7 +13,8 @@ export default () => (
       box-sizing: border-box;
     }
     body {
-      font: 16px "Courier New";
+      font: 16px monospace;
+      font-weight: 400;
     }
     
     a {
