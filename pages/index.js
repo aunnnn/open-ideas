@@ -57,16 +57,6 @@ class IndexPage extends Component {
 
           {/* DISPLAY CURRENT USER  */}
 
-          {/* NEW CHAT INPUT */}
-          <div className="new-chat">
-          {currentUsername && <div><b>Hi, {currentUsername}</b></div>}
-            {currentUserId ?
-              <NewChat onCreateNewChatroom={this.goToChatroom} currentUserId={currentUserId} currentUsername={currentUsername} />            
-              :
-              <div className="please-login"><Link prefetch href="/join"><a className="login-button">Login</a></Link> to create a chat</div>
-            }            
-          </div>
-
           {/* <br/> */}
 
           {/* CHAT PANEL  */}
@@ -92,7 +82,11 @@ class IndexPage extends Component {
                 <Chatroom roomId={currentRoomId} currentUserId={currentUserId} />
               </div> 
             || 
-              'Select chatroom'
+              <div>
+                <p>Hi, Welcome to Platonos! This is a place to talk.</p>
+                <br />
+                <p>Select talkroom or Join to talk</p>
+              </div>
           }
         </div>
 
@@ -121,13 +115,12 @@ class IndexPage extends Component {
 
           .chat-list {
             z-index: 1;
-            margin-top: 60px;
             padding-top: 8px;
             flex: 0 0 calc(50vw - 98px);
             overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
             position: relative;
             border-right: 1px solid rgba(0, 0, 0, .20);
-            border-top: 1px solid rgba(0, 0, 0, .20);
           }
 
           .chat-room {
@@ -135,6 +128,8 @@ class IndexPage extends Component {
             flex-direction: column;
             min-width: 0;
             padding-left: 12px;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
           }
 
           .initial-chat {
