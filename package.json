@@ -10,6 +10,9 @@
   "author": "aunnnn",
   "license": "MIT",
   "dependencies": {
+    "babel-eslint": "^8.0.1",
+    "eslint": "^4.8.0",
+    "eslint-plugin-react": "^7.4.0",
     "moment": "^2.18.1",
     "next": "^3.2.2",
     "next-routes": "^1.0.40",
