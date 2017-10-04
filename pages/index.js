@@ -18,6 +18,8 @@ import Chatroom from '../components/Chatroom'
 
 import { CHATROOM_QUERY } from '../components/Chatroom'
 
+import Colors from '../utils/Colors'
+
 class IndexPage extends Component {
 
   static async getInitialProps({ query }) {
@@ -37,6 +39,7 @@ class IndexPage extends Component {
   }
 
   render() {    
+    console.log(this.props)
     // This works after redirect to first page after login
     const { currentUserId, currentUsername } = this.props
     const currentRoomId = this.props.url.query.chatroomId || this.props.initialChatroomId
@@ -67,7 +70,12 @@ class IndexPage extends Component {
                   <h5>Directed</h5>
                 </div>
                 <div className="initial-chat" onClick={() => this.goToChatroom(this.props.initialChatroomId)}>
-                  <ChatListItem title={initialChat.title} count={initialChat.messages.length} createdAt={initialChat.createdAt} />
+                  <ChatListItem
+                    title={initialChat.title}
+                    count={initialChat.messages.length}
+                    createdAt={initialChat.createdAt}
+                    active={initialChat.id === currentRoomId}
+                  />
                 </div>
               </div>
               :
@@ -76,7 +84,7 @@ class IndexPage extends Component {
             <div className="header">
               <h5>Latest <span className="button">(change)</span></h5>
             </div>
-            <ChatList onClickChatroom={this.goToChatroom} />
+            <ChatList onClickChatroom={this.goToChatroom} currentRoomId={currentRoomId} />
           </div>
           
           { /* TALK ROOM */
@@ -145,14 +153,11 @@ class IndexPage extends Component {
           }
 
           .initial-chat {
-            {/* background: #88a; */}
+            color: #fff;
+            background: ${Colors.main};
             margin-bottom: 20px;
             cursor: pointer;
-            padding: 8px;
           }
-          .initial-chat:hover {
-            background: #99f;
-          }          
         `}</style>
       </Page>
     )
