@@ -85,7 +85,7 @@ class IndexPage extends Component {
               <div>
                 <p>Hi, Welcome to Platonos! This is a place to talk.</p>
                 <br />
-                <p>Select talkroom or Join to talk</p>
+                <p>Select talkroom to read or <Link prefetch href="/join"><a className="join-button">Join</a></Link> to talk.</p>
               </div>
           }
         </div>
@@ -96,13 +96,13 @@ class IndexPage extends Component {
             flex: 1;
             height: 100vh;
           }
-          .login-button {
+          .join-button {
             color: blue;
             font-size: 18px;
             font-weight: bold;
           }
     
-          .please-login {
+          .please-join {
             font-size: 14px;
           }
 

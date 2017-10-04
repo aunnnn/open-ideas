@@ -22,7 +22,7 @@ class TalkPage extends Component {
             {currentUserId ?
               <NewChat onCreateNewChatroom={this.goToChatroom} currentUserId={currentUserId} currentUsername={currentUsername} />            
               :
-              <div className="please-login"><Link prefetch href="/join"><a className="login-button">Login</a></Link> to create a chat</div>
+              <div className="please-join"><Link prefetch href="/join"><a className="join-button">Join</a></Link> to create a chat</div>
             }            
           </div>
 
@@ -43,7 +43,15 @@ class TalkPage extends Component {
             top: 12px;            
             z-index: 2;
           }
-
+          .join-button {
+            color: blue;
+            font-size: 18px;
+            font-weight: bold;
+          }
+    
+          .please-join {
+            font-size: 14px;
+          }
           .chat-list {
             z-index: 1;
             margin-top: 60px;
