@@ -97,7 +97,7 @@ class MainLayout extends Component {
           .world {
             flex: 1 1 auto;
           }
-        `}</style>µ
+        `}</style>
       </div>
     )
   }
