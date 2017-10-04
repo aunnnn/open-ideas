@@ -121,6 +121,10 @@ class IndexPage extends Component {
           }
           .header .button {
             font-weight: bold;
+            cursor: pointer;
+          }
+          .header .button:hover {
+            background-color: ${Colors.lightGrey};
           }
           .please-join {
             font-size: 14px;
