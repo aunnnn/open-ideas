@@ -5,6 +5,8 @@ import { graphql, gql, compose } from 'react-apollo'
 import withData from '../lib/withData'
 import MessageList from './MessageList'
 
+import Colors from '../utils/Colors'
+
 class Chatroom extends Component {
   constructor(props) {
     super(props)
@@ -88,7 +90,10 @@ class Chatroom extends Component {
     if (error) return <div>Error: {error}</div>
     if (chatroom) {
       return (
-        <div>        
+        <div style={{ padding: '0 10px 0 5px' }}>
+          <div className="header">
+            <div className="button">(save)</div>
+          </div>
           <h2>{chatroom.title}<span style={{ fontSize: '13px' }}> ({messages.length})</span></h2>
           <p style={{ fontSize: '13px', fontStyle: 'italic' }}>{usersInChat.map(u => u.username).join(', ')}</p>
   
@@ -106,6 +111,22 @@ class Chatroom extends Component {
               />
             </form>
           }
+          <style jsx scoped>{`
+            .header {
+              padding: 15px 0 10px;
+              display: flex;
+              {/* flex-direction: row;
+              justify-content: flex-end; */}
+            }
+            .button {
+              cursor: pointer;
+              font-size: 13px;
+              font-weight: bold;
+            }
+            .button:hover {
+              background-color: ${Colors.lightGrey};
+            }
+          `}</style>
         </div>
       )
     }

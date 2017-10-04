@@ -6,11 +6,13 @@ import { N_CHATROOMS_FIRSTLOAD, N_CHATROOMS_LOADMORE } from '../constants'
 import Page from '../layouts/main'
 import ChatListItem from './ChatListItem'
 
+import Colors from '../utils/Colors';
+
 // Change number of chats first load/ loadmore in constants.js
 class ChatList extends Component {
 
   render() {
-    const { loading, error, allChatrooms, _allChatroomsMeta, onClickChatroom, loadMoreEntries, noMore } = this.props;
+    const { loading, error, allChatrooms, _allChatroomsMeta, onClickChatroom, loadMoreEntries, noMore, currentRoomId } = this.props;
     if (loading) return <div>Loading</div>
     if (error) return <div>Error: {error}</div>
     if (allChatrooms) {
@@ -23,23 +25,23 @@ class ChatList extends Component {
                 <div key={chat.id}>
                   <li className="main" onClick={() => onClickChatroom(chat.id)}>
                     <ChatListItem 
+                      id={chat.id}
                       title={chat.title}
                       count={chat._messagesMeta.count}
                       createdAt={chat.createdAt}
+                      active={chat.id === currentRoomId}
                     />
                   </li>
                   <style jsx>{`
                     .main {
                       cursor: pointer;
                       background-color: white;
-                      padding: 8px;
                     }
 
                     .main:hover {
-                      background-color: #f5f5f5;
+                      background-color: ${Colors.lightGrey};
                     }
                   `}</style>  
-                  <hr/>
               </div>
               )
             })}
