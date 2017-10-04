@@ -13,7 +13,7 @@ const ChatListItem = ({ title, count, createdAt, active }) => {
       <p style={{ fontStyle: 'italic', fontSize: '12px' }}>{moment(createdAt).fromNow()}</p>    
       <style jsx scoped>{`
         .chat-list-item {
-          padding: 10px 15px 12px;
+          padding: 12px 15px 15px;
           border-bottom: 1px solid ${Colors.grey};
         }
         .chat-list-item.active {
