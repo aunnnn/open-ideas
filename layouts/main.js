@@ -6,6 +6,8 @@ import { withRouter } from 'next/router'
 import Meta from '../components/meta'
 import { loggedOut } from '../lib/authActions'
 
+import Colors from '../utils/Colors'
+
 import { GC_AUTH_TOKEN, GC_USER_ID, GC_USERNAME } from '../constants'
 
 class MainLayout extends Component {
@@ -86,11 +88,11 @@ class MainLayout extends Component {
             cursor: pointer;
           }
           .button-wrapper a:hover {
-            background-color: #fafafa;
+            background-color: ${Colors.lightGrey};
           }
           .button-wrapper a.active {
             font-weight: bold;
-            background-color: #f9f9f9;
+            background-color: ${Colors.lightGrey};
             border-top: 1px solid #ddd;
             border-bottom: 1px solid #ddd;
           }
