@@ -36,7 +36,7 @@ class ChatList extends Component {
                     }
 
                     .main:hover {
-                      background-color: gray;
+                      background-color: #f5f5f5;
                     }
                   `}</style>  
                   <hr/>

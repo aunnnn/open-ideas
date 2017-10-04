@@ -59,11 +59,13 @@ class IndexPage extends Component {
 
           {/* <br/> */}
 
-          {/* CHAT PANEL  */}
-          <div className="chat-list">
+          {/* TALK PANEL  */}
+          <div className="talk-list">
             { initialChatroom && (initialChat ? 
               <div>
-                <h5>Directed</h5>
+                <div className="header">
+                  <h5>Directed</h5>
+                </div>
                 <div className="initial-chat" onClick={() => this.goToChatroom(this.props.initialChatroomId)}>
                   <ChatListItem title={initialChat.title} count={initialChat.messages.length} createdAt={initialChat.createdAt} />
                 </div>
@@ -71,14 +73,16 @@ class IndexPage extends Component {
               :
               initialChatroomError ? <div>Error: {initialChatroomError}</div> : null)
             }
-            <h5>Latest</h5>
+            <div className="header">
+              <h5>Latest <span className="button">(change)</span></h5>
+            </div>
             <ChatList onClickChatroom={this.goToChatroom} />
           </div>
           
-          { 
+          { /* TALK ROOM */
               currentRoomId 
             && 
-              <div className="chat-room">
+              <div className="talk-room">
                 <Chatroom roomId={currentRoomId} currentUserId={currentUserId} />
               </div> 
             || 
@@ -90,7 +94,7 @@ class IndexPage extends Component {
           }
         </div>
 
-        <style jsx>{`
+        <style jsx scoped>{`
           .container {
             display: flex;
             flex: 1;
@@ -101,7 +105,15 @@ class IndexPage extends Component {
             font-size: 18px;
             font-weight: bold;
           }
-    
+          .header {
+            padding: 10px;
+          }
+          .header h5 {
+            font-weight: 400;
+          }
+          .header .button {
+            font-weight: bold;
+          }
           .please-join {
             font-size: 14px;
           }
@@ -113,7 +125,7 @@ class IndexPage extends Component {
             z-index: 2;
           }
 
-          .chat-list {
+          .talk-list {
             z-index: 1;
             padding-top: 8px;
             flex: 0 0 calc(50vw - 98px);
@@ -123,7 +135,7 @@ class IndexPage extends Component {
             border-right: 1px solid rgba(0, 0, 0, .20);
           }
 
-          .chat-room {
+          .talk-room {
             flex: 1
             flex-direction: column;
             min-width: 0;
@@ -133,8 +145,8 @@ class IndexPage extends Component {
           }
 
           .initial-chat {
-            background: #88a;
-            margin-bottom: 32px;
+            {/* background: #88a; */}
+            margin-bottom: 20px;
             cursor: pointer;
             padding: 8px;
           }
