@@ -140,6 +140,7 @@ class IndexPage extends Component {
             flex-direction: column;
             min-width: 0;
             padding-left: 12px;
+            padding-top: 8px;
             overflow-y: scroll;
             -webkit-overflow-scrolling: touch;
           }
