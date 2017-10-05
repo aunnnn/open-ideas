@@ -101,13 +101,7 @@ class MainLayout extends Component {
   }
 }
 
-// MainLayout.propTypes = {
-//   auth: React.PropTypes.object.isRequired,
-// }
-  
-const MainLayoutWithRouter = withRouter(MainLayout)
-
-export default connect(
+export default withRouter(connect(
   (state) => {
     return { 
       isLoggedIn: state.authReducers.isLoggedIn,
@@ -118,5 +112,4 @@ export default connect(
       dispatch(loggedOut())
     }
   }),
-)(MainLayoutWithRouter)
-
+)(MainLayout))
