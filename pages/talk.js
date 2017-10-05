@@ -43,6 +43,7 @@ class TalkPage extends Component {
             <UserChatList 
               forUserId={currentUserId} 
               onClickChatroom={this.goToChatroom} 
+              currentRoomId={currentRoomId}
             />
           </div>
           <div className="chat-room">

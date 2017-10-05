@@ -14,6 +14,7 @@ class UserChatList extends Component {
   static propTypes = {
     onClickChatroom: React.PropTypes.func.isRequired,
     forUserId: React.PropTypes.string,
+    currentRoomId: React.PropTypes.string,
   }
 
   render() {
