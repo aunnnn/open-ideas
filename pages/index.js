@@ -8,15 +8,11 @@ import { graphql, gql, compose } from 'react-apollo'
 
 import withData from '../lib/withData'
 
-import { GC_USER_ID, GC_USERNAME } from '../constants';
-
 import Page from '../layouts/main'
 import NewChat from '../components/NewChat'
 import ChatList from '../components/ChatList'
 import ChatListItem from '../components/ChatListItem'
 import Chatroom from '../components/Chatroom'
-
-import { CHATROOM_QUERY } from '../components/Chatroom'
 
 import Colors from '../utils/Colors'
 
@@ -39,7 +35,6 @@ class IndexPage extends Component {
   }
 
   render() {    
-    console.log(this.props)
     // This works after redirect to first page after login
     const { currentUserId, currentUsername } = this.props
     const currentRoomId = this.props.url.query.chatroomId || this.props.initialChatroomId
@@ -92,7 +87,7 @@ class IndexPage extends Component {
             && 
               <div className="talk-room">
                 <Chatroom roomId={currentRoomId} currentUserId={currentUserId} />
-              </div> 
+              </div>
             || 
               <div>
                 <p>Hi, Welcome to Platonos! This is a place to talk.</p>
@@ -152,6 +147,7 @@ class IndexPage extends Component {
             flex-direction: column;
             min-width: 0;
             padding-left: 12px;
+            padding-top: 8px;
             overflow-y: scroll;
             -webkit-overflow-scrolling: touch;
           }
@@ -173,6 +169,25 @@ query {
   user {
     id,
     username
+  }
+}
+`
+
+const CHATROOM_QUERY = gql`
+query Chatroom($roomId: ID!) {
+  Chatroom(id: $roomId) {
+    title
+    users {
+      id
+      username
+    }
+    messages {
+      id
+      text
+      createdAt
+      createdByUserId
+    }
+    createdAt
   }
 }
 `

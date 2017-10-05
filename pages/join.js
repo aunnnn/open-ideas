@@ -10,8 +10,6 @@ import { loggedIn } from '../lib/authActions'
 import Page from '../layouts/main'
 import withData from '../lib/withData'
 
-import { GC_AUTH_TOKEN, GC_USER_ID, GC_USERNAME } from '../constants'
-
 class LoginPage extends Component {
   constructor(props) {
     super(props)

@@ -9,11 +9,12 @@ import ChatListItem from './ChatListItem'
 import Colors from '../utils/Colors';
 
 // Change number of chats first load/ loadmore in constants.js
-class ChatList extends Component {
+class UserChatList extends Component {
 
   static propTypes = {
     onClickChatroom: React.PropTypes.func.isRequired,
-  };
+    forUserId: React.PropTypes.string,
+  }
 
   render() {
     const { loading, error, allChatrooms, _allChatroomsMeta, onClickChatroom, loadMoreEntries, noMore, currentRoomId } = this.props;
@@ -57,15 +58,20 @@ class ChatList extends Component {
         </div>
       )
     }
-    return <div>Something wrong, this shouldn't show.</div>
+    return <div>Login to view your chats.</div>
   }
 }
 
-export const FIRSTLOAD_CHATROOMS_QUERY = gql`
-  query allChatrooms {
+export const FIRSTLOAD_USER_CHATROOMS_QUERY = gql`
+  query allChatrooms($forUserId: ID!) {
     allChatrooms(
       first: ${N_CHATROOMS_FIRSTLOAD},
       orderBy: createdAt_DESC,
+      filter: {
+        users_some: {
+          id: $forUserId,
+        },
+      },
     ) {
       id
       title
@@ -73,20 +79,34 @@ export const FIRSTLOAD_CHATROOMS_QUERY = gql`
       _messagesMeta {
         count
       }
+      users {
+        id
+      }
     }    
 
-    _allChatroomsMeta {
+    _allChatroomsMeta(
+      filter: {
+        users_some: {
+          id: $forUserId,
+        },
+      },
+    ) {
       count
     }
   }
 `
 
-const MORE_CHATROOMS_QUERY = gql`
+const MORE_USER_CHATROOMS_QUERY = gql`
   query moreChatrooms($after: String!) {
     allChatrooms(
       first: ${N_CHATROOMS_LOADMORE}, 
       after: $after,
       orderBy: createdAt_DESC,
+      filter: {
+        users_some: {
+          id: $forUserId,
+        },
+      },
     ) {
         id
         title
@@ -97,9 +117,13 @@ const MORE_CHATROOMS_QUERY = gql`
     }
   }
 `
-export default graphql(FIRSTLOAD_CHATROOMS_QUERY, {
+export default graphql(FIRSTLOAD_USER_CHATROOMS_QUERY, {
 
-  props({ data: { loading, error, allChatrooms, _allChatroomsMeta, fetchMore } }) {
+  skip: ({ forUserId }) => {
+    return forUserId ? false : true
+  },
+
+  props({ data: { loading, error, allChatrooms, _allChatroomsMeta, fetchMore }, forUserId }) {
 
     // Transform props
     // ---------------
@@ -119,9 +143,10 @@ export default graphql(FIRSTLOAD_CHATROOMS_QUERY, {
       noMore: noMore,
       loadMoreEntries: () => {
         return fetchMore({
-          query: MORE_CHATROOMS_QUERY,
+          query: MORE_USER_CHATROOMS_QUERY,
           variables: {
             after: cursor,
+            forUserId: forUserId,
           },
           updateQuery: (previousResult, { fetchMoreResult }) => {
             const previousChatrooms = previousResult.allChatrooms
@@ -139,4 +164,4 @@ export default graphql(FIRSTLOAD_CHATROOMS_QUERY, {
       }
     }
   }
-})(ChatList)
+})(UserChatList)

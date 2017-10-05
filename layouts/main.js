@@ -8,8 +8,6 @@ import { loggedOut } from '../lib/authActions'
 
 import Colors from '../utils/Colors'
 
-import { GC_AUTH_TOKEN, GC_USER_ID, GC_USERNAME } from '../constants'
-
 class MainLayout extends Component {
 
   onClickLogout = (e) => {
@@ -99,19 +97,13 @@ class MainLayout extends Component {
           .world {
             flex: 1 1 auto;
           }
-        `}</style>µ
+        `}</style>
       </div>
     )
   }
 }
 
-// MainLayout.propTypes = {
-//   auth: React.PropTypes.object.isRequired,
-// }
-  
-const MainLayoutWithRouter = withRouter(MainLayout)
-
-export default connect(
+export default withRouter(connect(
   (state) => {
     return { 
       isLoggedIn: state.authReducers.isLoggedIn,
@@ -122,5 +114,4 @@ export default connect(
       dispatch(loggedOut())
     }
   }),
-)(MainLayoutWithRouter)
-
+)(MainLayout))
