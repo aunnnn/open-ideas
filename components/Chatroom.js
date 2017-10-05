@@ -33,7 +33,6 @@ class Chatroom extends Component {
       Router.pushRoute(`/chatrooms/${this.props.roomId}`)
     }
   }
-  
 
   componentWillReceiveProps(nextProps) {
     if(!nextProps.chatroomQuery.loading
