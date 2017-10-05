@@ -89,6 +89,11 @@ class NewChat extends Component {
             id: '',
             createdAt: (new Date()).toISOString(),
             title: this.state.title,
+            stateType: 0,
+            createdBy: {
+              __typename: 'User',
+              id: '',
+            },
             users: [
               {
                 __typename: 'User',
@@ -134,7 +139,6 @@ class NewChat extends Component {
             })
           } catch (err) {
             // Probably query allChatrooms doesn't exist. (e.g., in case user enters directly to '/talk' page)
-            // console.log('Error: ', err)
           }
 
           try {
@@ -230,6 +234,7 @@ const CREATE_CHAT_MUTATION = gql`
         id,
         username,
       }
+      stateType
     }
   }
 `
