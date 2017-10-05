@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { graphql, gql } from 'react-apollo'
 import moment from 'moment'
+import orderBy from 'lodash/orderBy'
+import some from 'lodash/some'
 
 import { N_CHATROOMS_FIRSTLOAD, N_CHATROOMS_LOADMORE } from '../constants'
 import Page from '../layouts/main'
@@ -13,6 +15,8 @@ class ChatList extends Component {
 
   static propTypes = {
     onClickChatroom: React.PropTypes.func.isRequired,
+    initialChatroom: React.PropTypes.object,
+    currentRoomId: React.PropTypes.string,
   };
 
   render() {
@@ -66,6 +70,9 @@ export const FIRSTLOAD_CHATROOMS_QUERY = gql`
     allChatrooms(
       first: ${N_CHATROOMS_FIRSTLOAD},
       orderBy: createdAt_DESC,
+      filter: {
+        stateType_in: [2, 3],
+      },
     ) {
       id
       title
@@ -73,9 +80,12 @@ export const FIRSTLOAD_CHATROOMS_QUERY = gql`
       _messagesMeta {
         count
       }
+      stateType
     }    
 
-    _allChatroomsMeta {
+    _allChatroomsMeta(filter: {
+      stateType_in: [2, 3],
+    }) {
       count
     }
   }
@@ -94,12 +104,16 @@ const MORE_CHATROOMS_QUERY = gql`
         _messagesMeta {
           count
         }
+        stateType
     }
   }
 `
 export default graphql(FIRSTLOAD_CHATROOMS_QUERY, {
 
-  props({ data: { loading, error, allChatrooms, _allChatroomsMeta, fetchMore } }) {
+  props(receivedProps) {
+    const { ownProps: { initialChatroom } } = receivedProps
+    const { data: { loading, error, _allChatroomsMeta, fetchMore } } = receivedProps
+    let allChatrooms = receivedProps.data.allChatrooms
 
     // Transform props
     // ---------------
@@ -111,9 +125,16 @@ export default graphql(FIRSTLOAD_CHATROOMS_QUERY, {
       cursor = allChatrooms.length > 0 ? allChatrooms[allChatrooms.length-1].id : null
       noMore = allChatrooms.length === _allChatroomsMeta.count
     }
+    let allChatroomsWithInitial = allChatrooms
+    if (initialChatroom) {
+      // **Append initialChat only when it doesn't already exist in allChatrooms.
+      if (!some(allChatrooms, { id: initialChatroom.id })) {
+        allChatroomsWithInitial = orderBy([...allChatrooms, initialChatroom], 'createdAt', 'desc')
+      }
+    }
     return {
       loading,
-      allChatrooms,
+      allChatrooms: allChatroomsWithInitial,
       _allChatroomsMeta,
       error,
       noMore: noMore,
@@ -131,8 +152,8 @@ export default graphql(FIRSTLOAD_CHATROOMS_QUERY, {
             const newCursor = noMore ? fetchMoreResult.allChatrooms[count - 1].id : cursor
             return {
               cursor: newCursor,
-              allChatrooms: [...previousChatrooms, ...newChatrooms],              
-              _allChatroomsMeta: previousChatrooms._allChatroomsMeta, // use static count of chatrooms for now
+              allChatrooms: [...previousChatrooms, ...newChatrooms],
+              _allChatroomsMeta: previousResult._allChatroomsMeta, // use static count of chatrooms for now
             }
           }
         })

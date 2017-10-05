@@ -65,27 +65,13 @@ class IndexPage extends Component {
 
           {/* TALK PANEL  */}
           <div className="talk-list">
-            { this.state.renderInitialChat && initialChatroom && (initialChat ? 
-              <div>
-                <div className="header">
-                  <h5>Directed</h5>
-                </div>
-                <div className="initial-chat" onClick={() => this.goToChatroom(this.props.initialChatroomId)}>
-                  <ChatListItem
-                    title={initialChat.title}
-                    count={initialChat.messages.length}
-                    createdAt={initialChat.createdAt}
-                    active={initialChat.id === currentRoomId}
-                  />
-                </div>
-              </div>
-              :
-              initialChatroomError ? <div>Error: {initialChatroomError}</div> : null)
-            }
             <div className="header">
               <h5>Latest <span className="button">(change)</span></h5>
             </div>
-            <ChatList onClickChatroom={this.goToChatroom} currentRoomId={currentRoomId} />
+            <ChatList 
+              onClickChatroom={this.goToChatroom} 
+              currentRoomId={currentRoomId} 
+              initialChatroom={initialChat} />
           </div>
           
           { /* TALK ROOM */
@@ -193,6 +179,9 @@ query Chatroom($roomId: ID!) {
       text
       createdAt
       createdByUserId
+    }
+    _messagesMeta {
+      count
     }
     createdAt
     stateType
