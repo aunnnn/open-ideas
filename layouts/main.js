@@ -6,11 +6,15 @@ import { withRouter } from 'next/router'
 import Meta from '../components/meta'
 import { loggedOut } from '../lib/authActions'
 
+import Colors from '../utils/Colors'
+
 class MainLayout extends Component {
 
   onClickLogout = (e) => {
     e.preventDefault()
-    this.props.onLoggedout()   
+    if (confirm('Do you want to logout?')) {
+      this.props.onLoggedout()   
+    }
   }
 
   render() {    
@@ -84,11 +88,11 @@ class MainLayout extends Component {
             cursor: pointer;
           }
           .button-wrapper a:hover {
-            background-color: #fafafa;
+            background-color: ${Colors.lightGrey};
           }
           .button-wrapper a.active {
             font-weight: bold;
-            background-color: #f9f9f9;
+            background-color: ${Colors.lightGrey};
             border-top: 1px solid #ddd;
             border-bottom: 1px solid #ddd;
           }
