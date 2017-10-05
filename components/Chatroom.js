@@ -177,6 +177,24 @@ class Chatroom extends Component {
       alert("Oops: " + err.graphQLErrors[0].message);
     }
   }
+  
+  emptyMessageComponent = (stateType) => {
+    const chatroom = this.props.chatroomQuery.Chatroom
+    if (!chatroom) return <div>...Loading...</div>
+    switch (chatroom.stateType) {
+    case CHATROOM_STATE_TYPES.created:
+      return <div>We're looking for a match....</div>
+    
+    case CHATROOM_STATE_TYPES.invited:
+      return <div>Your match is already invited.</div>
+    case CHATROOM_STATE_TYPES.active:
+      return <div>This room is empty.</div>
+    case CHATROOM_STATE_TYPES.closed:
+      return <div>This room is closed and empty 😭</div>
+    default: 
+      return <div>This room is empty.</div>
+    }
+  }
 
   renderChatroom = (chatroom, messages) => {
     const { currentUserId } = this.props
@@ -201,13 +219,7 @@ class Chatroom extends Component {
           messages={messages} 
           currentUserId={currentUserId} 
           userIds={usersInChat.map(u => u.id)} 
-          emptyComponentFunc={() => isActiveChat ?
-            <div>Type something, this room is empty 😭</div>
-            :
-            <div>
-              <h3>Please wait</h3>
-              <p>We're finding a match around the world...</p>
-            </div>}
+          emptyComponentFunc={this.emptyMessageComponent}
         />
 
         {canChat && isActiveChat &&
