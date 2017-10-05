@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { withApollo, gql } from 'react-apollo'
 import _ from 'lodash'
 
-import withData from '../lib/withData'
 import { FIRSTLOAD_CHATROOMS_QUERY } from './ChatList'
 
 class NewChat extends Component {
