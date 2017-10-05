@@ -13,8 +13,8 @@ class UserChatList extends Component {
 
   static propTypes = {
     onClickChatroom: React.PropTypes.func.isRequired,
-    forUserId: React.PropTypes.string.isRequired,
-  };
+    forUserId: React.PropTypes.string,
+  }
 
   render() {
     const { loading, error, allChatrooms, _allChatroomsMeta, onClickChatroom, loadMoreEntries, noMore, currentRoomId } = this.props;
@@ -58,7 +58,7 @@ class UserChatList extends Component {
         </div>
       )
     }
-    return <div>Something wrong, this shouldn't show.</div>
+    return <div>Login to view your chats.</div>
   }
 }
 
@@ -118,6 +118,10 @@ const MORE_USER_CHATROOMS_QUERY = gql`
   }
 `
 export default graphql(FIRSTLOAD_USER_CHATROOMS_QUERY, {
+
+  skip: ({ forUserId }) => {
+    return forUserId ? false : true
+  },
 
   props({ data: { loading, error, allChatrooms, _allChatroomsMeta, fetchMore }, forUserId }) {
 
