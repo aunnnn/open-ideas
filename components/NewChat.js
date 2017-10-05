@@ -67,6 +67,7 @@ class NewChat extends Component {
         variables: {
           title: this.state.title,
           userIds: [currentUserId, anotherUserId],
+          createdById: currentUserId,
         },
         // You may simply use this, in which case we don't need to update the store manually in 'update'
         // But this is slower.
@@ -217,11 +218,14 @@ class NewChat extends Component {
 }
 
 const CREATE_CHAT_MUTATION = gql`
-  mutation CreateChatroomMutation($title: String!, $userIds: [ID!]!) {
-    createChatroom(title: $title, usersIds: $userIds) {
+  mutation CreateChatroomMutation($title: String!, $createdById: ID!, $userIds: [ID!]!) {
+    createChatroom(title: $title, usersIds: $userIds, createdById: $createdById) {
       id,
       createdAt,
       title,
+      createdBy {
+        id
+      },
       users {
         id,
         username,
