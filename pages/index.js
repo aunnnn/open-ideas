@@ -26,11 +26,15 @@ class IndexPage extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      title: '',      
+      title: '',
+      renderInitialChat: true,
     }    
   }
 
   goToChatroom = (id) => {
+    this.setState({
+      renderInitialChat: false,
+    })
     Router.push(`/?chatroomId=${id}`, `/chatrooms/${id}`, { shallow: true })
   }
 
@@ -59,7 +63,7 @@ class IndexPage extends Component {
 
           {/* TALK PANEL  */}
           <div className="talk-list">
-            { initialChatroom && (initialChat ? 
+            { this.state.renderInitialChat && initialChatroom && (initialChat ? 
               <div>
                 <div className="header">
                   <h5>Directed</h5>
@@ -176,6 +180,7 @@ query {
 const CHATROOM_QUERY = gql`
 query Chatroom($roomId: ID!) {
   Chatroom(id: $roomId) {
+    id
     title
     users {
       id
@@ -188,6 +193,7 @@ query Chatroom($roomId: ID!) {
       createdByUserId
     }
     createdAt
+    stateType
   }
 }
 `
