@@ -89,7 +89,7 @@ class NewChat extends Component {
             id: '',
             createdAt: (new Date()).toISOString(),
             title: this.state.title,
-            stateType: 0,
+            stateType: 2,
             createdBy: {
               __typename: 'User',
               id: '',
@@ -114,67 +114,40 @@ class NewChat extends Component {
 
           // Why doesn't it be smart and update all 'related' queries & components !??
           // https://github.com/apollographql/apollo-client/issues/1697
-          
-          try  {
-            // All chatlist
-            // 1. read from store
-            const allChatroomsData = store.readQuery({
-              query: FIRSTLOAD_CHATROOMS_QUERY,
-            })
-
-            // Must update messagesMeta manually, since the newly added object doesn't has one
-            createChatroom._messagesMeta = {
-              count: 0,
-              __typename: '_QueryMeta',
+          function updateChatroomsQuery(query, variables) {
+            try  {
+              // All chatlist
+              // 1. read from store
+              const allChatroomsData = store.readQuery({
+                query,
+                variables,
+              })
+  
+              // Must update messagesMeta manually, since the newly added object doesn't has one
+              createChatroom._messagesMeta = {
+                count: 0,
+                __typename: '_QueryMeta',
+              }
+  
+              // 2. append at first position
+              allChatroomsData.allChatrooms.unshift(createChatroom)
+              allChatroomsData._allChatroomsMeta.count += 1
+  
+              // 3. write back
+              store.writeQuery({
+                query,
+                data: allChatroomsData,
+                variables,
+              })
+            } catch (err) {
+              // Probably query allChatrooms doesn't exist. (e.g., in case user enters directly to '/talk' page)
             }
-
-            // 2. append at first position
-            allChatroomsData.allChatrooms.unshift(createChatroom)
-            allChatroomsData._allChatroomsMeta.count += 1
-
-            // 3. write back
-            store.writeQuery({
-              query: FIRSTLOAD_CHATROOMS_QUERY,
-              data: allChatroomsData,
-            })
-          } catch (err) {
-            // Probably query allChatrooms doesn't exist. (e.g., in case user enters directly to '/talk' page)
           }
 
-          try {
-            // User chatlist
-            // 1. read from store
-            const userChatroomsData = store.readQuery({
-              query: FIRSTLOAD_USER_CHATROOMS_QUERY,
-              variables: {
-                forUserId: currentUserId,
-              },
-            })
-
-            // Must update messagesMeta manually, since the newly added object doesn't has one
-            createChatroom._messagesMeta = {
-              count: 0,
-              __typename: '_QueryMeta',
-            }
-
-            // 2. append at first position
-            userChatroomsData.allChatrooms.unshift(createChatroom)
-            userChatroomsData._allChatroomsMeta.count += 1
-
-            // 3. write back
-            store.writeQuery({
-              query: FIRSTLOAD_USER_CHATROOMS_QUERY,
-              data: userChatroomsData,
-              variables: {
-                forUserId: currentUserId,
-              },
-            })
-          } catch (err) {            
-            // This shouldn't error, since we can add chat only in '/talk' page. 
-            // This means FIRSTLOAD_USER_CHATROOMS_QUERY should exist.
-            console.err('Error: ', err)
-          }
-
+          updateChatroomsQuery(FIRSTLOAD_CHATROOMS_QUERY)
+          updateChatroomsQuery(FIRSTLOAD_USER_CHATROOMS_QUERY, {
+            forUserId: currentUserId,
+          })
         },
       })
 
@@ -223,7 +196,7 @@ class NewChat extends Component {
 
 const CREATE_CHAT_MUTATION = gql`
   mutation CreateChatroomMutation($title: String!, $createdById: ID!, $userIds: [ID!]!) {
-    createChatroom(title: $title, usersIds: $userIds, createdById: $createdById) {
+    createChatroom(title: $title, usersIds: $userIds, createdById: $createdById, stateType: 2) {
       id,
       createdAt,
       title,
