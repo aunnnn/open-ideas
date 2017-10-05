@@ -3,6 +3,7 @@ import { withApollo, gql } from 'react-apollo'
 import _ from 'lodash'
 
 import { FIRSTLOAD_CHATROOMS_QUERY } from './ChatList'
+import { FIRSTLOAD_USER_CHATROOMS_QUERY } from './UserChatList'
 
 class NewChat extends Component {
   
@@ -67,6 +68,19 @@ class NewChat extends Component {
           title: this.state.title,
           userIds: [currentUserId, anotherUserId],
         },
+        // You may simply use this, in which case we don't need to update the store manually in 'update'
+        // But this is slower.
+        // refetchQueries: [
+        //   {
+        //     query: FIRSTLOAD_CHATROOMS_QUERY,
+        //   },
+        //   {
+        //     query: FIRSTLOAD_USER_CHATROOMS_QUERY,
+        //     variables: {
+        //       forUserId: currentUserId,
+        //     }
+        //   }
+        // ],
         optimisticResponse: {
           __typename: 'Mutation',
           createChatroom: {
@@ -92,26 +106,70 @@ class NewChat extends Component {
 
           // Update the store (so that the graphql components across the app will get updated)
 
-          // 1. read from store
-          const data = store.readQuery({
-            query: FIRSTLOAD_CHATROOMS_QUERY,
-          })
+          // Why doesn't it be smart and update all 'related' queries & components !??
+          // https://github.com/apollographql/apollo-client/issues/1697
+          
+          try  {
+            // All chatlist
+            // 1. read from store
+            const allChatroomsData = store.readQuery({
+              query: FIRSTLOAD_CHATROOMS_QUERY,
+            })
 
-          // Must update messagesMeta manually, since the newly added object doesn't has one
-          createChatroom._messagesMeta = {
-            count: 0,
-            __typename: '_QueryMeta',
+            // Must update messagesMeta manually, since the newly added object doesn't has one
+            createChatroom._messagesMeta = {
+              count: 0,
+              __typename: '_QueryMeta',
+            }
+
+            // 2. append at first position
+            allChatroomsData.allChatrooms.unshift(createChatroom)
+            allChatroomsData._allChatroomsMeta.count += 1
+
+            // 3. write back
+            store.writeQuery({
+              query: FIRSTLOAD_CHATROOMS_QUERY,
+              data: allChatroomsData,
+            })
+          } catch (err) {
+            // Probably query allChatrooms doesn't exist. (e.g., in case user enters directly to '/talk' page)
+            // console.log('Error: ', err)
           }
 
-          // 2. append at first position
-          data.allChatrooms.splice(0,0,createChatroom)
-          data._allChatroomsMeta.count += 1
+          try {
+            // User chatlist
+            // 1. read from store
+            const userChatroomsData = store.readQuery({
+              query: FIRSTLOAD_USER_CHATROOMS_QUERY,
+              variables: {
+                forUserId: currentUserId,
+              },
+            })
 
-          // 3. write back
-          store.writeQuery({
-            query: FIRSTLOAD_CHATROOMS_QUERY,
-            data
-          })
+            // Must update messagesMeta manually, since the newly added object doesn't has one
+            createChatroom._messagesMeta = {
+              count: 0,
+              __typename: '_QueryMeta',
+            }
+
+            // 2. append at first position
+            userChatroomsData.allChatrooms.unshift(createChatroom)
+            userChatroomsData._allChatroomsMeta.count += 1
+
+            // 3. write back
+            store.writeQuery({
+              query: FIRSTLOAD_USER_CHATROOMS_QUERY,
+              data: userChatroomsData,
+              variables: {
+                forUserId: currentUserId,
+              },
+            })
+          } catch (err) {            
+            // This shouldn't error, since we can add chat only in '/talk' page. 
+            // This means FIRSTLOAD_USER_CHATROOMS_QUERY should exist.
+            console.err('Error: ', err)
+          }
+
         },
       })
 
