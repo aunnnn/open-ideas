@@ -16,7 +16,7 @@ class Chatroom extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(!nextProps.chatroomMessageQuery.loading) {
+    if(!nextProps.chatroomMessageQuery.loading && this.props.chatroomQuery.Chatroom) {
       // Check for existing subscription      
       if (this.unsubscribe) {
         // Check if props have changed and, if necessary, stop the subscription
@@ -76,77 +76,86 @@ class Chatroom extends Component {
     }
   }
 
-  render() {
-    const { chatroomQuery: { loading, error }, chatroomMessageQuery, roomId, currentUserId } = this.props
-
-    if (loading || chatroomMessageQuery.loading) return <div>Loading</div>
-    console.log('render chatroom')
-    const messages = chatroomMessageQuery.allMessages
-    const chatroom = this.props.chatroomQuery.Chatroom
+  renderChatroom = (chatroom, messages) => {
+    const { currentUserId } = this.props
     const usersInChat = chatroom.users
     const canChat = currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id
     
-    if (error) return <div>Error: {error}</div>
-    if (chatroom) {
-      return (
-        <div style={{ padding: '0 10px 0 5px' }}>
-          <div className="header">
-            <div className="button">(save)</div>
-          </div>
-          <h2>{chatroom.title}<span style={{ fontSize: '13px' }}> ({messages.length})</span></h2>
-          <p style={{ fontSize: '13px', fontStyle: 'italic' }}>{usersInChat.map(u => u.username).join(', ')}</p>
-  
-          <br/>
-          
-          <MessageList messages={messages} currentUserId={currentUserId} userIds={usersInChat.map(u => u.id)} />
-
-          {canChat &&
-            <form onSubmit={this.onCreateMessage}>
-              <input 
-                type="text"
-                onChange={(e) => this.setState({ textInput: e.target.value })}
-                placeholder="Type here..."
-                value={this.state.textInput}
-              />
-            </form>
-          }
-          <style jsx scoped>{`
-            .header {
-              padding: 15px 0 10px;
-              display: flex;
-              {/* flex-direction: row;
-              justify-content: flex-end; */}
-            }
-            .button {
-              cursor: pointer;
-              font-size: 13px;
-              font-weight: bold;
-            }
-            .button:hover {
-              background-color: ${Colors.lightGrey};
-            }
-          `}</style>
+    const chatroomTitle = chatroom.title
+    return (
+      <div style={{ padding: '0 10px 0 5px' }}>
+        <div className="header">
+          <div className="button">(save)</div>
         </div>
-      )
-    }
+        <h2>{chatroomTitle}<span style={{ fontSize: '13px' }}> ({messages.length})</span></h2>
+        <p style={{ fontSize: '13px', fontStyle: 'italic' }}>{usersInChat.map(u => u.username).join(', ')}</p>
+
+        <br/>
+        
+        <MessageList messages={messages} currentUserId={currentUserId} userIds={usersInChat.map(u => u.id)} />
+
+        {canChat &&
+          <form onSubmit={this.onCreateMessage}>
+            <input 
+              type="text"
+              onChange={(e) => this.setState({ textInput: e.target.value })}
+              placeholder="Type here..."
+              value={this.state.textInput}
+            />
+          </form>
+        }
+        <style jsx scoped>{`
+          .header {
+            padding: 15px 0 10px;
+            display: flex;
+            {/* flex-direction: row;
+            justify-content: flex-end; */}
+          }
+          .button {
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+          }
+          .button:hover {
+            background-color: ${Colors.lightGrey};
+          }
+        `}</style>
+      </div>
+    )
+  }
+
+  render() {
+    console.log('render chatroom')
+
+    const chatroomLoading = this.props.chatroomQuery.loading
+    const messagesLoading = this.props.chatroomMessageQuery.loading
+
+    if (chatroomLoading || messagesLoading) return <div>Loading</div>    
+
+    const chatroomError = this.props.chatroomQuery.error
+    const messagesError = this.props.chatroomMessageQuery.error
+    
+    if (chatroomError) return <div>Error: {chatroomError}</div>
+    if (messagesError) return <div>Error: {messagesError}</div>
+
+    const messages = this.props.chatroomMessageQuery.allMessages
+    const chatroom = this.props.chatroomQuery.Chatroom
+
+    if (!chatroom) return <div>This chatroom does not exist.</div>
+    if (chatroom && messages) return this.renderChatroom(chatroom, messages)
     return <div>Something wrong, this shouldn't show.</div>
   }
 }
 
 Chatroom.propTypes = {
   roomId: PropTypes.string.isRequired,
+  currentUserId: PropTypes.string,
 };
 
-export const CHATROOM_QUERY = gql`
+const CHATROOM_QUERY = gql`
   query Chatroom($roomId: ID!) {
     Chatroom(id: $roomId) {
       title
-      messages {
-        id
-        text
-        createdAt
-        createdByUserId
-      }
       users {
         id
         username
