@@ -71,8 +71,8 @@ class Chatroom extends Component {
     })
   }
   
-  
   onCreateMessage = async (e) => {
+    if (!confirm("Do you really want to end this chat?")) { return }
     e.preventDefault()
     const { textInput } = this.state
     if (textInput === '') {
@@ -97,25 +97,52 @@ class Chatroom extends Component {
     }
   }
 
+  onEndChatroom = async () => {
+    const { roomId, endChatroomMutation } = this.props
+    try {
+      const data = await endChatroomMutation({
+        variables: {
+          id: roomId,
+        }
+      })
+    } catch (err) {
+      alert("Oops: " + err.graphQLErrors[0].message);
+    }
+  }
+
   renderChatroom = (chatroom, messages) => {
     const { currentUserId } = this.props
     const usersInChat = chatroom.users
     const canChat = currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id
-    
+    const isActiveChat = chatroom.stateType === 2
+
     const chatroomTitle = chatroom.title
     return (
       <div style={{ padding: '0 10px 0 5px' }}>
         <div className="header">
           <div className="button">(save)</div>
+          <span></span>
+          {canChat && isActiveChat && <div className="end-chat-button" onClick={this.onEndChatroom} >End this chat</div>}
         </div>
         <h2>{chatroomTitle}<span style={{ fontSize: '13px' }}> ({messages.length})</span></h2>
         <p style={{ fontSize: '13px', fontStyle: 'italic' }}>{usersInChat.map(u => u.username).join(', ')}</p>
 
         <br/>
         
-        <MessageList messages={messages} currentUserId={currentUserId} userIds={usersInChat.map(u => u.id)} />
+        <MessageList 
+          messages={messages} 
+          currentUserId={currentUserId} 
+          userIds={usersInChat.map(u => u.id)} 
+          emptyComponentFunc={() => isActiveChat ?
+            <div>Type something, this room is empty 😭</div>
+            :
+            <div>
+              <h3>Please wait</h3>
+              <p>We're finding a match around the world...</p>
+            </div>}
+        />
 
-        {canChat &&
+        {canChat && isActiveChat &&
           <form onSubmit={this.onCreateMessage}>
             <input 
               type="text"
@@ -124,21 +151,44 @@ class Chatroom extends Component {
               value={this.state.textInput}
             />
           </form>
-        }
+        }        
         <style jsx scoped>{`
           .header {
             padding: 15px 0 10px;
             display: flex;
+            flex-direction: row;
             {/* flex-direction: row;
             justify-content: flex-end; */}
           }
+
+          .header > span {
+            flex-grow: 1;
+          }
+
           .button {
+            flex-grow: 0;
             cursor: pointer;
             font-size: 13px;
             font-weight: bold;
           }
+
           .button:hover {
             background-color: ${Colors.lightGrey};
+          }
+
+          .end-chat-button {
+            cursor: pointer;
+            flex-grow: 0;
+            background: #9b3718;
+            padding: 4px 8px;
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            justify-content: flex-end;
+          }
+
+          .end-chat-button:hover {
+            background: #752615;
           }
         `}</style>
       </div>
@@ -177,6 +227,7 @@ const CHATROOM_QUERY = gql`
         username
       }
       createdAt
+      stateType
     }
   }
 `
@@ -229,9 +280,19 @@ const CREATE_MESSAGE_MUTATION = gql`
     }
   }
 `
+
+const END_CHATROOM_MUTATION = gql`
+  mutation endChatroom($id: ID!) {
+    updateChatroom(id: $id, stateType: 3) {
+      id
+    }
+  }
+`
+
 export default compose(
   graphql(CHATROOM_QUERY, { name: 'chatroomQuery' }),
   graphql(CREATE_MESSAGE_MUTATION, { name: 'createMessageMutation' }),
+  graphql(END_CHATROOM_MUTATION, { name: 'endChatroomMutation' }),
   graphql(CHATROOM_MESSAGE_QUERY, { 
     name: 'chatroomMessageQuery', 
     options: (props) => {
