@@ -12,7 +12,9 @@ class MainLayout extends Component {
 
   onClickLogout = (e) => {
     e.preventDefault()
-    this.props.onLoggedout()   
+    if (confirm('Do you want to logout?')) {
+      this.props.onLoggedout()   
+    }
   }
 
   render() {    
