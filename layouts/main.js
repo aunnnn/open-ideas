@@ -6,8 +6,6 @@ import { withRouter } from 'next/router'
 import Meta from '../components/meta'
 import { loggedOut } from '../lib/authActions'
 
-import { GC_AUTH_TOKEN, GC_USER_ID, GC_USERNAME } from '../constants'
-
 class MainLayout extends Component {
 
   onClickLogout = (e) => {

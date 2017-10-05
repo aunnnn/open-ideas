@@ -8,8 +8,6 @@ import { graphql, gql, compose } from 'react-apollo'
 
 import withData from '../lib/withData'
 
-import { GC_USER_ID, GC_USERNAME } from '../constants';
-
 import Page from '../layouts/main'
 import NewChat from '../components/NewChat'
 import ChatList from '../components/ChatList'
