@@ -4,6 +4,7 @@ import _ from 'lodash'
 
 import { FIRSTLOAD_CHATROOMS_QUERY } from './ChatList'
 import { FIRSTLOAD_USER_CHATROOMS_QUERY } from './UserChatList'
+import { CHATROOM_STATE_TYPES } from '../constants'
 
 class NewChat extends Component {
   

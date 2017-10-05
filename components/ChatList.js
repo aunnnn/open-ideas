@@ -4,7 +4,7 @@ import moment from 'moment'
 import orderBy from 'lodash/orderBy'
 import some from 'lodash/some'
 
-import { N_CHATROOMS_FIRSTLOAD, N_CHATROOMS_LOADMORE } from '../constants'
+import { N_CHATROOMS_FIRSTLOAD, N_CHATROOMS_LOADMORE, CHATROOM_STATE_TYPES } from '../constants'
 import Page from '../layouts/main'
 import ChatListItem from './ChatListItem'
 
@@ -71,7 +71,7 @@ export const FIRSTLOAD_CHATROOMS_QUERY = gql`
       first: ${N_CHATROOMS_FIRSTLOAD},
       orderBy: createdAt_DESC,
       filter: {
-        stateType_in: [2, 3],
+        stateType_in: [${CHATROOM_STATE_TYPES.closed}, ${CHATROOM_STATE_TYPES.active}],
       },
     ) {
       id
@@ -84,7 +84,7 @@ export const FIRSTLOAD_CHATROOMS_QUERY = gql`
     }    
 
     _allChatroomsMeta(filter: {
-      stateType_in: [2, 3],
+      stateType_in: [${CHATROOM_STATE_TYPES.closed}, ${CHATROOM_STATE_TYPES.active}],
     }) {
       count
     }

@@ -1,12 +1,17 @@
 import React, { Component } from 'react'
-import { Router } from '../routes'
 import PropTypes from 'prop-types'
 import { graphql, gql, compose } from 'react-apollo'
+import findIndex from 'lodash/findIndex'
 
+import { CHATROOM_STATE_TYPES } from '../constants'
+import { Router } from '../routes'
 import withData from '../lib/withData'
 import MessageList from './MessageList'
 
 import Colors from '../utils/Colors'
+
+import { FIRSTLOAD_CHATROOMS_QUERY } from './ChatList'
+import { FIRSTLOAD_USER_CHATROOMS_QUERY } from './UserChatList'
 
 class Chatroom extends Component {
 
@@ -72,7 +77,6 @@ class Chatroom extends Component {
   }
   
   onCreateMessage = async (e) => {
-    if (!confirm("Do you really want to end this chat?")) { return }
     e.preventDefault()
     const { textInput } = this.state
     if (textInput === '') {
@@ -98,12 +102,76 @@ class Chatroom extends Component {
   }
 
   onEndChatroom = async () => {
-    const { roomId, endChatroomMutation } = this.props
+    if (!confirm("Do you really want to end this chat?")) { return }
+    const { roomId, endChatroomMutation, currentUserId } = this.props
     try {
       const data = await endChatroomMutation({
         variables: {
           id: roomId,
-        }
+        },
+        optimisticResponse: {
+          __typename: 'Mutation',
+          updateChatroom: {
+            __typename: 'Chatroom',
+            id: roomId,
+          }
+        },
+        update: (store, { data: { updateChatroom } }) => {
+          function updateChatroomsQuery (query) {
+            try {
+              // User chatlist
+              // 1. read from store
+              const userChatroomsData = store.readQuery({
+                query,
+                variables: {
+                  forUserId: currentUserId,
+                },
+              })
+  
+              // 2. update state
+              const endedChatroomIndex = findIndex(userChatroomsData.allChatrooms, c => c.id === updateChatroom.id)
+              userChatroomsData.allChatrooms[endedChatroomIndex].stateType = CHATROOM_STATE_TYPES.closed
+  
+              // 3. write back
+              store.writeQuery({
+                query,
+                data: userChatroomsData,
+                variables: {
+                  forUserId: currentUserId,
+                },
+              })
+            } catch (err) {            
+              // This shouldn't error, since we can add chat only in '/talk' page. 
+              // This means FIRSTLOAD_USER_CHATROOMS_QUERY should exist.
+              console.error('Error: ', err)
+            }
+          }
+
+          updateChatroomsQuery(FIRSTLOAD_USER_CHATROOMS_QUERY)
+          updateChatroomsQuery(FIRSTLOAD_CHATROOMS_QUERY)
+
+          try {
+            // Update cache so that the Chatroom component is rerendered to reflect change. (e.g., no input type, no endchat button, etc.)
+            const data = store.readQuery({
+              query: CHATROOM_QUERY,
+              variables: {
+                roomId,
+              }
+            })
+
+            data.Chatroom.stateType = CHATROOM_STATE_TYPES.closed
+
+            store.writeQuery({
+              query: CHATROOM_QUERY,
+              data,
+              variables: {
+                roomId,
+              }
+            })
+          } catch (err) {
+            console.error('Error: ', err)
+          }
+        },
       })
     } catch (err) {
       alert("Oops: " + err.graphQLErrors[0].message);
@@ -114,7 +182,7 @@ class Chatroom extends Component {
     const { currentUserId } = this.props
     const usersInChat = chatroom.users
     const canChat = currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id
-    const isActiveChat = chatroom.stateType === 2
+    const isActiveChat = chatroom.stateType === CHATROOM_STATE_TYPES.active
 
     const chatroomTitle = chatroom.title
     return (
@@ -283,7 +351,7 @@ const CREATE_MESSAGE_MUTATION = gql`
 
 const END_CHATROOM_MUTATION = gql`
   mutation endChatroom($id: ID!) {
-    updateChatroom(id: $id, stateType: 3) {
+    updateChatroom(id: $id, stateType: ${CHATROOM_STATE_TYPES.closed}) {
       id
     }
   }
