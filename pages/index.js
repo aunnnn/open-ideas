@@ -16,8 +16,6 @@ import ChatList from '../components/ChatList'
 import ChatListItem from '../components/ChatListItem'
 import Chatroom from '../components/Chatroom'
 
-import { CHATROOM_QUERY } from '../components/Chatroom'
-
 import Colors from '../utils/Colors'
 
 class IndexPage extends Component {
@@ -173,6 +171,25 @@ query {
   user {
     id,
     username
+  }
+}
+`
+
+const CHATROOM_QUERY = gql`
+query Chatroom($roomId: ID!) {
+  Chatroom(id: $roomId) {
+    title
+    users {
+      id
+      username
+    }
+    messages {
+      id
+      text
+      createdAt
+      createdByUserId
+    }
+    createdAt
   }
 }
 `
