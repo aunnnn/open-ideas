@@ -39,7 +39,6 @@ class IndexPage extends Component {
   }
 
   render() {    
-    console.log(this.props)
     // This works after redirect to first page after login
     const { currentUserId, currentUsername } = this.props
     const currentRoomId = this.props.url.query.chatroomId || this.props.initialChatroomId
@@ -92,7 +91,7 @@ class IndexPage extends Component {
             && 
               <div className="talk-room">
                 <Chatroom roomId={currentRoomId} currentUserId={currentUserId} />
-              </div> 
+              </div>
             || 
               <div>
                 <p>Hi, Welcome to Platonos! This is a place to talk.</p>
