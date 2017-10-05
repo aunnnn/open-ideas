@@ -144,7 +144,7 @@ export default graphql(FIRSTLOAD_USER_CHATROOMS_QUERY, {
       cursor = allChatrooms.length > 0 ? allChatrooms[allChatrooms.length-1].id : null
       noMore = allChatrooms.length === _allChatroomsMeta.count
     }
-    const orderedChatrooms = orderBy(allChatrooms, ['stateType', 'createdAt'])
+    const orderedChatrooms = orderBy(allChatrooms, ['stateType', 'createdAt'], ['asc', 'desc'])
     return {
       loading,
       allChatrooms: orderedChatrooms,
