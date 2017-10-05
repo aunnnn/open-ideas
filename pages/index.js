@@ -32,9 +32,11 @@ class IndexPage extends Component {
   }
 
   goToChatroom = (id) => {
-    this.setState({
-      renderInitialChat: false,
-    })
+    if (this.props.initialChatroomId && id !== this.props.initialChatroomId) {      
+      this.setState({
+        renderInitialChat: false,
+      })
+    }
     Router.push(`/?chatroomId=${id}`, `/chatrooms/${id}`, { shallow: true })
   }
 
