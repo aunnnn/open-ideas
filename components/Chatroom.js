@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Router } from '../routes'
 import PropTypes from 'prop-types'
 import { graphql, gql, compose } from 'react-apollo'
 
@@ -8,6 +9,12 @@ import MessageList from './MessageList'
 import Colors from '../utils/Colors'
 
 class Chatroom extends Component {
+
+  static propTypes = {
+    roomId: PropTypes.string.isRequired,
+    currentUserId: PropTypes.string,
+  };
+
   constructor(props) {
     super(props)
     this.state = {
@@ -15,17 +22,32 @@ class Chatroom extends Component {
     }
   }
 
+  componentDidMount() {
+    if (!process.browser) return
+    if (!this.props.chatroomQuery.Chatroom) return
+    const chatroom = this.props.chatroomQuery.Chatroom
+    const usersInChat = chatroom.users
+    const currentUserId = this.props.currentUserId
+    const canChat = currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id    
+    if (!canChat) {
+      Router.pushRoute(`/chatrooms/${this.props.roomId}`)
+    }
+  }
+  
+
   componentWillReceiveProps(nextProps) {
-    if(!nextProps.chatroomMessageQuery.loading && this.props.chatroomQuery.Chatroom) {
+    if(!nextProps.chatroomQuery.loading
+      && this.props.chatroomQuery.Chatroom) {
+
       // Check for existing subscription      
       if (this.unsubscribe) {
         // Check if props have changed and, if necessary, stop the subscription
         if (this.props.roomId !== nextProps.roomId) {
-          this.unsubscribe();
+          this.unsubscribe()
           console.log('-> unsubscribe')
         } else {
           console.log('-> same roomId, do nothing')
-          return;
+          return
         }
       }
       // Subscribe
@@ -146,11 +168,6 @@ class Chatroom extends Component {
     return <div>Something wrong, this shouldn't show.</div>
   }
 }
-
-Chatroom.propTypes = {
-  roomId: PropTypes.string.isRequired,
-  currentUserId: PropTypes.string,
-};
 
 const CHATROOM_QUERY = gql`
   query Chatroom($roomId: ID!) {
