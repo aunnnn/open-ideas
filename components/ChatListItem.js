@@ -6,6 +6,7 @@ import Colors from '../utils/Colors';
 import { CHATROOM_STATE_TYPES } from '../constants'
 
 const renderItemByStateType = (props) => {
+  // Earth fix this for me, chat-item-title cannot be used here.... just restyle it
   const { title, count, createdAt, active, stateType } = props
   
   switch (stateType) {
