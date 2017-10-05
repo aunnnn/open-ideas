@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { graphql, gql } from 'react-apollo'
 import moment from 'moment'
 
+import orderBy from 'lodash/orderBy'
+
 import { N_CHATROOMS_FIRSTLOAD, N_CHATROOMS_LOADMORE } from '../constants'
 import Page from '../layouts/main'
 import ChatListItem from './ChatListItem'
@@ -36,6 +38,7 @@ class UserChatList extends Component {
                       count={chat._messagesMeta.count}
                       createdAt={chat.createdAt}
                       active={chat.id === currentRoomId}
+                      stateType={chat.stateType}
                     />
                   </li>
                   <style jsx>{`
@@ -83,6 +86,7 @@ export const FIRSTLOAD_USER_CHATROOMS_QUERY = gql`
       users {
         id
       }
+      stateType
     }    
 
     _allChatroomsMeta(
@@ -98,7 +102,7 @@ export const FIRSTLOAD_USER_CHATROOMS_QUERY = gql`
 `
 
 const MORE_USER_CHATROOMS_QUERY = gql`
-  query moreChatrooms($after: String!) {
+  query moreChatrooms($after: String!, $forUserId: ID!) {
     allChatrooms(
       first: ${N_CHATROOMS_LOADMORE}, 
       after: $after,
@@ -115,6 +119,10 @@ const MORE_USER_CHATROOMS_QUERY = gql`
         _messagesMeta {
           count
         }
+        users {
+          id
+        }
+        stateType
     }
   }
 `
@@ -124,7 +132,7 @@ export default graphql(FIRSTLOAD_USER_CHATROOMS_QUERY, {
     return forUserId ? false : true
   },
 
-  props({ data: { loading, error, allChatrooms, _allChatroomsMeta, fetchMore }, forUserId }) {
+  props({ data: { loading, error, allChatrooms, _allChatroomsMeta, fetchMore }, ownProps: { forUserId } }) {
 
     // Transform props
     // ---------------
@@ -136,9 +144,10 @@ export default graphql(FIRSTLOAD_USER_CHATROOMS_QUERY, {
       cursor = allChatrooms.length > 0 ? allChatrooms[allChatrooms.length-1].id : null
       noMore = allChatrooms.length === _allChatroomsMeta.count
     }
+    const orderedChatrooms = orderBy(allChatrooms, ['stateType', 'createdAt'])
     return {
       loading,
-      allChatrooms,
+      allChatrooms: orderedChatrooms,
       _allChatroomsMeta,
       error,
       noMore: noMore,
@@ -155,10 +164,11 @@ export default graphql(FIRSTLOAD_USER_CHATROOMS_QUERY, {
 
             const count = newChatrooms.length
             const newCursor = noMore ? fetchMoreResult.allChatrooms[count - 1].id : cursor
+
             return {
               cursor: newCursor,
-              allChatrooms: [...previousChatrooms, ...newChatrooms],              
-              _allChatroomsMeta: previousChatrooms._allChatroomsMeta, // use static count of chatrooms for now
+              allChatrooms: [...previousChatrooms, ...newChatrooms],
+              _allChatroomsMeta: previousResult._allChatroomsMeta, // use static count of chatrooms for now
             }
           }
         })
