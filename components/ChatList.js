@@ -11,6 +11,10 @@ import Colors from '../utils/Colors';
 // Change number of chats first load/ loadmore in constants.js
 class ChatList extends Component {
 
+  static propTypes = {
+    onClickChatroom: React.PropTypes.func.isRequired,
+  };
+
   render() {
     const { loading, error, allChatrooms, _allChatroomsMeta, onClickChatroom, loadMoreEntries, noMore, currentRoomId } = this.props;
     if (loading) return <div>Loading</div>
@@ -93,11 +97,6 @@ const MORE_CHATROOMS_QUERY = gql`
     }
   }
 `
-
-ChatList.propTypes = {
-  onClickChatroom: React.PropTypes.func.isRequired,
-};
-
 export default graphql(FIRSTLOAD_CHATROOMS_QUERY, {
 
   props({ data: { loading, error, allChatrooms, _allChatroomsMeta, fetchMore } }) {
