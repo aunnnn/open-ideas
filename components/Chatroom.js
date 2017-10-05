@@ -81,7 +81,6 @@ class Chatroom extends Component {
 
     if (loading || chatroomMessageQuery.loading) return <div>Loading</div>
     console.log('render chatroom')
-    
     const messages = chatroomMessageQuery.allMessages
     const chatroom = this.props.chatroomQuery.Chatroom
     const usersInChat = chatroom.users

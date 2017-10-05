@@ -1,14 +1,27 @@
 import React, { Component } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
+import Router from 'next/router'
 import NewChat from '../components/NewChat'
 import Page from '../layouts/main'
 import withData from '../lib/withData'
 import connectAuth from '../lib/connectAuth'
+import UserChatList from '../components/UserChatList'
+import Chatroom from '../components/Chatroom'
 
 class TalkPage extends Component {
+
+  static async getInitialProps({ query }) {
+    return { initialChatroomId: query.chatroomId }
+  }
+
+  goToChatroom = (id) => {
+    Router.push(`/talk?chatroomId=${id}`, `/talk/${id}`, { shallow: true })
+  }
+
   render () {
     const { currentUserId, currentUsername } = this.props
+    const currentRoomId = this.props.url.query.chatroomId || this.props.initialChatroomId
     return (
       <Page>
         <Head>
@@ -27,7 +40,13 @@ class TalkPage extends Component {
           </div>
 
           <div className="chat-list">
-            
+            <UserChatList 
+              forUserId={currentUserId} 
+              onClickChatroom={this.goToChatroom} 
+            />
+          </div>
+          <div className="chat-room">
+            {currentRoomId && <Chatroom roomId={currentRoomId} currentUserId={currentUserId} />}
           </div>
 
         </div>
