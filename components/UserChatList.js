@@ -30,10 +30,11 @@ class UserChatList extends Component {
       // Check for existing subscription      
       if (this.unsubscribe) {
         // Check if props have changed and, if necessary, stop the subscription
-        this.unsubscribe()
+        // this.unsubscribe()
+        return
       }
       // Subscribe
-      console.log('...subscribe user chatroom updates')
+      console.log('UserChatList subscribe...')
       this.unsubscribe = this.subscribeToChatroomUpdates()
     } 
   }
