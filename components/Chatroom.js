@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { graphql, gql, compose } from 'react-apollo'
 import findIndex from 'lodash/findIndex'
+import some from 'lodash/some'
 
 import { CHATROOM_STATE_TYPES } from '../constants'
 
@@ -71,6 +72,9 @@ class Chatroom extends Component {
       },
       updateQuery: (previous, { subscriptionData }) => {
         const newMessage = subscriptionData.data.Message.node
+        if (some(previous.allMessages, { id: newMessage.id })) {
+          return previous
+        }
         const newAllMessages = previous.allMessages.slice()
         newAllMessages[previous.allMessages.length] = newMessage
         const result = {
