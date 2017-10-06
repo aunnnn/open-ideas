@@ -4,11 +4,10 @@ import moment from 'moment'
 import orderBy from 'lodash/orderBy'
 import some from 'lodash/some'
 
-import { N_CHATROOMS_FIRSTLOAD, N_CHATROOMS_LOADMORE, CHATROOM_STATE_TYPES } from '../constants'
 import Page from '../layouts/main'
 import ChatListItem from './ChatListItem'
-
 import Colors from '../utils/Colors';
+import { FIRSTLOAD_CHATROOMS_QUERY, MORE_CHATROOMS_QUERY } from '../graphql/PublicChatrooms'
 
 // Change number of chats first load/ loadmore in constants.js
 class ChatList extends Component {
@@ -20,6 +19,7 @@ class ChatList extends Component {
   };
 
   render() {
+    console.log('...render chatlist')
     const { loading, error, allChatrooms, _allChatroomsMeta, onClickChatroom, loadMoreEntries, noMore, currentRoomId } = this.props;
     if (loading) return <div>Loading</div>
     if (error) return <div>Error: {error}</div>
@@ -65,49 +65,6 @@ class ChatList extends Component {
   }
 }
 
-export const FIRSTLOAD_CHATROOMS_QUERY = gql`
-  query allChatrooms {
-    allChatrooms(
-      first: ${N_CHATROOMS_FIRSTLOAD},
-      orderBy: createdAt_DESC,
-      filter: {
-        stateType_in: [${CHATROOM_STATE_TYPES.closed}, ${CHATROOM_STATE_TYPES.active}],
-      },
-    ) {
-      id
-      title
-      createdAt
-      _messagesMeta {
-        count
-      }
-      stateType
-    }    
-
-    _allChatroomsMeta(filter: {
-      stateType_in: [${CHATROOM_STATE_TYPES.closed}, ${CHATROOM_STATE_TYPES.active}],
-    }) {
-      count
-    }
-  }
-`
-
-const MORE_CHATROOMS_QUERY = gql`
-  query moreChatrooms($after: String!) {
-    allChatrooms(
-      first: ${N_CHATROOMS_LOADMORE}, 
-      after: $after,
-      orderBy: createdAt_DESC,
-    ) {
-        id
-        title
-        createdAt
-        _messagesMeta {
-          count
-        }
-        stateType
-    }
-  }
-`
 export default graphql(FIRSTLOAD_CHATROOMS_QUERY, {
 
   props(receivedProps) {
