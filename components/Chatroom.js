@@ -2,8 +2,10 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { graphql, gql, compose } from 'react-apollo'
 import findIndex from 'lodash/findIndex'
+import some from 'lodash/some'
 
 import { CHATROOM_STATE_TYPES } from '../constants'
+
 import { Router } from '../routes'
 import withData from '../lib/withData'
 import MessageList from './MessageList'
@@ -12,6 +14,7 @@ import Colors from '../utils/Colors'
 
 import { FIRSTLOAD_CHATROOMS_QUERY } from './ChatList'
 import { FIRSTLOAD_USER_CHATROOMS_QUERY } from './UserChatList'
+import UserChatroomFragment from '../graphql/UserChatroomFragment'
 
 class Chatroom extends Component {
 
@@ -40,31 +43,38 @@ class Chatroom extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(!nextProps.chatroomQuery.loading
-      && this.props.chatroomQuery.Chatroom) {
+    if (!process.browser) return
 
+    if(!nextProps.chatroomQuery.loading
+      && nextProps.chatroomQuery.Chatroom) {
       // Check for existing subscription      
       if (this.unsubscribe) {
         // Check if props have changed and, if necessary, stop the subscription
-        if (this.props.roomId !== nextProps.roomId) {
+        if (this.props.chatroomQuery.Chatroom.id !== nextProps.chatroomQuery.Chatroom.id) {
           this.unsubscribe()
-          console.log('-> unsubscribe')
+          // console.log('-> unsubscribe from ', this.props.chatroomQuery.Chatroom.title)
         } else {
-          console.log('-> same roomId, do nothing')
+          // console.log('-> same roomId, do nothing')
           return
         }
       }
       // Subscribe
-      console.log('...subscribe')
-      this.unsubscribe = this.subscribeToNewMessages()
+      // console.log('...subscribe messages of', nextProps.chatroomQuery.Chatroom.id, `(${nextProps.chatroomQuery.Chatroom.title})`)
+      this.unsubscribe = this.subscribeToNewMessages(nextProps.chatroomQuery.Chatroom.id)
     }
   }
 
-  subscribeToNewMessages = () => {
+  subscribeToNewMessages = (roomId) => {
     return this.props.chatroomMessageQuery.subscribeToMore({
       document: CHATROOM_MESSAGE_SUBSCRIPTION,
+      variables: {
+        chatroomId: roomId,
+      },
       updateQuery: (previous, { subscriptionData }) => {
         const newMessage = subscriptionData.data.Message.node
+        if (some(previous.allMessages, { id: newMessage.id })) {
+          return previous
+        }
         const newAllMessages = previous.allMessages.slice()
         newAllMessages[previous.allMessages.length] = newMessage
         const result = {
@@ -117,15 +127,13 @@ class Chatroom extends Component {
           }
         },
         update: (store, { data: { updateChatroom } }) => {
-          function updateChatroomsQuery (query) {
+          function updateChatroomsQuery (query, variables) {
             try {
               // User chatlist
               // 1. read from store
               const userChatroomsData = store.readQuery({
                 query,
-                variables: {
-                  forUserId: currentUserId,
-                },
+                variables,
               })
   
               // 2. update state
@@ -136,18 +144,18 @@ class Chatroom extends Component {
               store.writeQuery({
                 query,
                 data: userChatroomsData,
-                variables: {
-                  forUserId: currentUserId,
-                },
+                variables,
               })
             } catch (err) {            
-              // This shouldn't error, since we can add chat only in '/talk' page. 
-              // This means FIRSTLOAD_USER_CHATROOMS_QUERY should exist.
-              console.error('Error: ', err)
+              // console.error('Error: ', err)
             }
           }
 
-          updateChatroomsQuery(FIRSTLOAD_USER_CHATROOMS_QUERY)
+          // One between this may get error,
+          //  e.g., user has not visited 'Talk' page yet, so there's no query, and readQuery throw.
+          updateChatroomsQuery(FIRSTLOAD_USER_CHATROOMS_QUERY, {
+            forUserId: currentUserId,
+          })
           updateChatroomsQuery(FIRSTLOAD_CHATROOMS_QUERY)
 
           try {
@@ -220,6 +228,7 @@ class Chatroom extends Component {
           currentUserId={currentUserId} 
           userIds={usersInChat.map(u => u.id)} 
           emptyComponentFunc={this.emptyMessageComponent}
+          authorId={chatroom.createdBy.id}
         />
 
         {canChat && isActiveChat &&
@@ -276,8 +285,6 @@ class Chatroom extends Component {
   }
 
   render() {
-    console.log('render chatroom')
-
     const chatroomLoading = this.props.chatroomQuery.loading
     const messagesLoading = this.props.chatroomMessageQuery.loading
 
@@ -301,15 +308,15 @@ class Chatroom extends Component {
 const CHATROOM_QUERY = gql`
   query Chatroom($roomId: ID!) {
     Chatroom(id: $roomId) {
-      title
+      ...UserChatroom
       users {
         id
         username
       }
-      createdAt
-      stateType
     }
   }
+
+  ${UserChatroomFragment}
 `
 
 const CHATROOM_MESSAGE_QUERY = gql`
@@ -330,10 +337,15 @@ const CHATROOM_MESSAGE_QUERY = gql`
 `
 
 const CHATROOM_MESSAGE_SUBSCRIPTION= gql`
-  subscription onNewMessages {
+  subscription onNewMessages($chatroomId: ID!) {
     Message(
       filter: {
-        mutation_in: [CREATED]
+        mutation_in: [CREATED],
+        node: {
+          chatroom: {
+            id: $chatroomId
+          }
+        }        
       }
     ) {
       node {

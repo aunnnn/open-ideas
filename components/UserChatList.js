@@ -2,14 +2,17 @@ import React, { Component } from 'react';
 import { graphql, gql } from 'react-apollo'
 import moment from 'moment'
 
-import orderBy from 'lodash/orderBy'
+import _ from 'lodash'
 
-import { N_CHATROOMS_FIRSTLOAD, N_CHATROOMS_LOADMORE } from '../constants'
+import { USER_CHATROOMS_SUBSCRIPTION, FIRSTLOAD_USER_CHATROOMS_QUERY, MORE_USER_CHATROOMS_QUERY } from '../graphql/UserChatrooms'
 import Page from '../layouts/main'
 import ChatListItem from './ChatListItem'
 
 import Colors from '../utils/Colors';
 
+const orderedUserChatrooms = (chatrooms) => {
+  return _.orderBy(chatrooms, ['stateType', 'createdAt'], ['asc', 'desc'])
+}
 // Change number of chats first load/ loadmore in constants.js
 class UserChatList extends Component {
 
@@ -17,6 +20,67 @@ class UserChatList extends Component {
     onClickChatroom: React.PropTypes.func.isRequired,
     forUserId: React.PropTypes.string,
     currentRoomId: React.PropTypes.string,
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!process.browser) return
+
+    if(this.props.allChatrooms) {
+
+      // Check for existing subscription      
+      if (this.unsubscribe) {
+        // Check if props have changed and, if necessary, stop the subscription
+        // this.unsubscribe()
+        return
+      }
+      // Subscribe
+      console.log('UserChatList subscribe...')
+      this.unsubscribe = this.subscribeToChatroomUpdates()
+    } 
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      console.log('-> unsubscribe user chatroom updates')
+      this.unsubscribe()
+    }
+  }
+  
+  subscribeToChatroomUpdates = () => {
+    return this.props.subscribeToMore({
+      document: USER_CHATROOMS_SUBSCRIPTION,
+      variables: {
+        forUserId: this.props.forUserId,
+      },
+      updateQuery: (previous, { subscriptionData }) => {
+        const Chatroom = subscriptionData.data.Chatroom.node
+        const updatedFields = subscriptionData.data.Chatroom.updatedFields
+        const mutation = subscriptionData.data.Chatroom.mutation
+        console.log('mutation: ', mutation)
+        console.log('updated Fields: ', updatedFields)
+
+        if (mutation === "UPDATED") {
+          if (updatedFields[0] !== "stateType") {
+            console.error(`Received UPDATED sub of chatrooms but updated field is not stateType (${updatedFields[0]}).`)
+            return previous
+          } else {
+            console.log('update by just ordering...?')
+            return previous
+          }
+        } else if (mutation === "CREATED") {
+          console.log('length of prev chatrooms', previous.allChatrooms.length)
+          if (!_.some(previous.allChatrooms, { id: Chatroom.id })) {
+            return {
+              ...previous,
+              allChatrooms: orderedUserChatrooms([...previous.allChatrooms, Chatroom]),
+            }
+          } else {
+            console.log('Detected duplicated, no need to update store.')
+            return previous
+          }
+        }
+      }
+    })
   }
 
   render() {
@@ -66,74 +130,15 @@ class UserChatList extends Component {
   }
 }
 
-export const FIRSTLOAD_USER_CHATROOMS_QUERY = gql`
-  query allChatrooms($forUserId: ID!) {
-    allChatrooms(
-      first: ${N_CHATROOMS_FIRSTLOAD},
-      orderBy: createdAt_DESC,
-      filter: {
-        users_some: {
-          id: $forUserId,
-        },
-      },
-    ) {
-      id
-      title
-      createdAt
-      _messagesMeta {
-        count
-      }
-      users {
-        id
-      }
-      stateType
-    }    
-
-    _allChatroomsMeta(
-      filter: {
-        users_some: {
-          id: $forUserId,
-        },
-      },
-    ) {
-      count
-    }
-  }
-`
-
-const MORE_USER_CHATROOMS_QUERY = gql`
-  query moreChatrooms($after: String!, $forUserId: ID!) {
-    allChatrooms(
-      first: ${N_CHATROOMS_LOADMORE}, 
-      after: $after,
-      orderBy: createdAt_DESC,
-      filter: {
-        users_some: {
-          id: $forUserId,
-        },
-      },
-    ) {
-        id
-        title
-        createdAt
-        _messagesMeta {
-          count
-        }
-        users {
-          id
-        }
-        stateType
-    }
-  }
-`
 export default graphql(FIRSTLOAD_USER_CHATROOMS_QUERY, {
 
   skip: ({ forUserId }) => {
     return forUserId ? false : true
   },
 
-  props({ data: { loading, error, allChatrooms, _allChatroomsMeta, fetchMore }, ownProps: { forUserId } }) {
+  props(receivedProps) {
 
+    const { data: { loading, error, allChatrooms, _allChatroomsMeta, fetchMore, subscribeToMore }, ownProps: { forUserId } } = receivedProps
     // Transform props
     // ---------------
     // The return props will be the available props. 
@@ -144,13 +149,14 @@ export default graphql(FIRSTLOAD_USER_CHATROOMS_QUERY, {
       cursor = allChatrooms.length > 0 ? allChatrooms[allChatrooms.length-1].id : null
       noMore = allChatrooms.length === _allChatroomsMeta.count
     }
-    const orderedChatrooms = orderBy(allChatrooms, ['stateType', 'createdAt'], ['asc', 'desc'])
+    const orderedChatrooms = orderedUserChatrooms(allChatrooms)
     return {
       loading,
       allChatrooms: orderedChatrooms,
       _allChatroomsMeta,
       error,
       noMore: noMore,
+      subscribeToMore,
       loadMoreEntries: () => {
         return fetchMore({
           query: MORE_USER_CHATROOMS_QUERY,
