@@ -39,13 +39,13 @@ class TalkPage extends Component {
             }            
           </div>
 
-          <div className="chat-list">
+          <div className="talk-list">
             <UserChatList 
               forUserId={currentUserId} 
               onClickChatroom={this.goToChatroom} 
             />
           </div>
-          <div className="chat-room">
+          <div className="talk-room">
             {currentRoomId && <Chatroom roomId={currentRoomId} currentUserId={currentUserId} />}
           </div>
 
@@ -57,9 +57,10 @@ class TalkPage extends Component {
             height: 100vh;
           }
           .new-chat {
-            position: fixed;
-            left: 110px;
-            top: 12px;            
+            width: 100%;
+            background-color: red;
+            height: 60px;
+            position: fixed;      
             z-index: 2;
           }
           .join-button {
@@ -71,22 +72,25 @@ class TalkPage extends Component {
           .please-join {
             font-size: 14px;
           }
-          .chat-list {
+          .talk-list {
             z-index: 1;
             margin-top: 60px;
-            padding-top: 8px;
             flex: 0 0 calc(50vw - 98px);
             overflow-y: scroll;
             position: relative;
             border-right: 1px solid rgba(0, 0, 0, .20);
             border-top: 1px solid rgba(0, 0, 0, .20);
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
           }
 
-          .chat-room {
+          .talk-room {
             flex: 1
             flex-direction: column;
             min-width: 0;
             padding-left: 12px;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
           }
         `}</style>
       </Page>
