@@ -15,7 +15,7 @@ subscription onChatroomUpdate($forUserId: ID!) {
     }
   ) {
     node {
-      ...Chatroom
+      ...UserChatroom
     }
     mutation
     updatedFields
@@ -36,7 +36,7 @@ query allChatrooms($forUserId: ID!) {
       },
     },
   ) {
-    ...Chatroom
+    ...UserChatroom
   }    
 
   _allChatroomsMeta(
@@ -65,7 +65,7 @@ query moreChatrooms($after: String!, $forUserId: ID!) {
       },
     },
   ) {
-      ...Chatroom
+      ...UserChatroom
   }
 }
 ${UserChatroomFragment}

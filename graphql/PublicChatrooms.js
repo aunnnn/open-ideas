@@ -11,7 +11,7 @@ export const FIRSTLOAD_CHATROOMS_QUERY = gql`
         stateType_in: [${CHATROOM_STATE_TYPES.closed}, ${CHATROOM_STATE_TYPES.active}],
       },
     ) {
-      ...Chatroom
+      ...PublicChatroom
     }    
 
     _allChatroomsMeta(filter: {
@@ -34,7 +34,7 @@ export const MORE_CHATROOMS_QUERY = gql`
         stateType_in: [${CHATROOM_STATE_TYPES.closed}, ${CHATROOM_STATE_TYPES.active}],
       },
     ) {
-        ...Chatroom
+        ...PublicChatroom
     }
   }
 

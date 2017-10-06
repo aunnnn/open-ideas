@@ -2,9 +2,10 @@ import React, { Component } from 'react'
 import { withApollo, gql } from 'react-apollo'
 import _ from 'lodash'
 
-import { FIRSTLOAD_CHATROOMS_QUERY } from './ChatList'
-import { FIRSTLOAD_USER_CHATROOMS_QUERY } from './UserChatList'
+import { FIRSTLOAD_CHATROOMS_QUERY } from '../graphql/PublicChatrooms'
+import { FIRSTLOAD_USER_CHATROOMS_QUERY } from '../graphql/UserChatrooms'
 import { CHATROOM_STATE_TYPES } from '../constants'
+import UserChatroomFragment from '../graphql/UserChatroomFragment'
 
 class NewChat extends Component {
   
@@ -62,6 +63,9 @@ class NewChat extends Component {
         anotherUsername = twoRandomUserIds[0] !== currentUserId ? twoRandomUsers[0].username : twoRandomUsers[1].username
       }
 
+      // mock
+      anotherUserId = 'cj7xqakfn4i260157lq1wwoz3'
+      anotherUsername = 'test'
 
       const { data: { createChatroom: { id } } } = await this.props.client.mutate({
         mutation: CREATE_CHAT_MUTATION,
@@ -69,6 +73,7 @@ class NewChat extends Component {
           title: this.state.title,
           userIds: [currentUserId, anotherUserId],
           createdById: currentUserId,
+          invitedUserId: anotherUserId,
         },
         // You may simply use this, in which case we don't need to update the store manually in 'update'
         // But this is slower.
@@ -88,25 +93,31 @@ class NewChat extends Component {
           createChatroom: {
             __typename: 'Chatroom',
             id: '',
-            createdAt: (new Date()).toISOString(),
             title: this.state.title,
-            stateType: 2,
-            createdBy: {
-              __typename: 'User',
-              id: '',
+            createdAt: (new Date()).toISOString(),
+            _messagesMeta: {
+              __typename: 'QueryMeta',
+              count: 0,
             },
             users: [
               {
                 __typename: 'User',
-                id: '',
-                username: currentUsername,
+                id: currentUserId,
               }, 
               {
                 __typename: 'User',
-                id: '',
-                username: anotherUsername,
-              }
+                id: anotherUserId,
+              },
             ],
+            invitedUser: {
+              __typename: 'User',
+              id: anotherUserId,
+            },
+            createdBy: {
+              __typename: 'User',
+              id: currentUserId,
+            },
+            stateType: CHATROOM_STATE_TYPES.active,
           }
         },
         update: (store, { data: { createChatroom }}) => {
@@ -142,6 +153,7 @@ class NewChat extends Component {
               })
             } catch (err) {
               // Probably query allChatrooms doesn't exist. (e.g., in case user enters directly to '/talk' page)
+              console.log('Err', err)
             }
           }
 
@@ -196,21 +208,19 @@ class NewChat extends Component {
 }
 
 const CREATE_CHAT_MUTATION = gql`
-  mutation CreateChatroomMutation($title: String!, $createdById: ID!, $userIds: [ID!]!) {
-    createChatroom(title: $title, usersIds: $userIds, createdById: $createdById, stateType: 2) {
-      id,
-      createdAt,
-      title,
-      createdBy {
-        id
-      },
-      users {
-        id,
-        username,
-      }
-      stateType
+  mutation CreateChatroomMutation($title: String!, $createdById: ID!, $userIds: [ID!]!, $invitedUserId: ID!) {
+    createChatroom(
+      title: $title, 
+      usersIds: $userIds, 
+      createdById: $createdById, 
+      stateType: ${CHATROOM_STATE_TYPES.active},
+      invitedUserId: $invitedUserId,      
+    ) {
+      ...UserChatroom
     }
   }
+
+  ${UserChatroomFragment}
 `
 
 const USER_COUNT_QUERY = gql`

@@ -1,7 +1,7 @@
 import { gql } from 'react-apollo'
 
 const UserChatroomFragment = gql`
-  fragment Chatroom on Chatroom {
+  fragment UserChatroom on Chatroom {
     id
     title
     createdAt

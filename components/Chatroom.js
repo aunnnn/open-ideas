@@ -4,6 +4,7 @@ import { graphql, gql, compose } from 'react-apollo'
 import findIndex from 'lodash/findIndex'
 
 import { CHATROOM_STATE_TYPES } from '../constants'
+
 import { Router } from '../routes'
 import withData from '../lib/withData'
 import MessageList from './MessageList'
@@ -12,6 +13,7 @@ import Colors from '../utils/Colors'
 
 import { FIRSTLOAD_CHATROOMS_QUERY } from './ChatList'
 import { FIRSTLOAD_USER_CHATROOMS_QUERY } from './UserChatList'
+import UserChatroomFragment from '../graphql/UserChatroomFragment'
 
 class Chatroom extends Component {
 
@@ -40,6 +42,8 @@ class Chatroom extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    if (!process.browser) return
+
     if(!nextProps.chatroomQuery.loading
       && nextProps.chatroomQuery.Chatroom) {
       // Check for existing subscription      
@@ -119,15 +123,13 @@ class Chatroom extends Component {
           }
         },
         update: (store, { data: { updateChatroom } }) => {
-          function updateChatroomsQuery (query) {
+          function updateChatroomsQuery (query, variables) {
             try {
               // User chatlist
               // 1. read from store
               const userChatroomsData = store.readQuery({
                 query,
-                variables: {
-                  forUserId: currentUserId,
-                },
+                variables,
               })
   
               // 2. update state
@@ -138,9 +140,7 @@ class Chatroom extends Component {
               store.writeQuery({
                 query,
                 data: userChatroomsData,
-                variables: {
-                  forUserId: currentUserId,
-                },
+                variables,
               })
             } catch (err) {            
               // console.error('Error: ', err)
@@ -149,7 +149,9 @@ class Chatroom extends Component {
 
           // One between this may get error,
           //  e.g., user has not visited 'Talk' page yet, so there's no query, and readQuery throw.
-          updateChatroomsQuery(FIRSTLOAD_USER_CHATROOMS_QUERY)
+          updateChatroomsQuery(FIRSTLOAD_USER_CHATROOMS_QUERY, {
+            forUserId: currentUserId,
+          })
           updateChatroomsQuery(FIRSTLOAD_CHATROOMS_QUERY)
 
           try {
@@ -279,8 +281,6 @@ class Chatroom extends Component {
   }
 
   render() {
-    console.log('render chatroom')
-
     const chatroomLoading = this.props.chatroomQuery.loading
     const messagesLoading = this.props.chatroomMessageQuery.loading
 
@@ -304,19 +304,15 @@ class Chatroom extends Component {
 const CHATROOM_QUERY = gql`
   query Chatroom($roomId: ID!) {
     Chatroom(id: $roomId) {
-      id
-      title
+      ...UserChatroom
       users {
         id
         username
       }
-      createdAt
-      stateType
-      createdBy {
-        id
-      }
     }
   }
+
+  ${UserChatroomFragment}
 `
 
 const CHATROOM_MESSAGE_QUERY = gql`
