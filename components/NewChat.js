@@ -64,8 +64,8 @@ class NewChat extends Component {
       }
 
       // mock
-      anotherUserId = 'cj7xqakfn4i260157lq1wwoz3'
-      anotherUsername = 'test'
+      // anotherUserId = 'cj7xqakfn4i260157lq1wwoz3'
+      // anotherUsername = 'test'
 
       const { data: { createChatroom: { id } } } = await this.props.client.mutate({
         mutation: CREATE_CHAT_MUTATION,
@@ -153,7 +153,7 @@ class NewChat extends Component {
               })
             } catch (err) {
               // Probably query allChatrooms doesn't exist. (e.g., in case user enters directly to '/talk' page)
-              console.log('Err', err)
+              // console.log('Err', err)
             }
           }
 
