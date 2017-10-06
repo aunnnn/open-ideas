@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { graphql, gql } from 'react-apollo'
 import moment from 'moment'
 
-import orderBy from 'lodash/orderBy'
+import _ from 'lodash'
 
 import { USER_CHATROOMS_SUBSCRIPTION, FIRSTLOAD_USER_CHATROOMS_QUERY, MORE_USER_CHATROOMS_QUERY } from '../graphql/UserChatrooms'
 import Page from '../layouts/main'
@@ -11,7 +11,7 @@ import ChatListItem from './ChatListItem'
 import Colors from '../utils/Colors';
 
 const orderedUserChatrooms = (chatrooms) => {
-  return orderBy(chatrooms, ['stateType', 'createdAt'], ['asc', 'desc'])
+  return _.orderBy(chatrooms, ['stateType', 'createdAt'], ['asc', 'desc'])
 }
 // Change number of chats first load/ loadmore in constants.js
 class UserChatList extends Component {
@@ -68,9 +68,15 @@ class UserChatList extends Component {
             return previous
           }
         } else if (mutation === "CREATED") {
-          return {
-            ...previous,
-            allChatrooms: orderedUserChatrooms([...previous.allChatrooms, Chatroom]),
+          console.log('length of prev chatrooms', previous.allChatrooms.length)
+          if (!_.some(previous.allChatrooms, { id: Chatroom.id })) {
+            return {
+              ...previous,
+              allChatrooms: orderedUserChatrooms([...previous.allChatrooms, Chatroom]),
+            }
+          } else {
+            console.log('Detected duplicated, no need to update store.')
+            return previous
           }
         }
       }
