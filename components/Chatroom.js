@@ -54,14 +54,17 @@ class Chatroom extends Component {
         }
       }
       // Subscribe
-      // console.log('...subscribe messages of', nextProps.chatroomQuery.Chatroom.title)
-      this.unsubscribe = this.subscribeToNewMessages()
+      // console.log('...subscribe messages of', nextProps.chatroomQuery.Chatroom.id, `(${nextProps.chatroomQuery.Chatroom.title})`)
+      this.unsubscribe = this.subscribeToNewMessages(nextProps.chatroomQuery.Chatroom.id)
     }
   }
 
-  subscribeToNewMessages = () => {
+  subscribeToNewMessages = (roomId) => {
     return this.props.chatroomMessageQuery.subscribeToMore({
       document: CHATROOM_MESSAGE_SUBSCRIPTION,
+      variables: {
+        chatroomId: roomId,
+      },
       updateQuery: (previous, { subscriptionData }) => {
         const newMessage = subscriptionData.data.Message.node
         const newAllMessages = previous.allMessages.slice()
@@ -140,12 +143,12 @@ class Chatroom extends Component {
                 },
               })
             } catch (err) {            
-              // This shouldn't error, since we can add chat only in '/talk' page. 
-              // This means FIRSTLOAD_USER_CHATROOMS_QUERY should exist.
-              console.error('Error: ', err)
+              // console.error('Error: ', err)
             }
           }
 
+          // One between this may get error,
+          //  e.g., user has not visited 'Talk' page yet, so there's no query, and readQuery throw.
           updateChatroomsQuery(FIRSTLOAD_USER_CHATROOMS_QUERY)
           updateChatroomsQuery(FIRSTLOAD_CHATROOMS_QUERY)
 
@@ -334,10 +337,15 @@ const CHATROOM_MESSAGE_QUERY = gql`
 `
 
 const CHATROOM_MESSAGE_SUBSCRIPTION= gql`
-  subscription onNewMessages {
+  subscription onNewMessages($chatroomId: ID!) {
     Message(
       filter: {
-        mutation_in: [CREATED]
+        mutation_in: [CREATED],
+        node: {
+          chatroom: {
+            id: $chatroomId
+          }
+        }        
       }
     ) {
       node {
