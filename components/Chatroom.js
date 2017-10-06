@@ -47,14 +47,14 @@ class Chatroom extends Component {
         // Check if props have changed and, if necessary, stop the subscription
         if (this.props.chatroomQuery.Chatroom.id !== nextProps.chatroomQuery.Chatroom.id) {
           this.unsubscribe()
-          console.log('-> unsubscribe from ', this.props.chatroomQuery.Chatroom.title)
+          // console.log('-> unsubscribe from ', this.props.chatroomQuery.Chatroom.title)
         } else {
-          console.log('-> same roomId, do nothing')
+          // console.log('-> same roomId, do nothing')
           return
         }
       }
       // Subscribe
-      console.log('...subscribe messages of', nextProps.chatroomQuery.Chatroom.title)
+      // console.log('...subscribe messages of', nextProps.chatroomQuery.Chatroom.title)
       this.unsubscribe = this.subscribeToNewMessages()
     }
   }
@@ -219,6 +219,7 @@ class Chatroom extends Component {
           currentUserId={currentUserId} 
           userIds={usersInChat.map(u => u.id)} 
           emptyComponentFunc={this.emptyMessageComponent}
+          authorId={chatroom.createdBy.id}
         />
 
         {canChat && isActiveChat &&
@@ -308,6 +309,9 @@ const CHATROOM_QUERY = gql`
       }
       createdAt
       stateType
+      createdBy {
+        id
+      }
     }
   }
 `
