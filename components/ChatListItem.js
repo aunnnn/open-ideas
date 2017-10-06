@@ -30,7 +30,7 @@ const renderItemByStateType = (props) => {
     // active chat
     return (
       <div>
-        <p className="chat-item-title">{title} ({count})</p>
+        <p className="chat-item-active">{title} ({count})</p>
         <p style={{ fontStyle: 'italic', fontSize: '12px' }}>{moment(createdAt).fromNow()}</p>
       </div>
     )
@@ -46,7 +46,7 @@ const renderItemByStateType = (props) => {
   default:
     return (
       <div>
-        <p className="chat-item-title">{title}</p>
+        <p className="chat-item-active">{title}</p>
         <p style={{ fontStyle: 'italic', fontSize: '12px' }}>{moment(createdAt).fromNow()}</p>
       </div>
     )
@@ -68,7 +68,9 @@ const ChatListItem = (props) => {
         .chat-list-item.active {
           background: ${Colors.lightGrey};
         }
-        .chat-item-title {
+      `}</style>
+      <style jsx global>{`
+        .chat-item-active {
           font-size: 18px;
           font-weight: bold;
           margin-bottom: 5px;
