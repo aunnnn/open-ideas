@@ -1,5 +1,5 @@
 # project: cj7xevxnc0yd20168ieas984x
-# version: 8
+# version: 40
 
 type File implements Node {
   contentType: String!
@@ -20,6 +20,7 @@ type User implements Node {
   updatedAt: DateTime!
   username: String! @isUnique
   chatrooms: [Chatroom!]! @relation(name: "UsersChatrooms")
+  createdChatrooms: [Chatroom!]! @relation(name: "UserCreatedChatrooms")
 }
 
 type Chatroom implements Node {
@@ -27,8 +28,12 @@ type Chatroom implements Node {
   title: String!
   createdAt: DateTime!
   updatedAt: DateTime!
+  createdBy: User @relation(name: "UserCreatedChatrooms")
   users: [User!]! @relation(name: "UsersChatrooms")
   messages: [Message!]! @relation(name: "ChatroomMessages")
+  stateType: Int! @defaultValue(value: 0)
+  numReported: Int! @defaultValue(value: 0)
+  latestInvitedAt: DateTime
 }
 
 type Message implements Node {
@@ -36,5 +41,5 @@ type Message implements Node {
   createdAt: DateTime!
   text: String!
   chatroom: Chatroom! @relation(name: "ChatroomMessages")
-  createdByUsername: String!
+  createdByUserId: String!
 }

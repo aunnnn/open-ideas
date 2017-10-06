@@ -26,11 +26,17 @@ class IndexPage extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      title: '',      
+      title: '',
+      renderInitialChat: true,
     }    
   }
 
   goToChatroom = (id) => {
+    if (this.props.initialChatroomId && id !== this.props.initialChatroomId) {      
+      this.setState({
+        renderInitialChat: false,
+      })
+    }
     Router.push(`/?chatroomId=${id}`, `/chatrooms/${id}`, { shallow: true })
   }
 
@@ -59,27 +65,13 @@ class IndexPage extends Component {
 
           {/* TALK PANEL  */}
           <div className="talk-list">
-            { initialChatroom && (initialChat ? 
-              <div>
-                <div className="header">
-                  <h5>Directed</h5>
-                </div>
-                <div className="initial-chat" onClick={() => this.goToChatroom(this.props.initialChatroomId)}>
-                  <ChatListItem
-                    title={initialChat.title}
-                    count={initialChat.messages.length}
-                    createdAt={initialChat.createdAt}
-                    active={initialChat.id === currentRoomId}
-                  />
-                </div>
-              </div>
-              :
-              initialChatroomError ? <div>Error: {initialChatroomError}</div> : null)
-            }
             <div className="header">
               <h5>Latest <span className="button">(change)</span></h5>
             </div>
-            <ChatList onClickChatroom={this.goToChatroom} currentRoomId={currentRoomId} />
+            <ChatList 
+              onClickChatroom={this.goToChatroom} 
+              currentRoomId={currentRoomId} 
+              initialChatroom={initialChat} />
           </div>
           
           { /* TALK ROOM */
@@ -176,6 +168,7 @@ query {
 const CHATROOM_QUERY = gql`
 query Chatroom($roomId: ID!) {
   Chatroom(id: $roomId) {
+    id
     title
     users {
       id
@@ -187,7 +180,11 @@ query Chatroom($roomId: ID!) {
       createdAt
       createdByUserId
     }
+    _messagesMeta {
+      count
+    }
     createdAt
+    stateType
   }
 }
 `
