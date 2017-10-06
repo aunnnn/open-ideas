@@ -41,21 +41,20 @@ class Chatroom extends Component {
 
   componentWillReceiveProps(nextProps) {
     if(!nextProps.chatroomQuery.loading
-      && this.props.chatroomQuery.Chatroom) {
-
+      && nextProps.chatroomQuery.Chatroom) {
       // Check for existing subscription      
       if (this.unsubscribe) {
         // Check if props have changed and, if necessary, stop the subscription
-        if (this.props.roomId !== nextProps.roomId) {
+        if (this.props.chatroomQuery.Chatroom.id !== nextProps.chatroomQuery.Chatroom.id) {
           this.unsubscribe()
-          console.log('-> unsubscribe')
+          console.log('-> unsubscribe from ', this.props.chatroomQuery.Chatroom.title)
         } else {
           console.log('-> same roomId, do nothing')
           return
         }
       }
       // Subscribe
-      console.log('...subscribe')
+      console.log('...subscribe messages of', nextProps.chatroomQuery.Chatroom.title)
       this.unsubscribe = this.subscribeToNewMessages()
     }
   }
@@ -301,6 +300,7 @@ class Chatroom extends Component {
 const CHATROOM_QUERY = gql`
   query Chatroom($roomId: ID!) {
     Chatroom(id: $roomId) {
+      id
       title
       users {
         id
