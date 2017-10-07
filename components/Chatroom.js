@@ -266,6 +266,7 @@ class Chatroom extends Component {
             flex: 1;
             overflow-y: scroll;
             -webkit-overflow-scrolling: touch;
+            width: 100%;
           }
           .input-wrapper {
             flex: 0 0 15vh;

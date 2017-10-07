@@ -48,6 +48,7 @@ class MessageList extends Component {
           .msg-list {
             display: flex;
             flex-direction: row;
+            word-break: break-word;
           }
           .plato {
             flex: 0 0;

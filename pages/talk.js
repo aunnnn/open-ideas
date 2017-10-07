@@ -87,7 +87,8 @@ class TalkPage extends Component {
           }
 
           .talk-room {
-            flex: 1
+            width: 50vw;
+            height: 100vh;
             flex-direction: column;
             min-width: 0;
           }
