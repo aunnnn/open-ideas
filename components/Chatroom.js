@@ -290,8 +290,6 @@ class Chatroom extends Component {
     const chatroomLoading = this.props.chatroomQuery.loading
     const messagesLoading = this.props.chatroomMessageQuery.loading
 
-    if (chatroomLoading || messagesLoading) return <div>Loading</div>    
-
     const chatroomError = this.props.chatroomQuery.error
     const messagesError = this.props.chatroomMessageQuery.error
     
@@ -300,6 +298,8 @@ class Chatroom extends Component {
 
     const messages = this.props.chatroomMessageQuery.allMessages
     const chatroom = this.props.chatroomQuery.Chatroom
+
+    if ((chatroomLoading && !chatroom) || (messagesLoading && !messages)) return <div>Loading</div>    
 
     if (!chatroom) return <div>This chatroom does not exist.</div>
     if (chatroom && messages) return this.renderChatroom(chatroom, messages)
@@ -392,12 +392,13 @@ export default compose(
   graphql(CREATE_MESSAGE_MUTATION, { name: 'createMessageMutation' }),
   graphql(END_CHATROOM_MUTATION, { name: 'endChatroomMutation' }),
   graphql(CHATROOM_MESSAGE_QUERY, { 
-    name: 'chatroomMessageQuery', 
+    name: 'chatroomMessageQuery',     
     options: (props) => {
       return {
         variables: {
           chatroomId: props.roomId
-        }
+        },
+        pollInterval: 20000,
       }
     }
 }),
