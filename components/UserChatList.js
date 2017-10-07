@@ -61,31 +61,19 @@ class UserChatList extends Component {
         const mutation = subscriptionData.data.Chatroom.mutation
         console.log('chatlist received subscription: Chatroom', Chatroom, 'mutation: ', mutation, 'updated Fields: ', updatedFields)
 
-        if (mutation === "UPDATED") {
-          // if (updatedFields[0] !== "stateType") {
-          //   console.error(`Received UPDATED sub of chatrooms but updated field is not stateType (${updatedFields[0]}).`)            
-          //   return {
-          //     ...previous,
-          //     allChatrooms: 
-          //   }
-          // } else {
-          //   console.log('update by just ordering...?')
-          //   return previous
-          // }
+        // Sometimes updated chatroom is not in firstload, we can add it here
+        if (!_.some(previous.allChatrooms, { id: Chatroom.id })) {
+          // This handle two cases:
+          // 1. CREATED
+          // 2. UPDATED but the Chatroom is not in the first load N
           return {
             ...previous,
-            allChatrooms: orderedUserChatrooms(previous.allChatrooms),
+            allChatrooms: orderedUserChatrooms([...previous.allChatrooms, Chatroom]),
           }
-        } else if (mutation === "CREATED") {
-          console.log('length of prev chatrooms', previous.allChatrooms.length)
-          if (!_.some(previous.allChatrooms, { id: Chatroom.id })) {
-            return {
-              ...previous,
-              allChatrooms: orderedUserChatrooms([...previous.allChatrooms, Chatroom]),
-            }
-          } else {
-            console.log('Detected duplicated, no need to update store.')
-            return previous
+        } else {
+          return {
+            ...previous,
+            allChatrooms: orderedUserChatrooms(previous.allChatrooms)
           }
         }
       }
@@ -145,12 +133,7 @@ export default graphql(FIRSTLOAD_USER_CHATROOMS_QUERY, {
     return forUserId ? false : true
   },
 
-  options: {
-    pollInterval: 20000,
-  },
-
   props(receivedProps) {
-
     const { data: { loading, error, allChatrooms, _allChatroomsMeta, fetchMore, subscribeToMore }, ownProps: { forUserId } } = receivedProps
     // Transform props
     // ---------------
