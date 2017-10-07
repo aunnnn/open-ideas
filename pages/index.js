@@ -68,6 +68,7 @@ class IndexPage extends Component {
             <div className="header">
               <h5>Latest <span className="button">(change)</span></h5>
             </div>
+            <div style={{ height: '45px' }} />
             <ChatList 
               onClickChatroom={this.goToChatroom} 
               currentRoomId={currentRoomId} 
@@ -101,7 +102,11 @@ class IndexPage extends Component {
             font-weight: bold;
           }
           .header {
-            padding: 10px;
+            width: calc(50vw - 98px);
+            padding: 15px 10px;
+            position: fixed;
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
           }
           .header h5 {
             font-weight: 400;
@@ -126,7 +131,6 @@ class IndexPage extends Component {
 
           .talk-list {
             z-index: 1;
-            padding-top: 8px;
             flex: 0 0 calc(50vw - 98px);
             overflow-y: scroll;
             -webkit-overflow-scrolling: touch;

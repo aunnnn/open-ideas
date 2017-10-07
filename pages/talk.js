@@ -58,11 +58,12 @@ class TalkPage extends Component {
             height: 100vh;
           }
           .new-chat {
-            width: 100%;
-            background-color: red;
+            width: calc(50vw - 98px);
+            background-color: #fff;
             height: 60px;
             position: fixed;      
             z-index: 2;
+            border-right: 1px solid #ddd;
           }
           .join-button {
             color: blue;
