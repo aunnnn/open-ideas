@@ -7,3 +7,5 @@ export const CHATROOM_STATE_TYPES = {
   active: 2,
   closed: 3,
 }
+
+export const PLATONOS_API_ENDPOINT = 'http://api.platonos.com'

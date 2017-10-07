@@ -2,13 +2,21 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Link from 'next/link'
 import { withRouter } from 'next/router'
+import fetch from 'isomorphic-fetch'
+import debounce from 'lodash/debounce'
 
 import Meta from '../components/meta'
 import { loggedOut } from '../lib/authActions'
 
 import Colors from '../utils/Colors'
+import { PLATONOS_API_ENDPOINT } from '../constants'
 
 class MainLayout extends Component {
+
+  constructor(props) {
+    super(props)
+    this.updateUserLastActive = debounce(this.updateUserLastActive, 1000)
+  }
 
   onClickLogout = (e) => {
     e.preventDefault()
@@ -17,7 +25,30 @@ class MainLayout extends Component {
     }
   }
 
+  updateUserLastActive = async () => {
+    if (!process.browser) return
+    if (!this.props.currentUserId) return
+    const currentUserId = this.props.currentUserId
+    try {
+      const header = new Headers({
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'text/plain'
+      })
+
+      await fetch(`${PLATONOS_API_ENDPOINT}/updateUserLastActiveAt/${currentUserId}`, {
+        method: 'GET',
+        mode: 'no-cors',
+        // header,
+      })
+    } catch (err) {
+      console.error('Cannot update user last active: ', err)
+    }
+  }
+
   render() {    
+
+    this.updateUserLastActive()
+
     const isLoggedIn = this.props.isLoggedIn    
     const { pathname } = this.props.router
     return (
@@ -109,6 +140,7 @@ export default withRouter(connect(
   (state) => {
     return { 
       isLoggedIn: state.authReducers.isLoggedIn,
+      currentUserId: state.authReducers.authData && state.authReducers.authData.currentUserId,
     }
   },
   (dispatch) => ({

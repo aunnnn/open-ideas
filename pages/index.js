@@ -40,7 +40,7 @@ class IndexPage extends Component {
 
   render() {    
     // This works after redirect to first page after login
-    const { currentUserId, currentUsername } = this.props
+    const { currentUserId } = this.props
     const currentRoomId = this.props.url.query.chatroomId || this.props.initialChatroomId
 
     const initialChatroom = this.props.initialChatroom
