@@ -30,16 +30,7 @@ class MainLayout extends Component {
     if (!this.props.currentUserId) return
     const currentUserId = this.props.currentUserId
     try {
-      const header = new Headers({
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'text/plain'
-      })
-
-      await fetch(`${PLATONOS_API_ENDPOINT}/updateUserLastActiveAt/${currentUserId}`, {
-        method: 'GET',
-        mode: 'no-cors',
-        // header,
-      })
+      await fetch(`${PLATONOS_API_ENDPOINT}/updateUserLastActiveAt/${currentUserId}`)
     } catch (err) {
       console.error('Cannot update user last active: ', err)
     }
