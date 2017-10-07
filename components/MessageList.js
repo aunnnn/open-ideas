@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment'
+import Colors from '../utils/Colors'
 
 class MessageList extends Component {
 
@@ -35,7 +36,7 @@ class MessageList extends Component {
             >
               {!isCurrentUser && <img src={`/static/${platoFace}`} alt="Platonos" className="plato" />}
               <div style={{ marginBottom: '15px' }}>
-                <p style={{ color: isAuthor ? 'purple' : 'black', marginBottom: '3px' }}>{m.text}</p>
+                <p style={{ color: isAuthor ? Colors.main : '#000', marginBottom: '3px' }}>{m.text}</p>
                 <p style={{ fontSize: '10px', fontStyle: 'italic' }} >
                   {/* Maybe using this for reactivity? https://gist.github.com/aortbals/48fa1e3526e42698f24dc58c2f03bf74 */}
                   {moment(m.createdAt).fromNow()}

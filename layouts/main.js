@@ -74,7 +74,7 @@ class MainLayout extends Component {
             font-weight: bold;
             text-align: center;
             margin: 0 0 15px;
-            color: #972952;
+            color: ${Colors.main};
           }
           .button-wrapper {
             margin-top: 20px;

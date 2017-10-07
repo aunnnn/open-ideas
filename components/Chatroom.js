@@ -310,7 +310,7 @@ class Chatroom extends Component {
           .end-chat-button {
             cursor: pointer;
             flex-grow: 0;
-            background: #9b3718;
+            background: ${Colors.main};
             padding: 4px 8px;
             color: white;
             font-size: 13px;
