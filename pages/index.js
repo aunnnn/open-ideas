@@ -9,9 +9,7 @@ import { graphql, gql, compose } from 'react-apollo'
 import withData from '../lib/withData'
 
 import Page from '../layouts/main'
-import NewChat from '../components/NewChat'
 import ChatList from '../components/ChatList'
-import ChatListItem from '../components/ChatListItem'
 import Chatroom from '../components/Chatroom'
 
 import Colors from '../utils/Colors'
