@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { withApollo, gql } from 'react-apollo'
 import _ from 'lodash'
+import fetch from 'isomorphic-fetch'
 
 import { FIRSTLOAD_CHATROOMS_QUERY } from '../graphql/PublicChatrooms'
 import { FIRSTLOAD_USER_CHATROOMS_QUERY } from '../graphql/UserChatrooms'
-import { CHATROOM_STATE_TYPES } from '../constants'
+import { CHATROOM_STATE_TYPES, PLATONOS_API_ENDPOINT } from '../constants'
 import UserChatroomFragment from '../graphql/UserChatroomFragment'
 
 class NewChat extends Component {
@@ -28,40 +29,48 @@ class NewChat extends Component {
     }
 
     try {
-      const userCount = (await this.props.client.query({ query: USER_COUNT_QUERY })).data._allUsersMeta.count
-      const randomSkip = _.random(0, userCount - 2)
-      if(userCount - 2 < 0) {
-        alert("Oops, can't find any users.")
-        return
+      const randomUser = await fetch(`${PLATONOS_API_ENDPOINT}/getRandomUser/${currentUserId}`)
+      const anotherUser = await randomUser.json()
+      const anotherUserId = anotherUser.user.gc_id
+      if (!anotherUserId) {
+        console.error('No random user return, no last active user at all!?')
       }
+      console.log('current: ', currentUserId, ', another user id: ', anotherUserId)
+      // const userCount = (await this.props.client.query({ query: USER_COUNT_QUERY })).data._allUsersMeta.count
+      // const randomSkip = _.random(0, userCount - 2)
+      // if(userCount - 2 < 0) {
+      //   alert("Oops, can't find any users.")
+      //   return
+      // }
 
       // alert('random skip is' + randomSkip)
 
       // To prevent duplicate, get two random users, at least one will never be a duplicate.
-      const twoRandomUsers  = (await this.props.client.query({
-        query: GET_USERS_QUERY,
-        variables: {
-          first: 2,
-          skip: randomSkip,
-        }
-      })).data.allUsers
+      // const twoRandomUsers  = (await this.props.client.query({
+      //   query: GET_USERS_QUERY,
+      //   variables: {
+      //     first: 2,
+      //     skip: randomSkip,
+      //   }
+      // })).data.allUsers
 
-      const twoRandomUserIds = twoRandomUsers.map(u => u.id)
+      // const twoRandomUserIds = twoRandomUsers.map(u => u.id)
 
-      // alert('fetched users are' + twoRandomUsers.map(u => u.username).join(' '))
+      // // alert('fetched users are' + twoRandomUsers.map(u => u.username).join(' '))
 
-      let anotherUserId;
-      let anotherUsername;
+      // let anotherUserId;
+      // let anotherUsername;
 
-      // if both not same as current user id, can random
-      if (twoRandomUserIds[0] !== currentUserId && twoRandomUserIds[1] !== currentUserId) {
-        anotherUserId = _.sample(twoRandomUserIds)
-        anotherUsername = anotherUserId === twoRandomUserIds[0] ? twoRandomUsers[0].username : twoRandomUsers[1].username
-      } else {
-        // some is duplicate, choose one that's not
-        anotherUserId = twoRandomUserIds[0] !== currentUserId ? twoRandomUserIds[0] : twoRandomUserIds[1]
-        anotherUsername = twoRandomUserIds[0] !== currentUserId ? twoRandomUsers[0].username : twoRandomUsers[1].username
-      }
+
+      // // if both not same as current user id, can random
+      // if (twoRandomUserIds[0] !== currentUserId && twoRandomUserIds[1] !== currentUserId) {
+      //   anotherUserId = _.sample(twoRandomUserIds)
+      //   anotherUsername = anotherUserId === twoRandomUserIds[0] ? twoRandomUsers[0].username : twoRandomUsers[1].username
+      // } else {
+      //   // some is duplicate, choose one that's not
+      //   anotherUserId = twoRandomUserIds[0] !== currentUserId ? twoRandomUserIds[0] : twoRandomUserIds[1]
+      //   anotherUsername = twoRandomUserIds[0] !== currentUserId ? twoRandomUsers[0].username : twoRandomUsers[1].username
+      // }
 
       // mock
       // anotherUserId = 'cj7xqakfn4i260157lq1wwoz3'
@@ -166,6 +175,10 @@ class NewChat extends Component {
           })
         },
       })
+
+      // Update invited
+      await fetch(`${PLATONOS_API_ENDPOINT}/updateUserLastInvitedAt/${anotherUserId}`)
+      console.log('did update user last invited at')
 
       this.setState({
         title: '',
