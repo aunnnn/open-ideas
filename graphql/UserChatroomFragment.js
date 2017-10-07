@@ -18,6 +18,7 @@ const UserChatroomFragment = gql`
       id
     }
     stateType
+    latestMessagesAt
   }
 `
 

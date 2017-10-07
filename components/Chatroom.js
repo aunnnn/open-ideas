@@ -70,6 +70,7 @@ class Chatroom extends Component {
       variables: {
         chatroomId: roomId,
       },
+      onError: (err) => console.error(err),
       updateQuery: (previous, { subscriptionData }) => {
         const newMessage = subscriptionData.data.Message.node
         if (some(previous.allMessages, { id: newMessage.id })) {
@@ -101,6 +102,7 @@ class Chatroom extends Component {
           text: textInput,
           chatroomId: roomId,
           createdByUserId: currentUserId,
+          updatedAt: new Date(),
         }
       })
       this.setState({
@@ -359,7 +361,7 @@ const CHATROOM_MESSAGE_SUBSCRIPTION= gql`
 `
 
 const CREATE_MESSAGE_MUTATION = gql`
-  mutation createMessage($text: String!, $chatroomId: ID!, $createdByUserId: String!) {
+  mutation createMessage($text: String!, $chatroomId: ID!, $createdByUserId: String!, $updatedAt: DateTime!) {
     createMessage (
       text: $text,
       chatroomId: $chatroomId,
@@ -369,6 +371,10 @@ const CREATE_MESSAGE_MUTATION = gql`
       text
       createdAt
       createdByUserId
+    }
+
+    updateChatroom(id: $chatroomId, latestMessagesAt: $updatedAt) {
+      id
     }
   }
 `
