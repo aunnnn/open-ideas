@@ -217,9 +217,8 @@ class Chatroom extends Component {
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <div className="header-wrapper">
           <div className="header">
-            <div className="button">(save)</div>
-            <span></span>
-            {canChat && isActiveChat && <div className="end-chat-button" onClick={this.onEndChatroom} >End this chat</div>}
+            <div className="button">save</div>
+            {canChat && isActiveChat && <div className="end-chat-button" onClick={this.onEndChatroom} >(End this chat)</div>}
           </div>
           <h2>{chatroomTitle}<span style={{ fontSize: '13px' }}> ({messages.length})</span></h2>
           <p style={{ fontSize: '13px', fontStyle: 'italic' }}>{usersInChat.map(u => u.username).join(', ')}</p>
@@ -288,12 +287,8 @@ class Chatroom extends Component {
             padding: 5px 0;
             display: flex;
             flex-direction: row;
-            {/* flex-direction: row;
-            justify-content: flex-end; */}
-          }
-
-          .header > span {
-            flex-grow: 1;
+            justify-content: flex-end;
+            align-items: center;
           }
 
           .button {
@@ -301,25 +296,27 @@ class Chatroom extends Component {
             cursor: pointer;
             font-size: 13px;
             font-weight: bold;
-          }
-
-          .button:hover {
-            background-color: ${Colors.lightGrey};
-          }
-
-          .end-chat-button {
-            cursor: pointer;
-            flex-grow: 0;
+            margin-right: 5px;
             background: ${Colors.main};
             padding: 4px 8px;
             color: white;
             font-size: 13px;
             font-weight: bold;
-            justify-content: flex-end;
+          }
+
+          .button:hover {
+            background: #752615;
+          }
+
+          .end-chat-button {
+            cursor: pointer;
+            flex-grow: 0;
+            font-size: 13px;
+            font-weight: bold;
           }
 
           .end-chat-button:hover {
-            background: #752615;
+            background-color: ${Colors.lightGrey};
           }
 
         `}</style>
