@@ -67,6 +67,7 @@ class NewChat extends Component {
       // anotherUserId = 'cj7xqakfn4i260157lq1wwoz3'
       // anotherUsername = 'test'
 
+      const dateString = (new Date()).toISOString()
       const { data: { createChatroom: { id } } } = await this.props.client.mutate({
         mutation: CREATE_CHAT_MUTATION,
         variables: {
@@ -74,6 +75,7 @@ class NewChat extends Component {
           userIds: [currentUserId, anotherUserId],
           createdById: currentUserId,
           invitedUserId: anotherUserId,
+          latestMessagesAt: dateString,
         },
         // You may simply use this, in which case we don't need to update the store manually in 'update'
         // But this is slower.
@@ -94,7 +96,7 @@ class NewChat extends Component {
             __typename: 'Chatroom',
             id: '',
             title: this.state.title,
-            createdAt: (new Date()).toISOString(),
+            createdAt: dateString,
             _messagesMeta: {
               __typename: 'QueryMeta',
               count: 0,
@@ -118,6 +120,7 @@ class NewChat extends Component {
               id: currentUserId,
             },
             stateType: CHATROOM_STATE_TYPES.active,
+            latestMessagesAt: dateString,
           }
         },
         update: (store, { data: { createChatroom }}) => {
@@ -208,13 +211,14 @@ class NewChat extends Component {
 }
 
 const CREATE_CHAT_MUTATION = gql`
-  mutation CreateChatroomMutation($title: String!, $createdById: ID!, $userIds: [ID!]!, $invitedUserId: ID!) {
+  mutation CreateChatroomMutation($title: String!, $createdById: ID!, $userIds: [ID!]!, $invitedUserId: ID!, $latestMessagesAt: DateTime!) {
     createChatroom(
       title: $title, 
       usersIds: $userIds, 
       createdById: $createdById, 
       stateType: ${CHATROOM_STATE_TYPES.active},
-      invitedUserId: $invitedUserId,      
+      invitedUserId: $invitedUserId,
+      latestMessagesAt: $latestMessagesAt,
     ) {
       ...UserChatroom
     }

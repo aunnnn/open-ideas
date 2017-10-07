@@ -11,7 +11,8 @@ import ChatListItem from './ChatListItem'
 import Colors from '../utils/Colors';
 
 const orderedUserChatrooms = (chatrooms) => {
-  return _.orderBy(chatrooms, ['stateType', 'createdAt'], ['asc', 'desc'])
+  // return _.orderBy(chatrooms, ['stateType', 'createdAt'], ['asc', 'desc'])
+  return _.orderBy(chatrooms, 'latestMessagesAt', 'desc')
 }
 // Change number of chats first load/ loadmore in constants.js
 class UserChatList extends Component {
@@ -43,6 +44,7 @@ class UserChatList extends Component {
     if (this.unsubscribe) {
       console.log('-> unsubscribe user chatroom updates')
       this.unsubscribe()
+      this.unsubscribe = null
     }
   }
   
@@ -52,31 +54,26 @@ class UserChatList extends Component {
       variables: {
         forUserId: this.props.forUserId,
       },
+      onError: (err) => console.error(err),
       updateQuery: (previous, { subscriptionData }) => {
         const Chatroom = subscriptionData.data.Chatroom.node
         const updatedFields = subscriptionData.data.Chatroom.updatedFields
         const mutation = subscriptionData.data.Chatroom.mutation
-        console.log('mutation: ', mutation)
-        console.log('updated Fields: ', updatedFields)
+        console.log('chatlist received subscription: Chatroom', Chatroom, 'mutation: ', mutation, 'updated Fields: ', updatedFields)
 
-        if (mutation === "UPDATED") {
-          if (updatedFields[0] !== "stateType") {
-            console.error(`Received UPDATED sub of chatrooms but updated field is not stateType (${updatedFields[0]}).`)
-            return previous
-          } else {
-            console.log('update by just ordering...?')
-            return previous
+        // Sometimes updated chatroom is not in firstload, we can add it here
+        if (!_.some(previous.allChatrooms, { id: Chatroom.id })) {
+          // This handle two cases:
+          // 1. CREATED
+          // 2. UPDATED but the Chatroom is not in the first load N
+          return {
+            ...previous,
+            allChatrooms: orderedUserChatrooms([...previous.allChatrooms, Chatroom]),
           }
-        } else if (mutation === "CREATED") {
-          console.log('length of prev chatrooms', previous.allChatrooms.length)
-          if (!_.some(previous.allChatrooms, { id: Chatroom.id })) {
-            return {
-              ...previous,
-              allChatrooms: orderedUserChatrooms([...previous.allChatrooms, Chatroom]),
-            }
-          } else {
-            console.log('Detected duplicated, no need to update store.')
-            return previous
+        } else {
+          return {
+            ...previous,
+            allChatrooms: orderedUserChatrooms(previous.allChatrooms)
           }
         }
       }
@@ -137,7 +134,6 @@ export default graphql(FIRSTLOAD_USER_CHATROOMS_QUERY, {
   },
 
   props(receivedProps) {
-
     const { data: { loading, error, allChatrooms, _allChatroomsMeta, fetchMore, subscribeToMore }, ownProps: { forUserId } } = receivedProps
     // Transform props
     // ---------------
