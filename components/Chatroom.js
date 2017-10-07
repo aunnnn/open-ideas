@@ -212,38 +212,77 @@ class Chatroom extends Component {
 
     const chatroomTitle = chatroom.title
     return (
-      <div style={{ padding: '0 10px 0 5px' }}>
-        <div className="header">
-          <div className="button">(save)</div>
-          <span></span>
-          {canChat && isActiveChat && <div className="end-chat-button" onClick={this.onEndChatroom} >End this chat</div>}
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        <div className="header-wrapper">
+          <div className="header">
+            <div className="button">(save)</div>
+            <span></span>
+            {canChat && isActiveChat && <div className="end-chat-button" onClick={this.onEndChatroom} >End this chat</div>}
+          </div>
+          <h2>{chatroomTitle}<span style={{ fontSize: '13px' }}> ({messages.length})</span></h2>
+          <p style={{ fontSize: '13px', fontStyle: 'italic' }}>{usersInChat.map(u => u.username).join(', ')}</p>
         </div>
-        <h2>{chatroomTitle}<span style={{ fontSize: '13px' }}> ({messages.length})</span></h2>
-        <p style={{ fontSize: '13px', fontStyle: 'italic' }}>{usersInChat.map(u => u.username).join(', ')}</p>
-
-        <br/>
         
-        <MessageList 
-          messages={messages} 
-          currentUserId={currentUserId} 
-          userIds={usersInChat.map(u => u.id)} 
-          emptyComponentFunc={this.emptyMessageComponent}
-          authorId={chatroom.createdBy.id}
-        />
+        <div className="message-wrapper">
+          <MessageList 
+            messages={messages} 
+            currentUserId={currentUserId} 
+            userIds={usersInChat.map(u => u.id)} 
+            emptyComponentFunc={this.emptyMessageComponent}
+            authorId={chatroom.createdBy.id}
+          />
+        </div>
 
         {canChat && isActiveChat &&
-          <form onSubmit={this.onCreateMessage}>
-            <input 
+          <form onSubmit={this.onCreateMessage} className="input-wrapper" ref={(form) => { this.inputForm = form; }}>
+            <textarea
+              className="input"
               type="text"
               onChange={(e) => this.setState({ textInput: e.target.value })}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  if (!e.shiftKey && !e.altKey) {
+                    this.onCreateMessage(e)
+                  } else if (e.altKey) {
+                    this.setState(prev => ({ textInput: prev.textInput + '\n' }))
+                  }
+                }
+              }}
               placeholder="Type here..."
               value={this.state.textInput}
+              on
             />
           </form>
         }        
         <style jsx scoped>{`
+          .header-wrapper {
+            flex-shrink: 0;
+            padding: 0 10px 10px;
+          }
+          .message-wrapper {
+            padding: 10px;
+            flex: 1;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+          }
+          .input-wrapper {
+            flex: 0 0 15vh;
+            border-top: 1px solid #ddd;
+          }
+          .input {
+            resize: none;
+            border: 0;
+            font-family: monospace;
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            height: 15vh;
+          }
+          .input:focus {
+            outline: none;
+          }
           .header {
-            padding: 15px 0 10px;
+            padding: 5px 0;
             display: flex;
             flex-direction: row;
             {/* flex-direction: row;
@@ -279,6 +318,7 @@ class Chatroom extends Component {
           .end-chat-button:hover {
             background: #752615;
           }
+
         `}</style>
       </div>
     )

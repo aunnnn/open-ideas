@@ -90,9 +90,6 @@ class TalkPage extends Component {
             flex: 1
             flex-direction: column;
             min-width: 0;
-            padding-left: 12px;
-            overflow-y: scroll;
-            -webkit-overflow-scrolling: touch;
           }
         `}</style>
       </Page>

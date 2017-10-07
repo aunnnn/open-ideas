@@ -107,6 +107,7 @@ class IndexPage extends Component {
             position: fixed;
             background-color: #fff;
             border-bottom: 1px solid #ddd;
+            border-right: 1px solid #ddd;
           }
           .header h5 {
             font-weight: 400;
@@ -142,10 +143,6 @@ class IndexPage extends Component {
             flex: 1
             flex-direction: column;
             min-width: 0;
-            padding-left: 12px;
-            padding-top: 8px;
-            overflow-y: scroll;
-            -webkit-overflow-scrolling: touch;
           }
 
           .initial-chat {
