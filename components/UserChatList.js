@@ -62,7 +62,7 @@ class UserChatList extends Component {
         console.log('chatlist received subscription: Chatroom', Chatroom, 'mutation: ', mutation, 'updated Fields: ', updatedFields)
 
         // Sometimes updated chatroom is not in firstload, we can add it here
-        if (!_.some(previous.allChatrooms, { id: Chatroom.id })) {
+        if (!_.some(previous.allChatrooms, (c) => (c.id === Chatroom.id))) {
           // This handle two cases:
           // 1. CREATED
           // 2. UPDATED but the Chatroom is not in the first load N

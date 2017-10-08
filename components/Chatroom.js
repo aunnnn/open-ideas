@@ -251,7 +251,6 @@ class Chatroom extends Component {
               }}
               placeholder="Type here..."
               value={this.state.textInput}
-              on
             />
           </form>
         }        
