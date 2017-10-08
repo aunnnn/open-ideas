@@ -262,10 +262,10 @@ class Chatroom extends Component {
           }
           .message-wrapper {
             padding: 10px;
-            flex: 1;
-            overflow-y: scroll;
+            flex: 1 1 auto;
+            overflow-y: auto;
+            overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
-            width: 100%;
           }
           .input-wrapper {
             flex: 0 0 15vh;

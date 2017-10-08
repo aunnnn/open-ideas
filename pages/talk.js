@@ -78,12 +78,11 @@ class TalkPage extends Component {
             z-index: 1;
             margin-top: 60px;
             flex: 0 0 calc(50vw - 98px);
-            overflow-y: scroll;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             position: relative;
             border-right: 1px solid rgba(0, 0, 0, .20);
             border-top: 1px solid rgba(0, 0, 0, .20);
-            overflow-y: scroll;
-            -webkit-overflow-scrolling: touch;
           }
 
           .talk-room {
