@@ -435,7 +435,7 @@ export default compose(
         variables: {
           chatroomId: props.roomId
         },
-        pollInterval: 20000,
+        pollInterval: 15000,
       }
     }
 }),
