@@ -7,14 +7,14 @@ import { CHATROOM_STATE_TYPES } from '../constants'
 
 const renderItemByStateType = (props) => {
   // Earth fix this for me, chat-item-title cannot be used here.... just restyle it
-  const { title, count, createdAt, active, stateType } = props
+  const { title, count, createdAt, stateType, isInvitationForCurrentUser } = props
   
   switch (stateType) {
   case CHATROOM_STATE_TYPES.created:
     // created chat/ no match yet
     return (
       <div>
-        <p className="chat-item-title">{title}<span style={{ fontSize: '12px', color: 'orange', opacity: '1.0' }}>...finding user</span></p>
+        <p className="chat-item-active">{title}<span style={{ fontSize: '12px', color: 'orange', opacity: '1.0' }}>...finding user</span></p>
         <p style={{ fontStyle: 'italic', fontSize: '12px' }}>{moment(createdAt).fromNow()}</p>
       </div>
     )
@@ -22,7 +22,7 @@ const renderItemByStateType = (props) => {
     // another user is invited to join this chat
     return (
       <div>
-        <p className="chat-item-title">{title}<span style={{ fontSize: '12px', color: 'blue' }}> invited </span></p>
+        <p className="chat-item-active">{title}<span style={{ fontSize: '12px', color: 'blue' }}> {isInvitationForCurrentUser ? 'invitation' : 'invited' } </span></p>
         <p style={{ fontStyle: 'italic', fontSize: '12px' }}>{moment(createdAt).fromNow()}</p>
       </div>
     )
@@ -38,7 +38,7 @@ const renderItemByStateType = (props) => {
     // closed chat
     return (
       <div style={{ opacity: 0.5 }}>
-        <p className="chat-item-title">{title}<span style={{ fontSize: '12px', color: 'orange' }}> closed </span></p>
+        <p className="chat-item-active">{title}<span style={{ fontSize: '12px', color: 'orange' }}> closed </span></p>
         <p style={{ fontStyle: 'italic', fontSize: '12px' }}>{moment(createdAt).fromNow()}</p>
       </div>
     )
@@ -86,6 +86,7 @@ ChatListItem.propTypes = {
   count: PropTypes.number,
   createdAt: PropTypes.string.isRequired,
   stateType: PropTypes.number,
+  isInvitationForCurrentUser: PropTypes.bool,
 };
 
 export default withRouter(ChatListItem)

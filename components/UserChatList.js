@@ -81,7 +81,7 @@ class UserChatList extends Component {
   }
 
   render() {
-    const { loading, error, allChatrooms, _allChatroomsMeta, onClickChatroom, loadMoreEntries, noMore, currentRoomId } = this.props;
+    const { loading, error, allChatrooms, _allChatroomsMeta, onClickChatroom, loadMoreEntries, noMore, currentRoomId, forUserId } = this.props;
     if (loading) return <div>Loading</div>
     if (error) return <div>Error: {error}</div>
     if (allChatrooms) {
@@ -100,6 +100,7 @@ class UserChatList extends Component {
                       createdAt={chat.createdAt}
                       active={chat.id === currentRoomId}
                       stateType={chat.stateType}
+                      isInvitationForCurrentUser={chat.invitedUser.id === forUserId}
                     />
                   </li>
                   <style jsx>{`

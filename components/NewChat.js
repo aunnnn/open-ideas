@@ -33,7 +33,8 @@ class NewChat extends Component {
       const anotherUser = await randomUser.json()
       const anotherUserId = anotherUser.user.gc_id
       if (!anotherUserId) {
-        console.error('No random user return, no last active user at all!?')
+        alert("Something's wrong. We can't find another user right now.")
+        return
       }
       console.log('current: ', currentUserId, ', another user id: ', anotherUserId)
       // const userCount = (await this.props.client.query({ query: USER_COUNT_QUERY })).data._allUsersMeta.count
@@ -85,6 +86,7 @@ class NewChat extends Component {
           createdById: currentUserId,
           invitedUserId: anotherUserId,
           latestMessagesAt: dateString,
+          stateType: CHATROOM_STATE_TYPES.invited,
         },
         // You may simply use this, in which case we don't need to update the store manually in 'update'
         // But this is slower.
@@ -128,7 +130,7 @@ class NewChat extends Component {
               __typename: 'User',
               id: currentUserId,
             },
-            stateType: CHATROOM_STATE_TYPES.active,
+            stateType: CHATROOM_STATE_TYPES.invited,
             latestMessagesAt: dateString,
           }
         },
@@ -224,12 +226,12 @@ class NewChat extends Component {
 }
 
 const CREATE_CHAT_MUTATION = gql`
-  mutation CreateChatroomMutation($title: String!, $createdById: ID!, $userIds: [ID!]!, $invitedUserId: ID!, $latestMessagesAt: DateTime!) {
+  mutation CreateChatroomMutation($title: String!, $createdById: ID!, $userIds: [ID!]!, $invitedUserId: ID!, $latestMessagesAt: DateTime!, $stateType: Int!) {
     createChatroom(
       title: $title, 
       usersIds: $userIds, 
       createdById: $createdById, 
-      stateType: ${CHATROOM_STATE_TYPES.active},
+      stateType: $stateType,
       invitedUserId: $invitedUserId,
       latestMessagesAt: $latestMessagesAt,
     ) {
