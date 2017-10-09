@@ -19,9 +19,21 @@ class MessageList extends Component {
     const messages = this.props.messages
     return !this.arraysEqual(newMessages, messages)
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    this.scrollToBottom()
+  }
+  
+  componentDidMount() {
+    this.scrollToBottom()
+  }
+  
+  scrollToBottom = () => {
+    this.messagesEnd.scrollIntoView()
+  }
   
   render() {        
-    const { messages, currentUserId, userIds, authorId } = this.props
+    const { messages, currentUserId, authorId } = this.props
     return (
       <div>
         {messages.map(m => {
@@ -44,6 +56,9 @@ class MessageList extends Component {
             </div>          
           )
         })}
+        <div style={{ float:"left", clear: "both" }}
+             ref={(el) => { this.messagesEnd = el; }}>
+        </div>
         <style jsx scoped>{`
           .msg-list {
             display: flex;
