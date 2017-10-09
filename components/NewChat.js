@@ -21,7 +21,6 @@ class NewChat extends Component {
     e.preventDefault()
 
     const currentUserId = this.props.currentUserId
-    const currentUsername = this.props.currentUsername
 
     if(!currentUserId) {
       alert('You must log in first.')
@@ -36,7 +35,6 @@ class NewChat extends Component {
         alert("Something's wrong. We can't find another user right now.")
         return
       }
-      console.log('current: ', currentUserId, ', another user id: ', anotherUserId)
       // const userCount = (await this.props.client.query({ query: USER_COUNT_QUERY })).data._allUsersMeta.count
       // const randomSkip = _.random(0, userCount - 2)
       // if(userCount - 2 < 0) {
@@ -87,7 +85,7 @@ class NewChat extends Component {
           invitedUserId: anotherUserId,
           latestMessagesAt: dateString,
           stateType: CHATROOM_STATE_TYPES.invited,
-        },
+      },
         // You may simply use this, in which case we don't need to update the store manually in 'update'
         // But this is slower.
         // refetchQueries: [
