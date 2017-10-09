@@ -21,8 +21,7 @@ class MessageList extends Component {
   }
   
   render() {        
-    const { messages, currentUserId, userIds, emptyComponentFunc, authorId } = this.props
-    if (messages.length === 0) return emptyComponentFunc()    
+    const { messages, currentUserId, userIds, authorId } = this.props
     return (
       <div>
         {messages.map(m => {
@@ -68,7 +67,6 @@ MessageList.propTypes = {
   authorId: React.PropTypes.string.isRequired,
   messages: React.PropTypes.array.isRequired,
   currentUserId: React.PropTypes.string,
-  emptyComponentFunc: React.PropTypes.func.isRequired,
 }
 
 export default MessageList
