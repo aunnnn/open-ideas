@@ -128,6 +128,7 @@ class NewChat extends Component {
               __typename: 'User',
               id: currentUserId,
             },
+            deniedByUserIds: [],
             stateType: CHATROOM_STATE_TYPES.invited,
             latestMessagesAt: dateString,
           }
