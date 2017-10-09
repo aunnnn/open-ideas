@@ -1,13 +1,11 @@
-import Page from '../layouts/main'
-import Head from 'next/head'
+import Page from "../layouts/main"
+import Head from "next/head"
 
 export default () => (
   <Page>
     <Head>
       <title>Platonos</title>
     </Head>
-    <div>
-      A place to talk.
-    </div>
+    <div>A place to talk.</div>
   </Page>
 )
