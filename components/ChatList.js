@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { graphql, gql } from 'react-apollo'
-import moment from 'moment'
 import orderBy from 'lodash/orderBy'
 import some from 'lodash/some'
 
-import Page from '../layouts/main'
 import ChatListItem from './ChatListItem'
 import Colors from '../utils/Colors';
 import { FIRSTLOAD_CHATROOMS_QUERY, MORE_CHATROOMS_QUERY } from '../graphql/PublicChatrooms'
+import { CHATROOM_STATE_TYPES } from '../constants'
 
 // Change number of chats first load/ loadmore in constants.js
 class ChatList extends Component {
@@ -83,7 +82,9 @@ export default graphql(FIRSTLOAD_CHATROOMS_QUERY, {
       noMore = allChatrooms.length === _allChatroomsMeta.count
     }
     let allChatroomsWithInitial = allChatrooms
-    if (initialChatroom) {
+
+    // Show to public only active/closed
+    if (initialChatroom && (initialChatroom.stateType === CHATROOM_STATE_TYPES.active || initialChatroom.stateType === CHATROOM_STATE_TYPES.closed)) {
       // **Append initialChat only when it doesn't already exist in allChatrooms.
       if (!some(allChatrooms, { id: initialChatroom.id })) {
         allChatroomsWithInitial = orderBy([...allChatrooms, initialChatroom], 'createdAt', 'desc')

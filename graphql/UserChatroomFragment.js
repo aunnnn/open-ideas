@@ -19,6 +19,7 @@ const UserChatroomFragment = gql`
     }
     stateType
     latestMessagesAt
+    deniedByUserIds
   }
 `
 

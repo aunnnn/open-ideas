@@ -5,9 +5,9 @@ import findIndex from 'lodash/findIndex'
 import some from 'lodash/some'
 
 import { CHATROOM_STATE_TYPES } from '../constants'
+import CHATROOM_STATETYPE_MUTATION from '../graphql/ChatroomStateTypeMutation'
 
 import { Router } from '../routes'
-import withData from '../lib/withData'
 import MessageList from './MessageList'
 
 import Colors from '../utils/Colors'
@@ -118,7 +118,7 @@ class Chatroom extends Component {
     if (!confirm("Do you really want to end this chat?")) { return }
     const { roomId, endChatroomMutation, currentUserId } = this.props
     try {
-      const data = await endChatroomMutation({
+      await endChatroomMutation({
         variables: {
           id: roomId,
         },
@@ -150,7 +150,7 @@ class Chatroom extends Component {
                 variables,
               })
             } catch (err) {            
-              // console.error('Error: ', err)
+              console.error('Error: ', err)
             }
           }
 
@@ -192,7 +192,7 @@ class Chatroom extends Component {
   renderChatroom = (chatroom, messages) => {
     const { currentUserId } = this.props
     const usersInChat = chatroom.users
-    const canChat = currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id
+    const canChat = chatroom.stateType === CHATROOM_STATE_TYPES.active && (currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id)
     const isActiveChat = chatroom.stateType === CHATROOM_STATE_TYPES.active
 
     const chatroomTitle = chatroom.title
@@ -329,12 +329,16 @@ class Chatroom extends Component {
     if ((chatroomLoading && !chatroom) || (messagesLoading && !messages)) return <div>Loading</div>    
 
     if (!chatroom) return <div>This chatroom does not exist.</div>
+    // E.g., someone may remember room id and put it directly in the url, we must check it here that it's active/closed.
+    const isPrivateChat = (chatroom.stateType !== CHATROOM_STATE_TYPES.active && chatroom.stateType !== CHATROOM_STATE_TYPES.closed)
+    const currentUserCanView = this.props.currentUserId && some(chatroom.users, { id: this.props.currentUserId })
+    if (isPrivateChat && !currentUserCanView) return <div>This chatroom is not available for public yet.</div>
     if (chatroom && messages) return this.renderChatroom(chatroom, messages)
     return <div>Something wrong, this shouldn't show.</div>
   }
 }
 
-const CHATROOM_QUERY = gql`
+export const CHATROOM_QUERY = gql`
   query Chatroom($roomId: ID!) {
     Chatroom(id: $roomId) {
       ...UserChatroom
@@ -406,18 +410,10 @@ const CREATE_MESSAGE_MUTATION = gql`
   }
 `
 
-const END_CHATROOM_MUTATION = gql`
-  mutation endChatroom($id: ID!) {
-    updateChatroom(id: $id, stateType: ${CHATROOM_STATE_TYPES.closed}) {
-      id
-    }
-  }
-`
-
 export default compose(
   graphql(CHATROOM_QUERY, { name: 'chatroomQuery' }),
   graphql(CREATE_MESSAGE_MUTATION, { name: 'createMessageMutation' }),
-  graphql(END_CHATROOM_MUTATION, { name: 'endChatroomMutation' }),
+  graphql(CHATROOM_STATETYPE_MUTATION(CHATROOM_STATE_TYPES.closed), { name: 'endChatroomMutation' }),
   graphql(CHATROOM_MESSAGE_QUERY, { 
     name: 'chatroomMessageQuery',     
     options: (props) => {

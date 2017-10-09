@@ -5,7 +5,6 @@ import moment from 'moment'
 import _ from 'lodash'
 
 import { USER_CHATROOMS_SUBSCRIPTION, FIRSTLOAD_USER_CHATROOMS_QUERY, MORE_USER_CHATROOMS_QUERY } from '../graphql/UserChatrooms'
-import Page from '../layouts/main'
 import ChatListItem from './ChatListItem'
 
 import Colors from '../utils/Colors';
@@ -89,7 +88,7 @@ class UserChatList extends Component {
       return (
         <div>
           <ul style={{ listStyle: 'none', padding: 0 }}>
-            {allChatrooms.map((chat, index) => {
+            {allChatrooms.map((chat) => {
               return (
                 <div key={chat.id}>
                   <li className="main" onClick={() => onClickChatroom(chat.id)}>
@@ -97,10 +96,10 @@ class UserChatList extends Component {
                       id={chat.id}
                       title={chat.title}
                       count={chat._messagesMeta.count}
-                      createdAt={chat.createdAt}
+                    createdAt={chat.createdAt}
                       active={chat.id === currentRoomId}
                       stateType={chat.stateType}
-                      isInvitationForCurrentUser={chat.invitedUser.id === forUserId}
+                      isInvitationForCurrentUser={chat.invitedUser && chat.invitedUser.id === forUserId}
                     />
                   </li>
                   <style jsx>{`

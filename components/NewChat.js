@@ -242,23 +242,6 @@ const CREATE_CHAT_MUTATION = gql`
   ${UserChatroomFragment}
 `
 
-const USER_COUNT_QUERY = gql`
-  query UserCountQuery {
-    _allUsersMeta {
-      count
-    }
-  }
-`
-
-const GET_USERS_QUERY =  gql`
-  query GetUsersQuery($first: Int!, $skip: Int!) {
-    allUsers(first: $first, skip: $skip) {
-      id,
-      username,
-    }
-  }
-`
-
 NewChat.propTypes = {
   currentUserId: React.PropTypes.string.isRequired,
   currentUsername: React.PropTypes.string.isRequired,

@@ -1,5 +1,5 @@
 # project: cj7xevxnc0yd20168ieas984x
-# version: 49
+# version: 52
 
 type File implements Node {
   contentType: String!
@@ -36,6 +36,8 @@ type Chatroom implements Node {
   numReported: Int! @defaultValue(value: 0)
   lastInvitedAt: DateTime
   invitedUser: User @relation(name: "UserInvitedChatroom")
+  latestMessagesAt: DateTime!
+  deniedByUserIds: [String!]!
 }
 
 type Message implements Node {
