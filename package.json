@@ -11,14 +11,14 @@
   "license": "MIT",
   "dependencies": {
     "moment": "^2.18.1",
-    "next": "^3.2.2",
-    "next-routes": "^1.0.40",
-    "react": "^15.6.1",
-    "react-apollo": "^1.4.15",
-    "react-dom": "^15.6.1",
+    "next": "^4.0.3",
+    "next-routes": "^1.1.0",
+    "prop-types": "^15.6.0",
+    "react": "^16.0.0",
+    "react-apollo": "^1.4.16",
+    "react-dom": "^16.0.0",
     "react-redux": "^5.0.6",
-    "redux": "^3.7.2",
-    "subscriptions-transport-ws": "^0.8.0"
+    "subscriptions-transport-ws": "^0.8.3"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.1",

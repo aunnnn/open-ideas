@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import moment from 'moment'
 import Colors from '../utils/Colors'
 
@@ -78,10 +79,10 @@ class MessageList extends Component {
 }
 
 MessageList.propTypes = {
-  userIds: React.PropTypes.array.isRequired,
-  authorId: React.PropTypes.string.isRequired,
-  messages: React.PropTypes.array.isRequired,
-  currentUserId: React.PropTypes.string,
+  userIds: PropTypes.array.isRequired,
+  authorId: PropTypes.string.isRequired,
+  messages: PropTypes.array.isRequired,
+  currentUserId: PropTypes.string,
 }
 
 export default MessageList

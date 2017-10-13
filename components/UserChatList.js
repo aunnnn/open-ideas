@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { graphql, gql } from 'react-apollo'
-import moment from 'moment'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { graphql } from 'react-apollo'
 
 import _ from 'lodash'
 
@@ -17,9 +17,9 @@ const orderedUserChatrooms = (chatrooms) => {
 class UserChatList extends Component {
 
   static propTypes = {
-    onClickChatroom: React.PropTypes.func.isRequired,
-    forUserId: React.PropTypes.string,
-    currentRoomId: React.PropTypes.string,
+    onClickChatroom: PropTypes.func.isRequired,
+    forUserId: PropTypes.string,
+    currentRoomId: PropTypes.string,
   }
 
   componentWillReceiveProps(nextProps) {

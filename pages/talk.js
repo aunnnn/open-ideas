@@ -97,4 +97,5 @@ class TalkPage extends Component {
   }
 }
 
-export default withData(connectAuth(TalkPage))
+const WithAuth = connectAuth(TalkPage)
+export default withData(WithAuth)

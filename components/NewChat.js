@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { withApollo, gql } from 'react-apollo'
-import _ from 'lodash'
 import fetch from 'isomorphic-fetch'
 
 import { FIRSTLOAD_CHATROOMS_QUERY } from '../graphql/PublicChatrooms'
@@ -30,51 +30,11 @@ class NewChat extends Component {
     try {
       const randomUser = await fetch(`${PLATONOS_API_ENDPOINT}/getRandomUser/${currentUserId}`)
       const anotherUser = await randomUser.json()
-      const anotherUserId = anotherUser.user.gc_id
-      if (!anotherUserId) {
+      if (!anotherUser.user) {
         alert("Something's wrong. We can't find another user right now.")
         return
       }
-      // const userCount = (await this.props.client.query({ query: USER_COUNT_QUERY })).data._allUsersMeta.count
-      // const randomSkip = _.random(0, userCount - 2)
-      // if(userCount - 2 < 0) {
-      //   alert("Oops, can't find any users.")
-      //   return
-      // }
-
-      // alert('random skip is' + randomSkip)
-
-      // To prevent duplicate, get two random users, at least one will never be a duplicate.
-      // const twoRandomUsers  = (await this.props.client.query({
-      //   query: GET_USERS_QUERY,
-      //   variables: {
-      //     first: 2,
-      //     skip: randomSkip,
-      //   }
-      // })).data.allUsers
-
-      // const twoRandomUserIds = twoRandomUsers.map(u => u.id)
-
-      // // alert('fetched users are' + twoRandomUsers.map(u => u.username).join(' '))
-
-      // let anotherUserId;
-      // let anotherUsername;
-
-
-      // // if both not same as current user id, can random
-      // if (twoRandomUserIds[0] !== currentUserId && twoRandomUserIds[1] !== currentUserId) {
-      //   anotherUserId = _.sample(twoRandomUserIds)
-      //   anotherUsername = anotherUserId === twoRandomUserIds[0] ? twoRandomUsers[0].username : twoRandomUsers[1].username
-      // } else {
-      //   // some is duplicate, choose one that's not
-      //   anotherUserId = twoRandomUserIds[0] !== currentUserId ? twoRandomUserIds[0] : twoRandomUserIds[1]
-      //   anotherUsername = twoRandomUserIds[0] !== currentUserId ? twoRandomUsers[0].username : twoRandomUsers[1].username
-      // }
-
-      // mock
-      // anotherUserId = 'cj7xqakfn4i260157lq1wwoz3'
-      // anotherUsername = 'test'
-
+      const anotherUserId = anotherUser.user.gc_id   
       const dateString = (new Date()).toISOString()
       const { data: { createChatroom: { id } } } = await this.props.client.mutate({
         mutation: CREATE_CHAT_MUTATION,
@@ -134,7 +94,6 @@ class NewChat extends Component {
           }
         },
         update: (store, { data: { createChatroom }}) => {
-
           // Update the store (so that the graphql components across the app will get updated)
 
           // Why doesn't it be smart and update all 'related' queries & components !??
@@ -176,7 +135,7 @@ class NewChat extends Component {
           })
         },
       })
-
+      
       // Update invited
       await fetch(`${PLATONOS_API_ENDPOINT}/updateUserLastInvitedAt/${anotherUserId}`)
       console.log('did update user last invited at')
@@ -186,7 +145,11 @@ class NewChat extends Component {
       })
       this.props.onCreateNewChatroom(id)
     } catch(err) {
-      alert("Oops: " + err.graphQLErrors[0].message);
+      if (err.graphQLErrors) {
+        alert("Oops: " + err.graphQLErrors[0].message);
+      } else {
+        alert("Error: " + err)
+      }
     }
   }
 
@@ -242,8 +205,8 @@ const CREATE_CHAT_MUTATION = gql`
 `
 
 NewChat.propTypes = {
-  currentUserId: React.PropTypes.string.isRequired,
-  currentUsername: React.PropTypes.string.isRequired,
+  currentUserId: PropTypes.string.isRequired,
+  currentUsername: PropTypes.string.isRequired,
 }
 
 export default withApollo(NewChat)

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import Router from 'next/router'
 import { graphql, compose } from 'react-apollo'
 import remove from 'lodash/remove'
@@ -9,8 +10,8 @@ import { FIRSTLOAD_USER_CHATROOMS_QUERY } from '../graphql/UserChatrooms'
 class ChatroomEmptyMessage extends Component {
 
   static propTypes = {
-    chatroom: React.PropTypes.object.isRequired,
-    currentUserId: React.PropTypes.string,
+    chatroom: PropTypes.object.isRequired,
+    currentUserId: PropTypes.string,
   }
 
   onAccept = async () => {

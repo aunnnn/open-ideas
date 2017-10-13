@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { graphql, gql } from 'react-apollo'
+import PropTypes from 'prop-types';
+import { graphql } from 'react-apollo'
 import orderBy from 'lodash/orderBy'
 import some from 'lodash/some'
 
@@ -12,9 +13,9 @@ import { CHATROOM_STATE_TYPES } from '../constants'
 class ChatList extends Component {
 
   static propTypes = {
-    onClickChatroom: React.PropTypes.func.isRequired,
-    initialChatroom: React.PropTypes.object,
-    currentRoomId: React.PropTypes.string,
+    onClickChatroom: PropTypes.func.isRequired,
+    initialChatroom: PropTypes.object,
+    currentRoomId: PropTypes.string,
   };
 
   render() {
