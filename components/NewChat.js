@@ -14,16 +14,33 @@ class NewChat extends Component {
     super(props);
     this.state = { 
       title: '',
+      insertingNewTopic: false,
     }
   }
 
   onCreateChat = async (e) => {
     e.preventDefault()
 
+    // Trim whitespaces
+    const topic = this.state.title.replace(/^[ ]+|[ ]+$/g,'')
+
+    if (!confirm(`Are you sure to submit this topic?\n"${topic}"`)) return
+    if (this.state.insertingNewTopic) { 
+      alert('Please wait...')
+      return 
+    }
+
+    this.setState({
+      insertingNewTopic: true,
+    })
+
     const currentUserId = this.props.currentUserId
 
     if(!currentUserId) {
       alert('You must log in first.')
+      this.setState({
+        insertingNewTopic: false,
+      })
       return
     }
 
@@ -39,7 +56,7 @@ class NewChat extends Component {
       const { data: { createChatroom: { id } } } = await this.props.client.mutate({
         mutation: CREATE_CHAT_MUTATION,
         variables: {
-          title: this.state.title,
+          title: topic,
           userIds: [currentUserId, anotherUserId],
           createdById: currentUserId,
           invitedUserId: anotherUserId,
@@ -64,7 +81,7 @@ class NewChat extends Component {
           createChatroom: {
             __typename: 'Chatroom',
             id: '',
-            title: this.state.title,
+            title: topic,
             createdAt: dateString,
             _messagesMeta: {
               __typename: 'QueryMeta',
@@ -142,6 +159,7 @@ class NewChat extends Component {
 
       this.setState({
         title: '',
+        insertingNewTopic: false,
       })
       this.props.onCreateNewChatroom(id)
     } catch(err) {
@@ -150,14 +168,18 @@ class NewChat extends Component {
       } else {
         alert("Error: " + err)
       }
+      this.setState({
+        insertingNewTopic: false,
+      })
     }
   }
 
   render() { 
-    const confirmDisabled = !this.state.title
+    const topic = this.state.title
+    const confirmDisabled = !topic || topic.replace(/\s/g, '').length === 0 || this.state.insertingNewTopic
     return (
       <div>
-        <form onSubmit={this.onCreateChat}>
+        <form onSubmit={confirmDisabled ? null : this.onCreateChat}>
           <input
               value={this.state.title}
               onChange={e => this.setState({ title: e.target.value})}

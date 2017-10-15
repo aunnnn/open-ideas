@@ -17,7 +17,7 @@ import Colors from '../utils/Colors'
 class IndexPage extends Component {
 
   static async getInitialProps({ query }) {
-    // for those who enters from link platonos.com/chatrooms/chatroomId
+    // for those who enters from link platonos.com/read/chatroomId
     return { initialChatroomId: query.chatroomId }
   }
 
@@ -35,7 +35,7 @@ class IndexPage extends Component {
         renderInitialChat: false,
       })
     }
-    Router.push(`/?chatroomId=${id}`, `/chatrooms/${id}`, { shallow: true })
+    Router.push(`/?chatroomId=${id}`, `/read/${id}`, { shallow: true })
   }
 
   render() {    
@@ -155,15 +155,6 @@ class IndexPage extends Component {
     )
   }
 } 
-
-const CURRENT_USER_QUERY = gql`
-query {
-  user {
-    id,
-    username
-  }
-}
-`
 
 const CHATROOM_QUERY = gql`
 query Chatroom($roomId: ID!) {

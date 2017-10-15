@@ -39,7 +39,7 @@ class Chatroom extends Component {
     const currentUserId = this.props.currentUserId
     const canChat = currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id    
     if (!canChat) {
-      Router.pushRoute(`/chatrooms/${this.props.roomId}`)
+      Router.pushRoute(`/read/${this.props.roomId}`)
     }
   }
 
@@ -326,6 +326,7 @@ class Chatroom extends Component {
     const messages = this.props.chatroomMessageQuery.allMessages
     const chatroom = this.props.chatroomQuery.Chatroom
 
+    if (chatroomLoading) return <div>Loading chatroom...</div>
     if ((chatroomLoading && !chatroom) || (messagesLoading && !messages)) return <div>Loading</div>    
 
     if (!chatroom) return <div>This chatroom does not exist.</div>
