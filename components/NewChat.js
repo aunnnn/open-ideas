@@ -21,6 +21,10 @@ class NewChat extends Component {
   onCreateChat = async (e) => {
     e.preventDefault()
 
+    // Trim whitespaces
+    const topic = this.state.title.replace(/^[ ]+|[ ]+$/g,'')
+
+    if (!confirm(`Are you sure to submit this topic?\n"${topic}"`)) return
     if (this.state.insertingNewTopic) { 
       alert('Please wait...')
       return 
@@ -52,7 +56,7 @@ class NewChat extends Component {
       const { data: { createChatroom: { id } } } = await this.props.client.mutate({
         mutation: CREATE_CHAT_MUTATION,
         variables: {
-          title: this.state.title,
+          title: topic,
           userIds: [currentUserId, anotherUserId],
           createdById: currentUserId,
           invitedUserId: anotherUserId,
@@ -77,7 +81,7 @@ class NewChat extends Component {
           createChatroom: {
             __typename: 'Chatroom',
             id: '',
-            title: this.state.title,
+            title: topic,
             createdAt: dateString,
             _messagesMeta: {
               __typename: 'QueryMeta',
@@ -171,7 +175,8 @@ class NewChat extends Component {
   }
 
   render() { 
-    const confirmDisabled = !this.state.title || this.state.insertingNewTopic
+    const topic = this.state.title
+    const confirmDisabled = !topic || topic.replace(/\s/g, '').length === 0 || this.state.insertingNewTopic
     return (
       <div>
         <form onSubmit={confirmDisabled ? null : this.onCreateChat}>
