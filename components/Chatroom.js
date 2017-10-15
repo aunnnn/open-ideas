@@ -326,7 +326,7 @@ class Chatroom extends Component {
     const messages = this.props.chatroomMessageQuery.allMessages
     const chatroom = this.props.chatroomQuery.Chatroom
 
-    if (chatroomLoading || messagesLoading) return <div>Loading chatroom...</div>
+    if (chatroomLoading) return <div>Loading chatroom...</div>
     if ((chatroomLoading && !chatroom) || (messagesLoading && !messages)) return <div>Loading</div>    
 
     if (!chatroom) return <div>This chatroom does not exist.</div>
