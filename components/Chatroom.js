@@ -39,7 +39,7 @@ class Chatroom extends Component {
     const currentUserId = this.props.currentUserId
     const canChat = currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id    
     if (!canChat) {
-      Router.pushRoute(`/chatrooms/${this.props.roomId}`)
+      Router.pushRoute(`/read/${this.props.roomId}`)
     }
   }
 
