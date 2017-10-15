@@ -14,16 +14,29 @@ class NewChat extends Component {
     super(props);
     this.state = { 
       title: '',
+      insertingNewTopic: false,
     }
   }
 
   onCreateChat = async (e) => {
     e.preventDefault()
 
+    if (this.state.insertingNewTopic) { 
+      alert('Please wait...')
+      return 
+    }
+
+    this.setState({
+      insertingNewTopic: true,
+    })
+
     const currentUserId = this.props.currentUserId
 
     if(!currentUserId) {
       alert('You must log in first.')
+      this.setState({
+        insertingNewTopic: false,
+      })
       return
     }
 
@@ -142,6 +155,7 @@ class NewChat extends Component {
 
       this.setState({
         title: '',
+        insertingNewTopic: false,
       })
       this.props.onCreateNewChatroom(id)
     } catch(err) {
@@ -150,14 +164,17 @@ class NewChat extends Component {
       } else {
         alert("Error: " + err)
       }
+      this.setState({
+        insertingNewTopic: false,
+      })
     }
   }
 
   render() { 
-    const confirmDisabled = !this.state.title
+    const confirmDisabled = !this.state.title || this.state.insertingNewTopic
     return (
       <div>
-        <form onSubmit={this.onCreateChat}>
+        <form onSubmit={confirmDisabled ? null : this.onCreateChat}>
           <input
               value={this.state.title}
               onChange={e => this.setState({ title: e.target.value})}
