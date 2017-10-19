@@ -37,9 +37,9 @@ class LoginPage extends Component {
             password
           }
         })
-        const _id = result.data.signinUser.user.id
-        const _token = result.data.signinUser.token
-        const _username = result.data.signinUser.user.username
+        const _id = result.data.authenticateUser.id
+        const _token = result.data.authenticateUser.token
+        const _username = result.data.authenticateUser.username
         this._saveUserDataToStore(_token, _id, _username)
       } else {
         const { username, email, password } = this.state
@@ -50,9 +50,9 @@ class LoginPage extends Component {
             password
           }
         })
-        const _id = result.data.signinUser.user.id
-        const _token = result.data.signinUser.token
-        const _username = result.data.signinUser.user.username
+        const _id = result.data.signupUser.id
+        const _token = result.data.signupUser.token
+        const _username = result.data.signupUser.username
         this._saveUserDataToStore(_token, _id, _username)
         alert('👋 Successfully created account.')        
       }
@@ -60,6 +60,7 @@ class LoginPage extends Component {
         pathname: '/'        
       })
     } catch(err) {
+    console.log('err', err)
       alert("Oops: " + (err.graphQLErrors && err.graphQLErrors.length >= 1 && err.graphQLErrors[0].message) || err); 
       this.setState({
         loading: false
@@ -143,43 +144,27 @@ class LoginPage extends Component {
  
 const CREATE_USER_MUTATION = gql`
 mutation CreateUserMutation($username: String!, $email: String!, $password: String!) {
-  createUser(
+  signupUser(
+    email: $email,
+    password: $password,
     username: $username,
-    authProvider: {
-      email: {
-        email: $email,
-        password: $password
-      }
-    }
   ) {
     id
     username
-  }
-
-  signinUser(email: {
-    email: $email,
-    password: $password
-  }) {
     token
-    user {
-      id
-      username
-    }
   }
 }
 `
 
 const SIGNIN_USER_MUTATION = gql`
 mutation SigninUserMutation($email: String!, $password: String!) {
-  signinUser(email: {
-    email: $email,
+  authenticateUser(
+    email: $email, 
     password: $password
-  }) {
+  ) {
     token
-    user {
-      id
-      username
-    }
+    id
+    username
   }
 }
 `

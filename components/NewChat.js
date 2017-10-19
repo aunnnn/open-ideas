@@ -48,8 +48,7 @@ class NewChat extends Component {
       const randomUser = await fetch(`${PLATONOS_API_ENDPOINT}/getRandomUser/${currentUserId}`)
       const anotherUser = await randomUser.json()
       if (!anotherUser.user) {
-        alert("Something's wrong. We can't find another user right now.")
-        return
+        throw "Something wrong. We can't find another user right now, please try again later."
       }
       const anotherUserId = anotherUser.user.gc_id   
       const dateString = (new Date()).toISOString()
@@ -166,7 +165,7 @@ class NewChat extends Component {
       if (err.graphQLErrors) {
         alert("Oops: " + err.graphQLErrors[0].message);
       } else {
-        alert("Error: " + err)
+        alert(err)
       }
       this.setState({
         insertingNewTopic: false,
