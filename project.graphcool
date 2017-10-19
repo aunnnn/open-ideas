@@ -1,7 +1,7 @@
 # project: cj7xevxnc0yd20168ieas984x
-# version: 52
+# version: 54
 
-type File implements Node {
+type File @model {
   contentType: String!
   createdAt: DateTime!
   id: ID! @isUnique
@@ -12,7 +12,7 @@ type File implements Node {
   url: String! @isUnique
 }
 
-type User implements Node {
+type User @model {
   createdAt: DateTime!
   email: String @isUnique
   id: ID! @isUnique
@@ -24,7 +24,7 @@ type User implements Node {
   invitedChatrooms: [Chatroom!]! @relation(name: "UserInvitedChatroom")
 }
 
-type Chatroom implements Node {
+type Chatroom @model {
   id: ID! @isUnique
   title: String!
   createdAt: DateTime!
@@ -37,10 +37,10 @@ type Chatroom implements Node {
   lastInvitedAt: DateTime
   invitedUser: User @relation(name: "UserInvitedChatroom")
   latestMessagesAt: DateTime!
-  deniedByUserIds: [String!]!
+  deniedByUserIds: [String!] @defaultValue(value: "[]")
 }
 
-type Message implements Node {
+type Message @model {
   id: ID! @isUnique
   createdAt: DateTime!
   text: String!
