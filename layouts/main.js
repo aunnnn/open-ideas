@@ -108,6 +108,7 @@ class MainLayout extends Component {
             text-align: center;
             padding: 15px 0;
             cursor: pointer;
+            outline: none;
           }
           .button-wrapper a:hover {
             background-color: ${Colors.lightGrey};
