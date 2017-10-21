@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { withApollo, gql } from 'react-apollo'
 import fetch from 'isomorphic-fetch'
+import some from 'lodash/some'
 
 import { FIRSTLOAD_CHATROOMS_QUERY } from '../graphql/PublicChatrooms'
 import { FIRSTLOAD_USER_CHATROOMS_QUERY } from '../graphql/UserChatrooms'
@@ -129,6 +130,11 @@ class NewChat extends Component {
                 __typename: '_QueryMeta',
               }
   
+              if (some(allChatroomsData.allChatrooms, c => c.id === createChatroom.id)) {
+                // Already exists
+                return
+              }
+
               // 2. append at first position
               allChatroomsData.allChatrooms.unshift(createChatroom)
               allChatroomsData._allChatroomsMeta.count += 1
