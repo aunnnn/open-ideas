@@ -60,8 +60,12 @@ class LoginPage extends Component {
         pathname: '/'        
       })
     } catch(err) {
-    console.log('err', err)
-      alert("Oops: " + (err.graphQLErrors && err.graphQLErrors.length >= 1 && err.graphQLErrors[0].message) || err); 
+      alert("Oops: " + (
+        err.graphQLErrors 
+          && err.graphQLErrors.length >= 1 
+          && (err.graphQLErrors[0].functionError || err.graphQLErrors[0].message)) 
+        || err); 
+      
       this.setState({
         loading: false
       })
@@ -95,7 +99,7 @@ class LoginPage extends Component {
           <input
             value={this.state.email}
             onChange={(e) => this.setState({ email: e.target.value })}
-            type="text"
+            type="email"
             placeholder="email address"
           />
           <input
