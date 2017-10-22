@@ -19,7 +19,6 @@ class ChatList extends Component {
   };
 
   render() {
-    console.log('...render chatlist')
     const { loading, error, allChatrooms, _allChatroomsMeta, onClickChatroom, loadMoreEntries, noMore, currentRoomId } = this.props;
     if (loading) return <div>Loading</div>
     if (error) return <div>Error: {error}</div>

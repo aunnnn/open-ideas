@@ -98,12 +98,12 @@ class Chatroom extends Component {
     try {
       const { createMessageMutation, roomId, currentUserId } = this.props
 
-      const data = await createMessageMutation({
+      await createMessageMutation({
         variables: {
           text: textInput,
           chatroomId: roomId,
           createdByUserId: currentUserId,
-          updatedAt: new Date(),
+          updatedAt: (new Date()).toISOString(),
         }
       })
       this.setState({
@@ -320,9 +320,12 @@ class Chatroom extends Component {
     const chatroomError = this.props.chatroomQuery.error
     const messagesError = this.props.chatroomMessageQuery.error
     
-    if (chatroomError) return <div>Error: {chatroomError}</div>
-    if (messagesError) return <div>Error: {messagesError}</div>
-
+    if (chatroomError) { 
+      return <div>Error: {chatroomError}</div> 
+    }
+    if (messagesError) {
+      return <div>Error: {messagesError}</div>
+    }
     const messages = this.props.chatroomMessageQuery.allMessages
     const chatroom = this.props.chatroomQuery.Chatroom
 
