@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Link from 'next/link'
+import Router from 'next/router'
 import { withRouter } from 'next/router'
 import fetch from 'isomorphic-fetch'
 import debounce from 'lodash/debounce'
@@ -21,7 +22,10 @@ class MainLayout extends Component {
   onClickLogout = (e) => {
     e.preventDefault()
     if (confirm('Do you want to logout?')) {
-      this.props.onLoggedout()   
+      this.props.onLoggedout()
+      Router.push({
+        pathname: '/'        
+      })   
     }
   }
 
@@ -35,7 +39,7 @@ class MainLayout extends Component {
       console.error('Cannot update user last active: ', err)
     }
   }
-
+  
   render() {    
 
     this.updateUserLastActive()
@@ -128,7 +132,7 @@ class MainLayout extends Component {
   }
 }
 
-export default withRouter(connect(
+const MainLayoutWithRedux = connect(
   (state) => {
     return { 
       isLoggedIn: state.authReducers.isLoggedIn,
@@ -140,4 +144,5 @@ export default withRouter(connect(
       dispatch(loggedOut())
     }
   }),
-)(MainLayout))
+)(MainLayout)
+export default withRouter(MainLayoutWithRedux)
