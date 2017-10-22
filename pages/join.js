@@ -50,11 +50,11 @@ class LoginPage extends Component {
             password
           }
         })
-        const _id = result.data.signupUser.id
-        const _token = result.data.signupUser.token
-        const _username = result.data.signupUser.username
-        this._saveUserDataToStore(_token, _id, _username)
-        alert('👋 Successfully created account.')        
+        // const _id = result.data.signupUser.id
+        // const _token = result.data.signupUser.token
+        // const _username = result.data.signupUser.username
+        // this._saveUserDataToStore(_token, _id, _username)
+        alert('👋 Successfully created account. Please check your email and click on the confirmation link.')        
       }
       Router.push({
         pathname: '/'        
@@ -154,8 +154,6 @@ mutation CreateUserMutation($username: String!, $email: String!, $password: Stri
     username: $username,
   ) {
     id
-    username
-    token
   }
 }
 `
