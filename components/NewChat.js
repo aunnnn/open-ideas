@@ -169,7 +169,7 @@ class NewChat extends Component {
       this.props.onCreateNewChatroom(id)
     } catch(err) {
       if (err.graphQLErrors) {
-        alert("Oops: " + err.graphQLErrors[0].message);
+        alert("Oops: " + err.graphQLErrors[0].functionError || err.graphQLErrors[0].message);
       } else {
         alert(err)
       }
