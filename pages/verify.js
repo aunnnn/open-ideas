@@ -61,6 +61,7 @@ class VerifyPage extends Component {
           && (err.graphQLErrors[0].functionError || err.graphQLErrors[0].message)
         || err),
       })
+      alert('Oops: ' + this.state.error)
       Router.push('/')
     }
   }
