@@ -160,7 +160,6 @@ class NewChat extends Component {
       
       // Update invited
       await fetch(`${PLATONOS_API_ENDPOINT}/updateUserLastInvitedAt/${anotherUserId}`)
-      console.log('did update user last invited at')
 
       this.setState({
         title: '',

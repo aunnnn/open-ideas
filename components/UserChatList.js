@@ -58,7 +58,7 @@ class UserChatList extends Component {
         const Chatroom = subscriptionData.data.Chatroom.node
         const updatedFields = subscriptionData.data.Chatroom.updatedFields
         const mutation = subscriptionData.data.Chatroom.mutation
-        console.log('chatlist received subscription: Chatroom', Chatroom, 'mutation: ', mutation, 'updated Fields: ', updatedFields)
+        // console.log('chatlist received subscription: Chatroom', Chatroom, 'mutation: ', mutation, 'updated Fields: ', updatedFields)
 
         // Sometimes updated chatroom is not in firstload, we can add it here
         if (!_.some(previous.allChatrooms, (c) => (c.id === Chatroom.id))) {
