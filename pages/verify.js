@@ -38,17 +38,14 @@ class VerifyPage extends Component {
       error: null,
     })
     try {
-      const data = await this.props.verifyUserMutation({
+      const result = await this.props.verifyUserMutation({
         variables: {
           verificationCode: this.props.verificationCode,
         }
-      })
-      if (data.verifyUser.username) {
-        alert(`Successfully verify ${data.verifyUser.username}. Proceed to login.`)
-        Router.push('/join')
-      } else {
-        throw 'Internal Error: no username found.'
-      }
+      })      
+      const username = result.data.verifyUser.username
+      alert(`Successfully verify ${username || ''}. Proceed to login.`)
+      Router.push('/join')
       this.setState({
         isVerifying: false,
         error: null,
