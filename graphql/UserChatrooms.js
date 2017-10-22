@@ -29,7 +29,7 @@ export const FIRSTLOAD_USER_CHATROOMS_QUERY = gql`
 query allChatrooms($forUserId: ID!) {
   allChatrooms(
     first: ${N_CHATROOMS_FIRSTLOAD},
-    orderBy: createdAt_DESC,
+    orderBy: latestMessagesAt_DESC,
     filter: {
       users_some: {
         id: $forUserId,
@@ -58,7 +58,7 @@ query moreChatrooms($after: String!, $forUserId: ID!) {
   allChatrooms(
     first: ${N_CHATROOMS_LOADMORE}, 
     after: $after,
-    orderBy: createdAt_DESC,
+    orderBy: latestMessagesAt_DESC,
     filter: {
       users_some: {
         id: $forUserId,
