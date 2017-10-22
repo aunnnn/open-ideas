@@ -34,14 +34,14 @@ class UserChatList extends Component {
         return
       }
       // Subscribe
-      console.log('UserChatList subscribe...')
+      // console.log('UserChatList subscribe...')
       this.unsubscribe = this.subscribeToChatroomUpdates()
     } 
   }
 
   componentWillUnmount() {
     if (this.unsubscribe) {
-      console.log('-> unsubscribe user chatroom updates')
+      // console.log('-> unsubscribe user chatroom updates')
       this.unsubscribe()
       this.unsubscribe = null
     }
