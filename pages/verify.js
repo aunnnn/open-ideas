@@ -43,8 +43,8 @@ class VerifyPage extends Component {
           verificationCode: this.props.verificationCode,
         }
       })
-      if (verifyUser.username) {
-        alert(`Successfully verify ${verifyUser.username}.`)
+      if (verifyUser.verifyUser.username) {
+        alert(`Successfully verify ${verifyUser.username}. Proceed to login.`)
         Router.push('/join')
       } else {
         throw 'Internal Error: no username found.'
