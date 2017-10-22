@@ -84,53 +84,59 @@ class LoginPage extends Component {
         <Head>
           <title>{pageTitle}</title>
         </Head>
-        <form className="main" onSubmit={confirmDisabled ? null : this.onConfirm}>
-          <h4>{pageTitle}</h4>
-          <br />
-          {/* If sign up mode */
-            !this.state.loginMode &&
-            <input 
-              value={this.state.username}
-              onChange={(e) => this.setState({ username: e.target.value })}
-              type="text"
-              placeholder="username"
+        <div className="main">
+          <h1>{pageTitle}</h1>
+          <form onSubmit={confirmDisabled ? null : this.onConfirm}>
+            <br />
+            {/* If sign up mode */
+              !this.state.loginMode &&
+              <input 
+                value={this.state.username}
+                onChange={(e) => this.setState({ username: e.target.value })}
+                type="text"
+                placeholder="username"
+              />
+            }
+            <input
+              value={this.state.email}
+              onChange={(e) => this.setState({ email: e.target.value })}
+              type="email"
+              placeholder="email address"
             />
-          }
-          <input
-            value={this.state.email}
-            onChange={(e) => this.setState({ email: e.target.value })}
-            type="email"
-            placeholder="email address"
-          />
-          <input
-            value={this.state.password}
-            onChange={(e) => this.setState({ password: e.target.value })}
-            type="password"
-            placeholder={this.state.loginMode ? 'Your password' : 'Choose a safe password'}
-          />                  
-          {!this.state.loading ?
-            <div>
-              <button
-                type="submit" 
-                className="primary-button"
-                disabled={confirmDisabled}
-              >
-                {this.state.loginMode ? 'login' : 'create account'}
-              </button>
-              <div
-                className="change-mode-button"
-                onClick={() => this.setState({ loginMode: !this.state.loginMode })}
-              >
-                {this.state.loginMode ? 'need to create an account?' : 'already have an account?' }
+            <input
+              value={this.state.password}
+              onChange={(e) => this.setState({ password: e.target.value })}
+              type="password"
+              placeholder={this.state.loginMode ? 'Your password' : 'Choose a safe password'}
+            />                  
+            {!this.state.loading ?
+              <div>
+                <button
+                  type="submit" 
+                  className="primary-button"
+                  disabled={confirmDisabled}
+                >
+                  {this.state.loginMode ? 'login' : 'create account'}
+                </button>
+                <div
+                  className="change-mode-button"
+                  onClick={() => this.setState({ loginMode: !this.state.loginMode })}
+                >
+                  {this.state.loginMode ? 'need to create an account?' : 'already have an account?' }
+                </div>
               </div>
-            </div>
-            :
-            <div>
-              👀 
-            </div>
-          }
-        </form>
-        <style jsx>{`          
+              :
+              <div>
+                👀 
+              </div>
+            }
+          </form>
+        </div>
+        <style jsx>{`  
+          .main {
+            margin: 8px;
+          }        
+
           .main input {
             display: block;
             margin: 8px 0;
@@ -140,6 +146,7 @@ class LoginPage extends Component {
             cursor: pointer;
             margin-top: 20px;
             font-size: 16px;
+            color: blue;
           }
         `}</style>
       </Page>)
