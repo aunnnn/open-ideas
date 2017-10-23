@@ -57,7 +57,13 @@ class MessageList extends Component {
             </div>          
           )
         })}
-        {this.props.isClosed && <div className="end-of-chat">End of chat</div>}
+        {this.props.isClosed && 
+          <div>
+            <br />
+            <div className="end-of-chat">End of chat</div>
+            <hr />
+          </div>
+        }
         <div style={{ float:"left", clear: "both" }}
              ref={(el) => { this.messagesEnd = el; }}>
         </div>
