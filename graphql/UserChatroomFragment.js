@@ -20,6 +20,9 @@ const UserChatroomFragment = gql`
     stateType
     latestMessagesAt
     deniedByUserIds
+    savedByUsers {
+      id
+    }
   }
 `
 

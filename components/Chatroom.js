@@ -5,7 +5,6 @@ import findIndex from 'lodash/findIndex'
 import some from 'lodash/some'
 
 import { CHATROOM_STATE_TYPES } from '../constants'
-import CHATROOM_STATETYPE_MUTATION from '../graphql/ChatroomStateTypeMutation'
 
 import { Router } from '../routes'
 import MessageList from './MessageList'
@@ -16,6 +15,8 @@ import { FIRSTLOAD_CHATROOMS_QUERY } from './ChatList'
 import { FIRSTLOAD_USER_CHATROOMS_QUERY } from './UserChatList'
 import ChatroomEmptyMessage from './ChatroomEmptyMessage'
 import UserChatroomFragment from '../graphql/UserChatroomFragment'
+import CHATROOM_STATETYPE_MUTATION from '../graphql/ChatroomStateTypeMutation'
+import CURRENT_USER_QUERY from '../graphql/UserQuery'
 
 class Chatroom extends Component {
 
@@ -29,6 +30,7 @@ class Chatroom extends Component {
     super(props)
     this.state = {
       textInput: '',
+      mutatingSavedTalk: false,
     }
   }
 
@@ -190,6 +192,42 @@ class Chatroom extends Component {
     }
   }
 
+  onSaveOrRemoveChatroom = async (isSave) => {
+    if (!confirm(isSave ? "Save this talk? You can view all saved talks at Profile." : "Remove this talk?")) return
+    const { roomId, currentUserId } = this.props
+    this.setState({
+      mutatingSavedTalk: true
+    })
+    try {
+      const targetFunc = isSave ? this.props.saveChatroomMutation : this.props.removeFromSavedChatroomsMutation
+      await targetFunc({
+        variables: {
+          userId: currentUserId,
+          chatroomId: roomId,
+        },
+        refetchQueries: [
+          {
+            query: CURRENT_USER_QUERY,
+            variables: {
+              userId: currentUserId,
+            }
+          },
+          {
+            query: CHATROOM_QUERY,
+            variables: {
+              roomId
+            },
+          }
+        ]
+      })
+    } catch (err) {
+      alert("Oops: " + err.graphQLErrors[0].message);
+    }
+    this.setState({
+      mutatingSavedTalk: false,
+    })
+  }
+
   renderChatroom = (chatroom, messages) => {
     const { currentUserId } = this.props
     const usersInChat = chatroom.users
@@ -197,11 +235,16 @@ class Chatroom extends Component {
     const isActiveChat = chatroom.stateType === CHATROOM_STATE_TYPES.active
     const isClosedChat = chatroom.stateType === CHATROOM_STATE_TYPES.closed
     const chatroomTitle = chatroom.title
+    const isSavedByCurrentUser = chatroom.savedByUsers.map(u => u.id).indexOf(currentUserId) > -1
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <div className="header-wrapper">
           <div className="header">
-            <div className="button">save</div>
+          <div 
+            className={`button ${isSavedByCurrentUser ? 'remove-button' : 'save-button'}`} 
+            onClick={this.state.mutatingSavedTalk ? null : (() => this.onSaveOrRemoveChatroom(!isSavedByCurrentUser))}>
+              {isSavedByCurrentUser? 'remove' : 'save' }
+          </div>              
             {canChat && isActiveChat && <div className="end-chat-button" onClick={this.onEndChatroom} >(End this chat)</div>}
           </div>
           <h2>{chatroomTitle}<span style={{ fontSize: '13px' }}> ({messages.length})</span></h2>
@@ -288,16 +331,28 @@ class Chatroom extends Component {
             font-size: 13px;
             font-weight: bold;
             margin-right: 5px;
-            background: ${Colors.main};
             padding: 4px 8px;
             color: white;
             font-size: 13px;
             font-weight: bold;
           }
 
-          .button:hover {
+          .save-button {
+            background: ${Colors.main};
+          }
+
+          .remove-button {
+            background: gray;
+          }
+
+          .save-button:hover {
             background: #752615;
           }
+
+          .remove-button:hover {
+            opacity: 0.8;
+          }
+
 
           .end-chat-button {
             cursor: pointer;
@@ -416,9 +471,37 @@ const CREATE_MESSAGE_MUTATION = gql`
   }
 `
 
+const SAVE_CHATROOM_MUTATION = gql`
+  mutation saveChatroom($userId: ID!, $chatroomId: ID!) {
+    addToUserSavedChatrooms(
+      savedByUsersUserId: $userId,
+      savedChatroomsChatroomId: $chatroomId,
+    ) {
+      savedByUsersUser {
+        id
+      }
+    }
+  }
+`
+
+const REMOVE_FROM_SAVED_CHATROOM_MUTATION = gql`
+  mutation removeChatroom($userId: ID!, $chatroomId: ID!) {
+    removeFromUserSavedChatrooms(
+      savedByUsersUserId: $userId, 
+      savedChatroomsChatroomId: $chatroomId
+    ) {
+      savedByUsersUser {
+        id
+      }
+    }
+  }
+`
+
 export default compose(
   graphql(CHATROOM_QUERY, { name: 'chatroomQuery' }),
   graphql(CREATE_MESSAGE_MUTATION, { name: 'createMessageMutation' }),
+  graphql(SAVE_CHATROOM_MUTATION, { name: 'saveChatroomMutation' }),
+  graphql(REMOVE_FROM_SAVED_CHATROOM_MUTATION, { name: 'removeFromSavedChatroomsMutation' }),
   graphql(CHATROOM_STATETYPE_MUTATION(CHATROOM_STATE_TYPES.closed), { name: 'endChatroomMutation' }),
   graphql(CHATROOM_MESSAGE_QUERY, { 
     name: 'chatroomMessageQuery',     

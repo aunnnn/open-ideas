@@ -131,9 +131,9 @@ class ChatroomEmptyMessage extends Component {
     })
   }
 
-  onReport = () => {
-
-  }
+  // Not support yet
+  // onReport = () => {
+  // }
 
   render() {
     const chatroom = this.props.chatroom
@@ -146,26 +146,34 @@ class ChatroomEmptyMessage extends Component {
     if (chatroom.invitedUser.id === this.props.currentUserId) {
       return (
         <div>
-          <h3 className="title">👤 Someone invites you to chat!</h3>
+          <div>
+            <img src="/static/plato-red.jpg" alt="👤" className="plato" />
+            <h3 className="title"> Someone invites you to chat!</h3>
+          </div>
           <br />
           <p className="question">Do you want to talk?</p>
           {/* <br /> */}
           <div className="invitation-actions-container">
             <a onClick={this.onAccept} style={{ color: 'blue' }}>✔ Yes, start this chat.</a>
             <a onClick={this.onDeny} style={{ color: 'blue' }}>✖ No, I don't want to discuss this topic.</a>
-            <a onClick={this.onReport} style={{ color: '#d87511', fontSize: '14px' }}>🙁 Report, this topic seems inappropriate, random or not suitable to the community.</a>
+            {/* <a onClick={this.onReport} style={{ color: '#d87511', fontSize: '14px' }}>🙁 Report, this topic seems inappropriate, random or not suitable to the community.</a> */}
           </div>
           <style jsx>{`
             .title {
-              background: #dce2ed;
               padding: 8px;
               text-align: center;
+            }
+            .plato {
+              margin: 0 auto;
+              width: 100px;
+              height: auto;
+              display: block;
             }
             .question {
               font-size: 18px;
             }
             .invitation-actions-container a {
-              margin-top: 12px;
+              margin: 12px auto;
               display: block;
               font-size: 16px;
               color: green;
@@ -184,12 +192,11 @@ class ChatroomEmptyMessage extends Component {
       // Author will see this.            
       return (
         <div>
-          <h3>Your match is already invited.</h3>
+          <h3>👽 Your match is already invited.</h3>
           <br/>
           <p><b>Your match can...</b></p>
-          <p>• accept the topic, and the chat will start immediately,</p>
-          <p>• reject the topic, in which case we will invite another user.</p>
-          <hr/>
+          <p>• accept, and the talk will start immediately,</p>
+          <p>• reject, and we will invite another user.</p>
           <br/>
           {chatroom.deniedByUserIds.length > 0 
             && 

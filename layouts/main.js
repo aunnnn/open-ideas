@@ -71,7 +71,9 @@ class MainLayout extends Component {
           <div className="button-wrapper">
             <Link prefetch href="/"><a className={pathname === '/' && 'active'}>Read</a></Link>
             <Link prefetch href="/talk"><a className={pathname === '/talk' && 'active'}>Talk</a></Link>
-            
+            {isLoggedIn &&
+              <Link prefetch href="/profile"><a className={pathname === '/profile' && 'active'}>Profile</a></Link>
+            }
             {isLoggedIn ?
               <a onClick={this.onClickLogout}>Logout</a>
               :

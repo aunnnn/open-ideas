@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Head from "next/head"
 import Router from "next/router"
-import { graphql, gql, compose } from 'react-apollo'
+import { graphql, gql } from 'react-apollo'
 
 import Page from "../layouts/main"
 import withData from '../lib/withData'

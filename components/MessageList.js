@@ -60,8 +60,7 @@ class MessageList extends Component {
         {this.props.isClosed && 
           <div>
             <br />
-            <div className="end-of-chat">End of chat</div>
-            <hr />
+            <div className="end-of-chat">...End of chat...</div>
           </div>
         }
         <div style={{ float:"left", clear: "both" }}
@@ -81,6 +80,7 @@ class MessageList extends Component {
           }
           .end-of-chat {
             font-style: italic;
+            font-size: 14px;
             color: gray;
             text-align: center;
           }
