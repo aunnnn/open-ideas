@@ -57,6 +57,7 @@ class MessageList extends Component {
             </div>          
           )
         })}
+        {this.props.isClosed && <div className="end-of-chat">End of chat</div>}
         <div style={{ float:"left", clear: "both" }}
              ref={(el) => { this.messagesEnd = el; }}>
         </div>
@@ -72,6 +73,11 @@ class MessageList extends Component {
             height: 52px;
             margin-right: 10px;
           }
+          .end-of-chat {
+            font-style: italic;
+            color: gray;
+            text-align: center;
+          }
         `}</style>
       </div>
     );
@@ -83,6 +89,7 @@ MessageList.propTypes = {
   authorId: PropTypes.string.isRequired,
   messages: PropTypes.array.isRequired,
   currentUserId: PropTypes.string,
+  isClosed: PropTypes.bool.isRequired,
 }
 
 export default MessageList

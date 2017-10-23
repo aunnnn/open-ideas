@@ -195,7 +195,7 @@ class Chatroom extends Component {
     const usersInChat = chatroom.users
     const canChat = chatroom.stateType === CHATROOM_STATE_TYPES.active && (currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id)
     const isActiveChat = chatroom.stateType === CHATROOM_STATE_TYPES.active
-
+    const isClosedChat = chatroom.stateType === CHATROOM_STATE_TYPES.closed
     const chatroomTitle = chatroom.title
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
@@ -221,6 +221,7 @@ class Chatroom extends Component {
                 currentUserId={currentUserId} 
                 userIds={usersInChat.map(u => u.id)} 
                 authorId={chatroom.createdBy.id}
+                isClosed={isClosedChat}
               />   
           }
         </div>
