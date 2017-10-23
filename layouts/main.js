@@ -8,6 +8,7 @@ import debounce from 'lodash/debounce'
 
 import Meta from '../components/meta'
 import { loggedOut } from '../lib/authActions'
+import { initGA, logPageView } from '../lib/analytics'
 
 import Colors from '../utils/Colors'
 import { PLATONOS_API_ENDPOINT } from '../constants'
@@ -17,6 +18,14 @@ class MainLayout extends Component {
   constructor(props) {
     super(props)
     this.updateUserLastActive = debounce(this.updateUserLastActive, 1000)
+  }
+
+  componentDidMount() {
+    if (!window.GA_INITIALIZED) {
+      initGA()
+      window.GA_INITIALIZED = true
+    }
+    logPageView() 
   }
 
   onClickLogout = (e) => {
@@ -145,4 +154,6 @@ const MainLayoutWithRedux = connect(
     }
   }),
 )(MainLayout)
-export default withRouter(MainLayoutWithRedux)
+
+const MainLayoutWithRouter = withRouter(MainLayoutWithRedux)
+export default MainLayoutWithRouter

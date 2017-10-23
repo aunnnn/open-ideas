@@ -9,6 +9,7 @@ import { loggedIn } from '../lib/authActions'
 
 import Page from '../layouts/main'
 import withData from '../lib/withData'
+import { logEvent } from '../lib/analytics'
 
 class LoginPage extends Component {
   constructor(props) {
@@ -119,7 +120,10 @@ class LoginPage extends Component {
               </button>
               <div
                 className="change-mode-button"
-                onClick={() => this.setState({ loginMode: !this.state.loginMode })}
+                onClick={() => {
+                  logEvent('Join', this.state.loginMode ? 'Signup' : 'Login')
+                  this.setState({ loginMode: !this.state.loginMode })
+                }}
               >
                 {this.state.loginMode ? 'need to create an account?' : 'already have an account?' }
               </div>
