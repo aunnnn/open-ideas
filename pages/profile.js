@@ -1,14 +1,21 @@
 import Head from "next/head"
+import Router from "next/router"
 import React, { Component } from 'react';
 import { graphql, compose } from 'react-apollo'
 import moment from 'moment'
 
+import Colors from '../utils/Colors'
 import CURRENT_USER_QUERY from '../graphql/UserQuery'
 import Page from "../layouts/main"
 import withData from '../lib/withData'
 import connectAuth from '../lib/connectAuth'
-
+import { computeSlugFromChatTitleAndID } from '../utils/misc'
 class ProfilePage extends Component {
+
+  onClickSavedListItem = (title, id) => {
+    const slug = computeSlugFromChatTitleAndID(title, id)
+    Router.push(`/?slug=${slug}`, `/read/${slug}`, { shallow: true })
+  }
 
   renderLoaded = () => {
     const { currentUserQuery: { User, error } } = this.props
@@ -29,15 +36,40 @@ class ProfilePage extends Component {
           :
           <div>
             <h3>Saved ({User.savedChatrooms.length})</h3>
-            {User.savedChatrooms.map(c => <div key={c.id}>{c.title}</div>)}
+            <div className="saved-list">
+              {User.savedChatrooms.map(c => (
+                <div className="saved-list-item" key={c.id} onClick={() => this.onClickSavedListItem(c.title,c.id)}>
+                  <p>{c.title} <span>({c._messagesMeta.count})</span></p>
+                </div>
+              ))}
+            </div>
           </div>
         }
+        <style jsx>{`
+          .saved-list-item {
+            cursor: pointer;
+            padding: 8px;
+          }
+          .saved-list-item:hover {
+            cursor: pointer;
+            background: ${Colors.lightGrey};
+          }
+          .saved-list-item span {
+            font-size: 12px;
+          }
+        `}</style>
       </div>
     )
   }
 
   render() {
-    const { currentUsername, currentUserQuery: { loading, error } } = this.props
+    const { currentUsername, currentUserQuery } = this.props
+    let loading;
+    if (currentUserQuery) {
+      loading = currentUserQuery.loading
+    } else {
+      loading = true
+    }
     return (
       <Page>
         <Head>
@@ -66,6 +98,9 @@ const ProfilePageWithGraphQLAndAuth = connectAuth(compose(
           userId: props.currentUserId,
         }
       }
+    },
+    skip: ({ currentUserId }) => {
+      return currentUserId ? false : true
     }
   })
 )(ProfilePage))

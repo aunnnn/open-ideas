@@ -30,6 +30,7 @@ class Chatroom extends Component {
     super(props)
     this.state = {
       textInput: '',
+      mutatingSavedTalk: false,
     }
   }
 
@@ -194,6 +195,9 @@ class Chatroom extends Component {
   onSaveOrRemoveChatroom = async (isSave) => {
     if (!confirm(isSave ? "Save this talk? You can view all saved talks at Profile." : "Remove this talk?")) return
     const { roomId, currentUserId } = this.props
+    this.setState({
+      mutatingSavedTalk: true
+    })
     try {
       const targetFunc = isSave ? this.props.saveChatroomMutation : this.props.removeFromSavedChatroomsMutation
       await targetFunc({
@@ -219,6 +223,9 @@ class Chatroom extends Component {
     } catch (err) {
       alert("Oops: " + err.graphQLErrors[0].message);
     }
+    this.setState({
+      mutatingSavedTalk: false,
+    })
   }
 
   renderChatroom = (chatroom, messages) => {
@@ -233,7 +240,11 @@ class Chatroom extends Component {
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <div className="header-wrapper">
           <div className="header">
-            <div className={`button ${isSavedByCurrentUser ? 'remove-button' : 'save-button'}`} onClick={() => this.onSaveOrRemoveChatroom(!isSavedByCurrentUser)}>{isSavedByCurrentUser? 'remove' : 'save' }</div>
+          <div 
+            className={`button ${isSavedByCurrentUser ? 'remove-button' : 'save-button'}`} 
+            onClick={this.state.mutatingSavedTalk ? null : (() => this.onSaveOrRemoveChatroom(!isSavedByCurrentUser))}>
+              {isSavedByCurrentUser? 'remove' : 'save' }
+          </div>              
             {canChat && isActiveChat && <div className="end-chat-button" onClick={this.onEndChatroom} >(End this chat)</div>}
           </div>
           <h2>{chatroomTitle}<span style={{ fontSize: '13px' }}> ({messages.length})</span></h2>

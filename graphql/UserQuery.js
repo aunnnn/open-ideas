@@ -7,6 +7,9 @@ query getCurrentUser($userId: ID!) {
     savedChatrooms {
       id
       title
+      _messagesMeta {
+        count
+      }
     }
   }
 }
