@@ -45,7 +45,7 @@ class IndexPage extends Component {
 
   render() {    
     // This works after redirect to first page after login
-    const { currentUserId } = this.props
+    const { currentUserId, currentUsername } = this.props
     const currentRoomId = this.props.url.query.slug ? chatroomIDFromSlug(this.props.url.query.slug) : null
 
     const initialChatroom = this.props.initialChatroom
@@ -90,9 +90,14 @@ class IndexPage extends Component {
               </div>
             || 
               <div className="welcome">
-                <h2>Welcome to Platonos!</h2>
+                <h2>Welcome to Platonos{currentUsername && `, ${currentUsername}`}!</h2>
                 <br />
-                <p>Read previous chats here or <Link prefetch href="/join"><a className="join-button">Join</a></Link> to create a chat.</p>
+                {
+                  currentUsername ? 
+                  <p>Select a talk to read.</p>
+                  :
+                  <p>Read talks here or <Link prefetch href="/join"><a className="join-button">Join</a></Link> to create a chat.</p>
+                }
               </div>
           }
         </div>

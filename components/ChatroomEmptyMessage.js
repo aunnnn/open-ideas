@@ -195,7 +195,7 @@ class ChatroomEmptyMessage extends Component {
           <h3>👽 Your match is already invited.</h3>
           <br/>
           <p><b>Your match can...</b></p>
-          <p>• accept, and the chat will start immediately,</p>
+          <p>• accept, and the talk will start immediately,</p>
           <p>• reject, and we will invite another user.</p>
           <br/>
           {chatroom.deniedByUserIds.length > 0 
