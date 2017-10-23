@@ -80,10 +80,10 @@ class IndexPage extends Component {
                 <Chatroom roomId={currentRoomId} currentUserId={currentUserId} />
               </div>
             || 
-              <div>
-                <p>Hi, Welcome to Platonos! This is a place to talk.</p>
+              <div className="welcome">
+                <h2>Welcome to Platonos!</h2>
                 <br />
-                <p>Select talkroom to read or <Link prefetch href="/join"><a className="join-button">Join</a></Link> to talk.</p>
+                <p>Read previous chats here or <Link prefetch href="/join"><a className="join-button">Join</a></Link> to create a chat.</p>
               </div>
           }
         </div>
@@ -149,6 +149,9 @@ class IndexPage extends Component {
             background: ${Colors.main};
             margin-bottom: 20px;
             cursor: pointer;
+          }
+          .welcome {
+            margin: 8px;
           }
         `}</style>
       </Page>

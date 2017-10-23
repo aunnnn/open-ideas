@@ -73,6 +73,7 @@ class TalkPage extends Component {
     
           .please-join {
             font-size: 14px;
+            margin: 8px;
           }
           .talk-list {
             z-index: 1;
@@ -82,7 +83,7 @@ class TalkPage extends Component {
             -webkit-overflow-scrolling: touch;
             position: relative;
             border-right: 1px solid rgba(0, 0, 0, .20);
-            border-top: 1px solid rgba(0, 0, 0, .20);
+            // border-top: 1px solid rgba(0, 0, 0, .20);
           }
 
           .talk-room {

@@ -34,14 +34,14 @@ class UserChatList extends Component {
         return
       }
       // Subscribe
-      console.log('UserChatList subscribe...')
+      // console.log('UserChatList subscribe...')
       this.unsubscribe = this.subscribeToChatroomUpdates()
     } 
   }
 
   componentWillUnmount() {
     if (this.unsubscribe) {
-      console.log('-> unsubscribe user chatroom updates')
+      // console.log('-> unsubscribe user chatroom updates')
       this.unsubscribe()
       this.unsubscribe = null
     }
@@ -56,8 +56,8 @@ class UserChatList extends Component {
       onError: (err) => console.error(err),
       updateQuery: (previous, { subscriptionData }) => {
         const Chatroom = subscriptionData.data.Chatroom.node
-        const updatedFields = subscriptionData.data.Chatroom.updatedFields
-        const mutation = subscriptionData.data.Chatroom.mutation
+        // const updatedFields = subscriptionData.data.Chatroom.updatedFields
+        // const mutation = subscriptionData.data.Chatroom.mutation
         // console.log('chatlist received subscription: Chatroom', Chatroom, 'mutation: ', mutation, 'updated Fields: ', updatedFields)
 
         // Sometimes updated chatroom is not in firstload, we can add it here
@@ -123,7 +123,7 @@ class UserChatList extends Component {
         </div>
       )
     }
-    return <div>Login to view your chats.</div>
+    return <div></div>
   }
 }
 
