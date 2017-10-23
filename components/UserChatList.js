@@ -8,6 +8,7 @@ import { USER_CHATROOMS_SUBSCRIPTION, FIRSTLOAD_USER_CHATROOMS_QUERY, MORE_USER_
 import ChatListItem from './ChatListItem'
 
 import Colors from '../utils/Colors';
+import { computeSlugFromChatTitleAndID } from '../utils/misc'
 
 const orderedUserChatrooms = (chatrooms) => {
   // return _.orderBy(chatrooms, ['stateType', 'createdAt'], ['asc', 'desc'])
@@ -89,9 +90,10 @@ class UserChatList extends Component {
         <div>
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {allChatrooms.map((chat) => {
+              const computedSlug = computeSlugFromChatTitleAndID(chat.title, chat.id)
               return (
                 <div key={chat.id}>
-                  <li className="main" onClick={() => onClickChatroom(chat.id)}>
+                  <li className="main" onClick={() => onClickChatroom(computedSlug)}>
                     <ChatListItem 
                       id={chat.id}
                       title={chat.title}

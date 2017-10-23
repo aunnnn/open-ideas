@@ -8,6 +8,7 @@ import ChatListItem from './ChatListItem'
 import Colors from '../utils/Colors';
 import { FIRSTLOAD_CHATROOMS_QUERY, MORE_CHATROOMS_QUERY } from '../graphql/PublicChatrooms'
 import { CHATROOM_STATE_TYPES } from '../constants'
+import { computeSlugFromChatTitleAndID } from '../utils/misc'
 
 // Change number of chats first load/ loadmore in constants.js
 class ChatList extends Component {
@@ -27,10 +28,11 @@ class ChatList extends Component {
       return (
         <div>
           <ul style={{ listStyle: 'none', padding: 0 }}>
-            {allChatrooms.map((chat, index) => {
+            {allChatrooms.map((chat) => {
+              const computedSlug = computeSlugFromChatTitleAndID(chat.title, chat.id)
               return (
                 <div key={chat.id}>
-                  <li className="main" onClick={() => onClickChatroom(chat.id)}>
+                  <li className="main" onClick={() => onClickChatroom(computedSlug)}>
                     <ChatListItem 
                       id={chat.id}
                       title={chat.title}

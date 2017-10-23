@@ -8,20 +8,25 @@ import withData from '../lib/withData'
 import connectAuth from '../lib/connectAuth'
 import UserChatList from '../components/UserChatList'
 import Chatroom from '../components/Chatroom'
+import { chatroomIDFromSlug } from '../utils/misc'
 
 class TalkPage extends Component {
 
   static async getInitialProps({ query }) {
-    return { initialChatroomId: query.chatroomId }
+    const chatroomId = query.slug ? chatroomIDFromSlug(query.slug) : null
+    return { 
+      initialChatroomId: chatroomId,
+      slug: query.slug,
+    }
   }
 
-  goToChatroom = (id) => {
-    Router.push(`/talk?chatroomId=${id}`, `/talk/${id}`, { shallow: true })
+  goToChatroom = (slug) => {
+    Router.push(`/talk?slug=${slug}`, `/talk/${slug}`, { shallow: true })
   }
 
   render () {
     const { currentUserId, currentUsername } = this.props
-    const currentRoomId = this.props.url.query.chatroomId || this.props.initialChatroomId
+    const currentRoomId = this.props.url.query.slug ? chatroomIDFromSlug(this.props.url.query.slug) : null
     return (
       <Page>
         <Head>
@@ -47,7 +52,7 @@ class TalkPage extends Component {
             />
           </div>
           <div className="talk-room">
-            {currentRoomId && <Chatroom roomId={currentRoomId} currentUserId={currentUserId} />}
+            {currentRoomId && <Chatroom roomId={currentRoomId} currentUserId={currentUserId} talkMode />}
           </div>
 
         </div>

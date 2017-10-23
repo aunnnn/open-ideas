@@ -7,6 +7,7 @@ import some from 'lodash/some'
 import { FIRSTLOAD_CHATROOMS_QUERY } from '../graphql/PublicChatrooms'
 import { FIRSTLOAD_USER_CHATROOMS_QUERY } from '../graphql/UserChatrooms'
 import { CHATROOM_STATE_TYPES, PLATONOS_API_ENDPOINT } from '../constants'
+import { computeSlugFromChatTitleAndID } from '../utils/misc'
 import UserChatroomFragment from '../graphql/UserChatroomFragment'
 
 class NewChat extends Component {
@@ -161,11 +162,13 @@ class NewChat extends Component {
       // Update invited
       await fetch(`${PLATONOS_API_ENDPOINT}/updateUserLastInvitedAt/${anotherUserId}`)
 
+      const title = this.state.title + ''
       this.setState({
         title: '',
         insertingNewTopic: false,
       })
-      this.props.onCreateNewChatroom(id)
+      const newChatroomSlug = computeSlugFromChatTitleAndID(title, id)
+      this.props.onCreateNewChatroom(newChatroomSlug)
     } catch(err) {
       if (err.graphQLErrors) {
         alert("Oops: " + err.graphQLErrors[0].functionError || err.graphQLErrors[0].message);

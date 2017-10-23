@@ -13,12 +13,17 @@ import ChatList from '../components/ChatList'
 import Chatroom from '../components/Chatroom'
 
 import Colors from '../utils/Colors'
+import { chatroomIDFromSlug } from '../utils/misc'
 
 class IndexPage extends Component {
 
   static async getInitialProps({ query }) {
     // for those who enters from link platonos.com/read/chatroomId
-    return { initialChatroomId: query.chatroomId }
+    const chatroomId = query.slug ? chatroomIDFromSlug(query.slug) : null
+    return { 
+      initialChatroomId: chatroomId,
+      slug: query.slug,
+    }
   }
 
   constructor(props) {
@@ -29,19 +34,19 @@ class IndexPage extends Component {
     }    
   }
 
-  goToChatroom = (id) => {
-    if (this.props.initialChatroomId && id !== this.props.initialChatroomId) {      
+  goToChatroom = (slug) => {
+    if (this.props.slug && slug !== this.props.slug) {      
       this.setState({
         renderInitialChat: false,
       })
     }
-    Router.push(`/?chatroomId=${id}`, `/read/${id}`, { shallow: true })
+    Router.push(`/?slug=${slug}`, `/read/${slug}`, { shallow: true })
   }
 
   render() {    
     // This works after redirect to first page after login
     const { currentUserId } = this.props
-    const currentRoomId = this.props.url.query.chatroomId || this.props.initialChatroomId
+    const currentRoomId = this.props.url.query.slug ? chatroomIDFromSlug(this.props.url.query.slug) : null
 
     const initialChatroom = this.props.initialChatroom
     let initialChatroomLoading, initialChatroomError, initialChat
@@ -77,7 +82,7 @@ class IndexPage extends Component {
               currentRoomId 
             && 
               <div className="talk-room">
-                <Chatroom roomId={currentRoomId} currentUserId={currentUserId} />
+                <Chatroom roomId={currentRoomId} currentUserId={currentUserId} talkMode={false} />
               </div>
             || 
               <div className="welcome">

@@ -22,6 +22,7 @@ class Chatroom extends Component {
   static propTypes = {
     roomId: PropTypes.string.isRequired,
     currentUserId: PropTypes.string,
+    talkMode: PropTypes.bool.isRequired,
   };
 
   constructor(props) {
@@ -38,7 +39,7 @@ class Chatroom extends Component {
     const usersInChat = chatroom.users
     const currentUserId = this.props.currentUserId
     const canChat = currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id    
-    if (!canChat) {
+    if (!canChat && this.props.talkMode) {
       Router.pushRoute(`/read/${this.props.roomId}`)
     }
   }
