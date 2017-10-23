@@ -69,7 +69,11 @@ class IndexPage extends Component {
           {/* TALK PANEL  */}
           <div className="talk-list">
             <div className="header">
-              <h5>Latest <span className="button">(change)</span></h5>
+              <h5>
+                <span className="button">new</span>|
+                <span className="button">updated</span>|
+                <span className="button">messages</span>
+              </h5>
             </div>
             <div style={{ height: '45px' }} />
             <ChatList 
@@ -116,8 +120,9 @@ class IndexPage extends Component {
             font-weight: 400;
           }
           .header .button {
-            font-weight: bold;
+            font-size: 16px;
             cursor: pointer;
+            margin: 0 4px;
           }
           .header .button:hover {
             background-color: ${Colors.lightGrey};
