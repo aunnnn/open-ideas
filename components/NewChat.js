@@ -4,7 +4,6 @@ import { withApollo, gql } from 'react-apollo'
 import fetch from 'isomorphic-fetch'
 import some from 'lodash/some'
 
-import { FIRSTLOAD_CHATROOMS_QUERY } from '../graphql/PublicChatrooms'
 import { FIRSTLOAD_USER_CHATROOMS_QUERY } from '../graphql/UserChatrooms'
 import { CHATROOM_STATE_TYPES, PLATONOS_API_ENDPOINT } from '../constants'
 import { computeSlugFromChatTitleAndID } from '../utils/misc'
@@ -152,7 +151,6 @@ class NewChat extends Component {
             }
           }
 
-          updateChatroomsQuery(FIRSTLOAD_CHATROOMS_QUERY)
           updateChatroomsQuery(FIRSTLOAD_USER_CHATROOMS_QUERY, {
             forUserId: currentUserId,
           })
