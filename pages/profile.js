@@ -1,8 +1,9 @@
 import Head from "next/head"
 import React, { Component } from 'react';
-import { graphql, gql, compose } from 'react-apollo'
+import { graphql, compose } from 'react-apollo'
 import moment from 'moment'
 
+import CURRENT_USER_QUERY from '../graphql/UserQuery'
 import Page from "../layouts/main"
 import withData from '../lib/withData'
 import connectAuth from '../lib/connectAuth'
@@ -21,6 +22,16 @@ class ProfilePage extends Component {
     return (
       <div>
         <p>Your account was created {moment(User.createdAt).fromNow()}</p>
+        <br/>
+        {
+          User.savedChatrooms.length === 0 ?
+          <div>No saved talks</div>
+          :
+          <div>
+            <h3>Saved ({User.savedChatrooms.length})</h3>
+            {User.savedChatrooms.map(c => <div key={c.id}>{c.title}</div>)}
+          </div>
+        }
       </div>
     )
   }
@@ -45,18 +56,6 @@ class ProfilePage extends Component {
     );
   }
 }
-
-const CURRENT_USER_QUERY = gql`
-  query getCurrentUser($userId: ID!) {
-    User(id: $userId) {
-      createdAt
-      savedChatrooms {
-        id
-        title
-      }
-    }
-  }
-`
 
 const ProfilePageWithGraphQLAndAuth = connectAuth(compose(
   graphql(CURRENT_USER_QUERY, { 
