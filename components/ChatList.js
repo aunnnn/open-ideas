@@ -35,7 +35,7 @@ class ChatList extends Component {
                       id={chat.id}
                       title={chat.title}
                       count={chat._messagesMeta.count}
-                      createdAt={chat.createdAt}
+                      displayDate={chat.createdAt}
                       active={chat.id === currentRoomId}
                     />
                   </li>

@@ -7,7 +7,7 @@ import { CHATROOM_STATE_TYPES } from '../constants'
 
 const renderItemByStateType = (props) => {
   // Earth fix this for me, chat-item-title cannot be used here.... just restyle it
-  const { title, count, createdAt, stateType, isInvitationForCurrentUser } = props
+  const { title, count, displayDate, stateType, isInvitationForCurrentUser } = props
   
   switch (stateType) {
   case CHATROOM_STATE_TYPES.created:
@@ -15,7 +15,7 @@ const renderItemByStateType = (props) => {
     return (
       <div>
         <p className="chat-item-active">{title}<span style={{ fontSize: '12px', color: 'orange', opacity: '1.0' }}>...finding user</span></p>
-        <p style={{ fontStyle: 'italic', fontSize: '12px' }}>{moment(createdAt).fromNow()}</p>
+        <p style={{ fontStyle: 'italic', fontSize: '12px' }}>{moment(displayDate).fromNow()}</p>
       </div>
     )
   case CHATROOM_STATE_TYPES.invited:
@@ -23,7 +23,7 @@ const renderItemByStateType = (props) => {
     return (
       <div>
         <p className="chat-item-active">{title}<span style={{ fontSize: '12px', color: 'blue' }}> {isInvitationForCurrentUser ? 'invitation' : 'invited' } </span></p>
-        <p style={{ fontStyle: 'italic', fontSize: '12px' }}>{moment(createdAt).fromNow()}</p>
+        <p style={{ fontStyle: 'italic', fontSize: '12px' }}>{moment(displayDate).fromNow()}</p>
       </div>
     )
   case CHATROOM_STATE_TYPES.active:
@@ -31,7 +31,7 @@ const renderItemByStateType = (props) => {
     return (
       <div>
         <p className="chat-item-active">{title} ({count})</p>
-        <p style={{ fontStyle: 'italic', fontSize: '12px' }}>{moment(createdAt).fromNow()}</p>
+        <p style={{ fontStyle: 'italic', fontSize: '12px' }}>{moment(displayDate).fromNow()}</p>
       </div>
     )
   case CHATROOM_STATE_TYPES.closed:
@@ -39,7 +39,7 @@ const renderItemByStateType = (props) => {
     return (
       <div style={{ opacity: 0.5 }}>
         <p className="chat-item-active">{title}<span style={{ fontSize: '12px', color: 'orange' }}> closed </span></p>
-        <p style={{ fontStyle: 'italic', fontSize: '12px' }}>{moment(createdAt).fromNow()}</p>
+        <p style={{ fontStyle: 'italic', fontSize: '12px' }}>{moment(displayDate).fromNow()}</p>
       </div>
     )
 
@@ -47,7 +47,7 @@ const renderItemByStateType = (props) => {
     return (
       <div>
         <p className="chat-item-active">{title}</p>
-        <p style={{ fontStyle: 'italic', fontSize: '12px' }}>{moment(createdAt).fromNow()}</p>
+        <p style={{ fontStyle: 'italic', fontSize: '12px' }}>{moment(displayDate).fromNow()}</p>
       </div>
     )
   }
@@ -84,7 +84,7 @@ ChatListItem.propTypes = {
   id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   count: PropTypes.number,
-  createdAt: PropTypes.string.isRequired,
+  displayDate: PropTypes.string.isRequired,
   stateType: PropTypes.number,
   isInvitationForCurrentUser: PropTypes.bool,
 };

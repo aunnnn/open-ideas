@@ -96,7 +96,7 @@ class UserChatList extends Component {
                       id={chat.id}
                       title={chat.title}
                       count={chat._messagesMeta.count}
-                      createdAt={chat.latestMessagesAt}
+                      displayDate={chat.latestMessagesAt}
                       active={chat.id === currentRoomId}
                       stateType={chat.stateType}
                       isInvitationForCurrentUser={chat.invitedUser && chat.invitedUser.id === forUserId}
