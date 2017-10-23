@@ -184,7 +184,7 @@ class NewChat extends Component {
     const confirmDisabled = !topic || topic.replace(/\s/g, '').length === 0 || this.state.insertingNewTopic
     return (
       <div>
-        <form onSubmit={confirmDisabled ? null : this.onCreateChat}>
+        <form className="main" onSubmit={confirmDisabled ? null : this.onCreateChat}>
           <input
               value={this.state.title}
               onChange={e => this.setState({ title: e.target.value})}
@@ -198,15 +198,24 @@ class NewChat extends Component {
               type="submit"
               disabled={confirmDisabled}
           >
-              Create chat
+              Create talk
           </button>
           <style jsx>{`
             .add-chat-input {
-              height: 26px;
-              margin-right: 8px;
+              order: 0;
+              flex-grow: 1;
             }
+
             .primary-button {
+              order: 1;
               border: none;
+              flex-grow: 0;        
+            }
+
+            .main {
+              display: flex;
+              flex-flow: row wrap;
+              height: 30px;
             }
           `}</style>
         </form>

@@ -66,6 +66,7 @@ class TalkPage extends Component {
             width: calc(50vw - 98px);
             background-color: #fff;
             height: 60px;
+            padding: 4px;
             position: fixed;      
             z-index: 2;
             border-right: 1px solid #ddd;
@@ -88,7 +89,6 @@ class TalkPage extends Component {
             -webkit-overflow-scrolling: touch;
             position: relative;
             border-right: 1px solid rgba(0, 0, 0, .20);
-            // border-top: 1px solid rgba(0, 0, 0, .20);
           }
 
           .talk-room {
