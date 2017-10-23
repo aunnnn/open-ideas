@@ -36,7 +36,6 @@ class TalkPage extends Component {
         
           {/* NEW CHAT INPUT */}
           <div className="new-chat">
-          {currentUsername && <div><b>Hi, {currentUsername}</b></div>}
             {currentUserId ?
               <NewChat onCreateNewChatroom={this.goToChatroom} currentUserId={currentUserId} currentUsername={currentUsername} />            
               :
@@ -66,7 +65,7 @@ class TalkPage extends Component {
             width: calc(50vw - 98px);
             background-color: #fff;
             height: 60px;
-            padding: 4px;
+            padding: 12px 4px 4px 4px;
             position: fixed;      
             z-index: 2;
             border-right: 1px solid #ddd;

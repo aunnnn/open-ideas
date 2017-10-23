@@ -8,4 +8,5 @@ export const CHATROOM_STATE_TYPES = {
   closed: 3,
 }
 
+export const MAXIMUM_TOPIC_CHARACTERS_LENGTH = 150
 export const PLATONOS_API_ENDPOINT = 'https://api.platonos.com'

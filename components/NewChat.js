@@ -5,7 +5,7 @@ import fetch from 'isomorphic-fetch'
 import some from 'lodash/some'
 
 import { FIRSTLOAD_USER_CHATROOMS_QUERY } from '../graphql/UserChatrooms'
-import { CHATROOM_STATE_TYPES, PLATONOS_API_ENDPOINT } from '../constants'
+import { CHATROOM_STATE_TYPES, PLATONOS_API_ENDPOINT, MAXIMUM_TOPIC_CHARACTERS_LENGTH } from '../constants'
 import { computeSlugFromChatTitleAndID } from '../utils/misc'
 import UserChatroomFragment from '../graphql/UserChatroomFragment'
 
@@ -181,7 +181,10 @@ class NewChat extends Component {
 
   render() { 
     const topic = this.state.title
-    const confirmDisabled = !topic || topic.replace(/\s/g, '').length === 0 || this.state.insertingNewTopic
+    const isOverMaximumChars = topic.length > MAXIMUM_TOPIC_CHARACTERS_LENGTH
+    const confirmDisabled = !topic || topic.replace(/\s/g, '').length === 0 || this.state.insertingNewTopic || isOverMaximumChars
+    const charactersLeft = MAXIMUM_TOPIC_CHARACTERS_LENGTH - topic.length
+    
     return (
       <div>
         <form className="main" onSubmit={confirmDisabled ? null : this.onCreateChat}>
@@ -200,25 +203,33 @@ class NewChat extends Component {
           >
               Create talk
           </button>
-          <style jsx>{`
-            .add-chat-input {
-              order: 0;
-              flex-grow: 1;
-            }
-
-            .primary-button {
-              order: 1;
-              border: none;
-              flex-grow: 0;        
-            }
-
-            .main {
-              display: flex;
-              flex-flow: row wrap;
-              height: 30px;
-            }
-          `}</style>
         </form>
+        {topic.length > 0 && <p className="chars-left">Characters left: {charactersLeft}</p>}
+        <style jsx>{`
+          .add-chat-input {
+            order: 0;
+            flex-grow: 1;
+          }
+
+          .primary-button {
+            order: 1;
+            border: none;
+            flex-grow: 0;        
+          }
+
+          .main {
+            display: flex;
+            flex-flow: row wrap;
+            height: 30px;
+          }
+
+          .chars-left {
+            margin-top: 4px;
+            font-size: 12px;
+            color: ${isOverMaximumChars ? 'red' : 'gray'};            
+            font-weight: ${isOverMaximumChars ? 'bold' : 'normal'}
+          }
+        `}</style>
       </div>)
     }
 }
