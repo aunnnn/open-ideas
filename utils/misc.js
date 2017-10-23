@@ -5,6 +5,7 @@ export const computeSlugFromChatTitleAndID = (title, id) => {
     .replace(/\s\s+/g, ' ') // replace multiple spaces with one space
     .trim()
     .split(" ")
+    .slice(0, 10)
     .join("-") + `-${id}`
 }
 
