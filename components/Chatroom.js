@@ -236,6 +236,8 @@ class Chatroom extends Component {
     const isClosedChat = chatroom.stateType === CHATROOM_STATE_TYPES.closed
     const chatroomTitle = chatroom.title
     const isSavedByCurrentUser = chatroom.savedByUsers.map(u => u.id).indexOf(currentUserId) > -1
+    
+    const canSubmitMessage = this.state.textInput !== ''
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <div className="header-wrapper">
@@ -270,7 +272,7 @@ class Chatroom extends Component {
         </div>
 
         {canChat && isActiveChat &&
-          <form onSubmit={this.onCreateMessage} className="input-wrapper" ref={(form) => { this.inputForm = form; }}>
+          <form onSubmit={canSubmitMessage ? this.onCreateMessage : null} className="input-wrapper" ref={(form) => { this.inputForm = form; }}>
             <textarea
               className="input"
               type="text"
@@ -287,6 +289,14 @@ class Chatroom extends Component {
               placeholder="Type here..."
               value={this.state.textInput}
             />
+            {canSubmitMessage && 
+              <button 
+                className="input-submit-button"
+                type="submit"
+                disabled={!canSubmitMessage}
+              >
+                Send
+              </button>}
           </form>
         }        
         <style jsx scoped>{`
@@ -300,10 +310,12 @@ class Chatroom extends Component {
             overflow-y: auto;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
-          }
+          }          
           .input-wrapper {
             flex: 0 0 15vh;
             border-top: 1px solid #ddd;
+            display: flex;
+            align-items: flex-end;
           }
           .input {
             resize: none;
@@ -313,8 +325,21 @@ class Chatroom extends Component {
             font-size: 16px;
             width: 100%;
             height: 15vh;
+            background-color: rgba(255,255,255,0.2);
           }
           .input:focus {
+            outline: none;
+          }
+          .input-submit-button {
+            line-height: 32px;
+            display: flex;
+            padding: 4px !important;
+            background-color: white;
+            color: blue;
+            font-weight: bold;
+            border: none;
+            font-size: .9em;
+            cursor: pointer;
             outline: none;
           }
           .header {
@@ -352,7 +377,6 @@ class Chatroom extends Component {
           .remove-button:hover {
             opacity: 0.8;
           }
-
 
           .end-chat-button {
             cursor: pointer;

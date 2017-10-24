@@ -32,7 +32,7 @@ class ProfilePage extends Component {
         <br/>
         {
           User.savedChatrooms.length === 0 ?
-          <div>No saved talks</div>
+          <div>No saved talks.</div>
           :
           <div>
             <h3>Saved ({User.savedChatrooms.length})</h3>
