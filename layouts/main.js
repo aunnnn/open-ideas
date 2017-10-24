@@ -69,15 +69,20 @@ class MainLayout extends Component {
             </a>
           </Link>
           <div className="button-wrapper">
-            <Link prefetch href="/"><a className={pathname === '/' && 'active'}>Read</a></Link>
-            <Link prefetch href="/talk"><a className={pathname === '/talk' && 'active'}>Talk</a></Link>
-            {isLoggedIn &&
-              <Link prefetch href="/profile"><a className={pathname === '/profile' && 'active'}>Profile</a></Link>
-            }
-            {isLoggedIn ?
-              <a onClick={this.onClickLogout}>Logout</a>
-              :
-              <Link prefetch href="/join"><a className={pathname === '/join' && 'active'}>Join</a></Link>}                        
+            <div className="upper-pane">
+              <Link prefetch href="/"><a className={pathname === '/' && 'active'}>Read</a></Link>
+              <Link prefetch href="/talk"><a className={pathname === '/talk' && 'active'}>Talk</a></Link>
+              {isLoggedIn &&
+                <Link prefetch href="/profile"><a className={pathname === '/profile' && 'active'}>Profile</a></Link>
+              }
+              {isLoggedIn ?
+                <a onClick={this.onClickLogout}>Logout</a>
+                :
+                <Link prefetch href="/join"><a className={pathname === '/join' && 'active'}>Join</a></Link>}                        
+            </div>
+            <div className="lower-pane">
+              <Link prefetch href="/about"><a className={pathname === '/about' && 'active'}>About</a></Link>
+            </div>
           </div>
         </div>
         <div className="world">
@@ -98,6 +103,8 @@ class MainLayout extends Component {
             flex-basis: 98px;
             min-width: 98px;
             border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
           }
           .logo {
             pointer: cursor;
@@ -115,9 +122,19 @@ class MainLayout extends Component {
           }
           .button-wrapper {
             margin-top: 20px;
+            flex-basis: max-content;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+          }
+          .button-wrapper .upper-pane a {
+            height: 50px;
+          }
+          .button-wrapper .upper-pane {
+            display: flex;
+            flex-direction: column;
           }
           .button-wrapper a {
-            height: 50px;
             color: #000;
             display: block;
             text-align: center;
@@ -133,6 +150,13 @@ class MainLayout extends Component {
             background-color: ${Colors.lightGrey};
             border-top: 1px solid #ddd;
             border-bottom: 1px solid #ddd;
+          }
+          .lower-pane {
+            margin-top: auto;
+            margin-bottom: 30px;
+          }
+          .lower-pane a {
+            font-size: .9em !important;
           }
           .world {
             flex: 1 1 auto;

@@ -51,7 +51,23 @@ class TalkPage extends Component {
             />
           </div>
           <div className="talk-room">
-            {currentRoomId && <Chatroom roomId={currentRoomId} currentUserId={currentUserId} talkMode />}
+            {currentRoomId ? <Chatroom roomId={currentRoomId} currentUserId={currentUserId} talkMode />
+            :
+            <div style={{ margin: '8px' }}>
+             {
+               currentUsername ?
+               <div>
+                 <h2>Your Talks, {currentUsername}.</h2> 
+                 <br/>
+                 <p>Select a talk to read, or create a new one.</p>
+               </div>
+               :
+               <div>
+                 <h2>Welcome to Platonos!</h2> 
+                 <p>You can view your talks and create a talk here after login. <Link prefetch href="/join"><a className="join-button">Join</a></Link></p>
+               </div>
+             }
+            </div>}
           </div>
 
         </div>
@@ -64,7 +80,7 @@ class TalkPage extends Component {
           .new-chat {
             width: calc(50vw - 98px);
             background-color: #fff;
-            height: 60px;
+            height: 64px;
             padding: 12px 4px 4px 4px;
             position: fixed;      
             z-index: 2;
@@ -82,14 +98,13 @@ class TalkPage extends Component {
           }
           .talk-list {
             z-index: 1;
-            margin-top: 60px;
+            margin-top: 64px;
             flex: 0 0 calc(50vw - 98px);
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             position: relative;
             border-right: 1px solid rgba(0, 0, 0, .20);
           }
-
           .talk-room {
             width: 50vw;
             height: 100vh;

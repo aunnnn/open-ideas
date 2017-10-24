@@ -89,14 +89,19 @@ class IndexPage extends Component {
                 <Chatroom roomId={currentRoomId} currentUserId={currentUserId} talkMode={false} />
               </div>
             || 
-              <div className="welcome">
+              <div style={{ margin: '8px' }}>
                 <h2>Welcome to Platonos{currentUsername && `, ${currentUsername}`}!</h2>
-                <br />
                 {
                   currentUsername ? 
                   <p>Select a talk to read.</p>
                   :
-                  <p>Read talks here or <Link prefetch href="/join"><a className="join-button">Join</a></Link> to create a chat.</p>
+                  <div>
+                    <p>Read talks here or <Link prefetch href="/join"><a className="join-button">Join</a></Link> to create a chat.</p>
+                    <div id="what-is-platonos">
+                      <h3>What is Platonos?</h3>
+                      <p>This is where you can read conversations between two anonymous users.</p>
+                    </div>
+                  </div>
                 }
               </div>
           }
@@ -107,6 +112,9 @@ class IndexPage extends Component {
             display: flex;
             flex: 1;
             height: 100vh;
+          }
+          #what-is-platonos {
+            margin-top: 40px;
           }
           .join-button {
             color: blue;
@@ -164,9 +172,6 @@ class IndexPage extends Component {
             background: ${Colors.main};
             margin-bottom: 20px;
             cursor: pointer;
-          }
-          .welcome {
-            margin: 8px;
           }
         `}</style>
       </Page>
