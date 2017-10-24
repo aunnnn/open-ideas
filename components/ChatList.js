@@ -58,7 +58,7 @@ class ChatList extends Component {
           {!noMore ? 
             <div onClick={loadMoreEntries} style={{ color: 'blue', textAlign: 'center', cursor: 'pointer' }}>load more</div>
             :
-            <div style={{ color: 'gray', textAlign: 'center', fontSize: '14px', marginTop: '20px' }}>{_allChatroomsMeta.count} chats</div>}
+            <div style={{ color: 'gray', textAlign: 'center', fontSize: '14px', marginTop: '20px' }}>{_allChatroomsMeta.count} talk{_allChatroomsMeta.count !== 1 && 's'}</div>}
         </div>
       )
     }
