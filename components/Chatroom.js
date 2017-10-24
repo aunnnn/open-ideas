@@ -424,7 +424,7 @@ class Chatroom extends Component {
     if ((chatroomLoading && !chatroom) || (messagesLoading && !messages)) return <div style={{ margin: '8px'}}>Loading</div>    
 
     if (!chatroom) return <div style={{ margin: '8px'}}>This chatroom does not exist.</div>
-    // E.g., someone may remember room id and put it directly in the url, we must check it here that it's active/closed.
+
     const isPrivateChat = (chatroom.stateType !== CHATROOM_STATE_TYPES.active && chatroom.stateType !== CHATROOM_STATE_TYPES.closed)
     const currentUserCanView = this.props.currentUserId && some(chatroom.users, { id: this.props.currentUserId })
     if (isPrivateChat && !currentUserCanView) return <div style={{ margin: '8px'}}>This chatroom is not available for public yet.</div>
