@@ -193,7 +193,7 @@ class ChatroomEmptyMessage extends Component {
       return (
         <div>
           <img src="/static/plato.jpg" alt="👤" className="plato" />
-          <h3>Your match is already invited.</h3>
+          <h3 className="title">Your match is already invited.</h3>
           <br/>
           <p><b>Your match can...</b></p>
           <p>• accept, and the talk will start immediately,</p>
@@ -211,6 +211,9 @@ class ChatroomEmptyMessage extends Component {
               width: 200px;
               height: auto;
               display: block;
+            }
+            .title {
+              text-align: center;
             }
           `}</style>
         </div>
