@@ -39,7 +39,7 @@ class TalkPage extends Component {
             {currentUserId ?
               <NewChat onCreateNewChatroom={this.goToChatroom} currentUserId={currentUserId} currentUsername={currentUsername} />            
               :
-              <div className="please-join"><Link prefetch href="/join"><a className="join-button">Join</a></Link> to create a chat</div>
+              <div className="please-join"><Link prefetch href="/join"><a className="join-button">Join</a></Link> to create a talk</div>
             }            
           </div>
 

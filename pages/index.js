@@ -91,35 +91,48 @@ class IndexPage extends Component {
             || 
               <div style={{ margin: '8px' }}>
                 <h2>Welcome to Platonos{currentUsername && `, ${currentUsername}`}!</h2>
+                <br/>
                 {
                   currentUsername ? 
                   <p>Select a talk to read.</p>
                   :
                   <div>
-                    <p>Read talks here or <Link prefetch href="/join"><a className="join-button">Join</a></Link> to create a chat.</p>
-                    <div id="what-is-platonos">
-                      <h3>What is Platonos?</h3>
-                      <p>This is where you can read conversations between two anonymous users.</p>
-                    </div>
+                    <p>Read talks here or <Link prefetch href="/join"><a className="join-button">Join</a></Link> to create a talk.</p>
                   </div>
                 }
+                <div id="what-is-platonos">
+                  <h3>What is Platonos?</h3>
+                  <br/>
+                  <p>
+                    Platonos finds a random user for you to discuss on a topic you create.
+                    <br/><br/>
+                    All talks are public and everyone is anonymous.
+                    <br/><br/>
+                    <Link prefetch href="/about"><a className="about-button">Learn more</a></Link>
+                  </p>
+                  <p></p>
+                </div>
               </div>
           }
         </div>
 
-        <style jsx scoped>{`
+        <style jsx>{`
           .container {
             display: flex;
             flex: 1;
             height: 100vh;
           }
           #what-is-platonos {
-            margin-top: 40px;
+            margin-top: 60px;
           }
           .join-button {
             color: blue;
             font-size: 18px;
             font-weight: bold;
+          }
+          .about-button {
+            color: #444444;
+            text-decoration: underline;
           }
           .header {
             width: calc(50vw - 98px);
