@@ -31,11 +31,6 @@ class AboutPage extends Component {
               Any talks can be rewarding if participants are open-minded and thoughtful. 
               Any topic, without jargons, can be explained so that anyone could appreciate it.
             </p>
-            <br/>
-            {/* <p>We find many subjects worth thinking and talking.</p>
-            <p>We are not afraid to learn from others.</p>
-            <p>We are willing to explain others.</p>
-            <p>We know that we know nothing.</p> */}
           </div>
         </div>
         <style jsx>{`
