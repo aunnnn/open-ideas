@@ -40,7 +40,7 @@ class MessageList extends Component {
         {messages.map(m => {
           const isCurrentUserMessage = m.createdByUserId === currentUserId
           const isAuthor = m.createdByUserId === authorId
-          const anotherUserFace = !isCurrentUserMessage && currentUserId !== authorId ? 'plato-red.png' : 'plato.png'
+          const anotherUserFace = !isCurrentUserMessage && currentUserId !== authorId ? 'plato-red.jpg' : 'plato.jpg'
           return (
             <div
               key={m.id} className="msg-list"

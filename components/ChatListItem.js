@@ -35,7 +35,7 @@ const renderItemByStateType = (props) => {
       <p className="chat-item">{title} <span>({count})</span></p>
       <p className="date">{displayDate}
         {
-          stateType 
+          stateType
           &&
           <span className="state-display"> • {displayedTextForState(stateType, isInvitationForCurrentUser)}</span>
         }

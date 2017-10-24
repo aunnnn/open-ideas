@@ -147,7 +147,7 @@ class ChatroomEmptyMessage extends Component {
       return (
         <div>
           <div>
-            <img src="/static/plato-red.jpg" alt="👤" className="plato" />
+            <img src="/static/plato.jpg" alt="👤" className="plato" />
             <h3 className="title"> Someone invites you to talk!</h3>
           </div>
           <br />
@@ -164,8 +164,8 @@ class ChatroomEmptyMessage extends Component {
               text-align: center;
             }
             .plato {
-              margin: 0 auto;
-              width: 100px;
+              margin: 12px auto;
+              width: 200px;
               height: auto;
               display: block;
             }
@@ -192,7 +192,8 @@ class ChatroomEmptyMessage extends Component {
       // Author will see this.            
       return (
         <div>
-          <h3>👽 Your match is already invited.</h3>
+          <img src="/static/plato.jpg" alt="👤" className="plato" />
+          <h3>Your match is already invited.</h3>
           <br/>
           <p><b>Your match can...</b></p>
           <p>• accept, and the talk will start immediately,</p>
@@ -204,6 +205,14 @@ class ChatroomEmptyMessage extends Component {
               <h4 style={{ color: '#d87511' }}>🙁 Your topic has already been turned down by {chatroom.deniedByUserIds.length} people.</h4>
               <p>*A topic that has been rejected 3 times will be removed.*</p>
             </div>}
+          <style jsx>{`
+            .plato {
+              margin: 12px auto;
+              width: 200px;
+              height: auto;
+              display: block;
+            }
+          `}</style>
         </div>
       )
     }

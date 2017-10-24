@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { graphql } from 'react-apollo'
 
 import _ from 'lodash'
+import moment from 'moment'
 
 import { USER_CHATROOMS_SUBSCRIPTION, FIRSTLOAD_USER_CHATROOMS_QUERY, MORE_USER_CHATROOMS_QUERY } from '../graphql/UserChatrooms'
 import ChatListItem from './ChatListItem'
@@ -98,7 +99,7 @@ class UserChatList extends Component {
                       id={chat.id}
                       title={chat.title}
                       count={chat._messagesMeta.count}
-                      displayDate={chat.latestMessagesAt}
+                      displayDate={moment(chat.latestMessagesAt).fromNow()}
                       active={chat.id === currentRoomId}
                       stateType={chat.stateType}
                       isInvitationForCurrentUser={chat.invitedUser && chat.invitedUser.id === forUserId}
