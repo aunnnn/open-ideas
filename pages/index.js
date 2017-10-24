@@ -94,7 +94,9 @@ class IndexPage extends Component {
                 <br/>
                 {
                   currentUsername ? 
-                  <p>Select a talk to read.</p>
+                  <div>
+                    <p>Select a talk to read.</p>
+                  </div>
                   :
                   <div>
                     <p>Read talks here or <Link prefetch href="/join"><a className="join-button">Join</a></Link> to create a talk.</p>
