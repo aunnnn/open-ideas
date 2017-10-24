@@ -100,7 +100,6 @@ class MainLayout extends Component {
             height: 100vh;
           }
           .sidebar {
-            flex-basis: 98px;
             min-width: 98px;
             border-right: 1px solid #ddd;
             display: flex;
@@ -122,7 +121,6 @@ class MainLayout extends Component {
           }
           .button-wrapper {
             margin-top: 20px;
-            flex-basis: max-content;
             display: flex;
             flex-direction: column;
             flex-grow: 1;

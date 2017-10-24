@@ -34,8 +34,8 @@ class ChatList extends Component {
       dateDisplayFunction 
     } = this.props;
 
-    if (loading) return <div>Loading</div>
-    if (error) return <div>Error: {error}</div>
+    if (loading) return <div style={{ margin: '8px'}}>Loading</div>
+    if (error) return <div style={{ margin: '8px'}}>Error: {error}</div>
     if (allChatrooms) {
       if (allChatrooms.length === 0) return <div>No chats yet 😂</div>
       return (

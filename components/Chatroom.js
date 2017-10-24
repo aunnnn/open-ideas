@@ -420,14 +420,14 @@ class Chatroom extends Component {
     const messages = this.props.chatroomMessageQuery.allMessages
     const chatroom = this.props.chatroomQuery.Chatroom
 
-    if (chatroomLoading) return <div>Loading chatroom...</div>
-    if ((chatroomLoading && !chatroom) || (messagesLoading && !messages)) return <div>Loading</div>    
+    if (chatroomLoading) return <div style={{ margin: '8px'}}>Loading chatroom...</div>
+    if ((chatroomLoading && !chatroom) || (messagesLoading && !messages)) return <div style={{ margin: '8px'}}>Loading</div>    
 
-    if (!chatroom) return <div>This chatroom does not exist.</div>
+    if (!chatroom) return <div style={{ margin: '8px'}}>This chatroom does not exist.</div>
     // E.g., someone may remember room id and put it directly in the url, we must check it here that it's active/closed.
     const isPrivateChat = (chatroom.stateType !== CHATROOM_STATE_TYPES.active && chatroom.stateType !== CHATROOM_STATE_TYPES.closed)
     const currentUserCanView = this.props.currentUserId && some(chatroom.users, { id: this.props.currentUserId })
-    if (isPrivateChat && !currentUserCanView) return <div>This chatroom is not available for public yet.</div>
+    if (isPrivateChat && !currentUserCanView) return <div style={{ margin: '8px'}}>This chatroom is not available for public yet.</div>
     if (chatroom && messages) return this.renderChatroom(chatroom, messages)
     return <div>Something wrong, this shouldn't show.</div>
   }
