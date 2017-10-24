@@ -4,7 +4,6 @@ import React, { Component } from 'react';
 import { graphql, compose } from 'react-apollo'
 import moment from 'moment'
 
-import Colors from '../utils/Colors'
 import CURRENT_USER_QUERY from '../graphql/UserQuery'
 import Page from "../layouts/main"
 import withData from '../lib/withData'
