@@ -27,8 +27,8 @@ class ProfilePage extends Component {
       )
     }
     return (
-      <div>
-        <p>Your account was created {moment(User.createdAt).fromNow()}</p>
+      <div className="main">
+        <p className="create-date">Your account was created {moment(User.createdAt).fromNow()}</p>
         <br/>
         {
           User.savedChatrooms.length === 0 ?
@@ -46,13 +46,19 @@ class ProfilePage extends Component {
           </div>
         }
         <style jsx>{`
+          .create-date {
+            font-size: 14px;
+          }
+          .saved-list {
+            margin-top: 4px;
+          }
           .saved-list-item {
             cursor: pointer;
-            padding: 8px;
+            padding: 4px;
           }
           .saved-list-item:hover {
             cursor: pointer;
-            background: ${Colors.lightGrey};
+            text-decoration: underline;
           }
           .saved-list-item span {
             font-size: 12px;
