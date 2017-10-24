@@ -17,10 +17,23 @@ class ChatList extends Component {
     onClickChatroom: PropTypes.func.isRequired,
     initialChatroom: PropTypes.object,
     currentRoomId: PropTypes.string,
+    sortedBy: PropTypes.string.isRequired,
+    dateDisplayFunction: PropTypes.func.isRequired,
   };
 
   render() {
-    const { loading, error, allChatrooms, _allChatroomsMeta, onClickChatroom, loadMoreEntries, noMore, currentRoomId } = this.props;
+    const { 
+      loading, 
+      error, 
+      allChatrooms, 
+      _allChatroomsMeta, 
+      onClickChatroom, 
+      loadMoreEntries, 
+      noMore, 
+      currentRoomId, 
+      dateDisplayFunction 
+    } = this.props;
+
     if (loading) return <div>Loading</div>
     if (error) return <div>Error: {error}</div>
     if (allChatrooms) {
@@ -37,7 +50,7 @@ class ChatList extends Component {
                       id={chat.id}
                       title={chat.title}
                       count={chat._messagesMeta.count}
-                      displayDate={chat.createdAt}
+                      displayDate={dateDisplayFunction(chat)}
                       active={chat.id === currentRoomId}
                     />
                   </li>
@@ -67,9 +80,15 @@ class ChatList extends Component {
 }
 
 export default graphql(FIRSTLOAD_CHATROOMS_QUERY, {
-
+  options: props => {
+    return {
+      variables: {
+        orderBy: props.sortedBy,
+      }
+    }
+  },
   props(receivedProps) {
-    const { ownProps: { initialChatroom } } = receivedProps
+    const { ownProps: { initialChatroom, sortedBy } } = receivedProps
     const { data: { loading, error, _allChatroomsMeta, fetchMore } } = receivedProps
     let allChatrooms = receivedProps.data.allChatrooms
 
@@ -86,7 +105,7 @@ export default graphql(FIRSTLOAD_CHATROOMS_QUERY, {
     let allChatroomsWithInitial = allChatrooms
 
     // Show to public only active/closed
-    if (initialChatroom && (initialChatroom.stateType === CHATROOM_STATE_TYPES.active || initialChatroom.stateType === CHATROOM_STATE_TYPES.closed)) {
+    if (sortedBy === 'new' && initialChatroom && (initialChatroom.stateType === CHATROOM_STATE_TYPES.active || initialChatroom.stateType === CHATROOM_STATE_TYPES.closed)) {
       // **Append initialChat only when it doesn't already exist in allChatrooms.
       if (!some(allChatrooms, { id: initialChatroom.id })) {
         allChatroomsWithInitial = orderBy([...allChatrooms, initialChatroom], 'createdAt', 'desc')
@@ -103,6 +122,7 @@ export default graphql(FIRSTLOAD_CHATROOMS_QUERY, {
           query: MORE_CHATROOMS_QUERY,
           variables: {
             after: cursor,
+            orderBy: sortedBy,
           },
           updateQuery: (previousResult, { fetchMoreResult }) => {
             const previousChatrooms = previousResult.allChatrooms

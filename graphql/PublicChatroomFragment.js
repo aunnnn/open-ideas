@@ -5,10 +5,12 @@ const PublicChatroomFragment = gql`
     id
     title
     createdAt
+    updatedAt
     _messagesMeta {
       count
     }
     stateType
+    estimatedMessagesCount
   }
 `
 

@@ -99,7 +99,14 @@ class Chatroom extends Component {
       return
     }
     try {
-      const { createMessageMutation, roomId, currentUserId } = this.props
+      const { createMessageMutation, roomId, currentUserId, chatroomQuery } = this.props
+
+      if (!chatroomQuery.Chatroom) {
+        alert('Please wait...')
+        return
+      }
+
+      const estimatedMessagesCount = chatroomQuery.Chatroom._messagesMeta.count
 
       await createMessageMutation({
         variables: {
@@ -107,6 +114,7 @@ class Chatroom extends Component {
           chatroomId: roomId,
           createdByUserId: currentUserId,
           updatedAt: (new Date()).toISOString(),
+          estimatedMessagesCount,
         }
       })
       this.setState({
@@ -477,9 +485,18 @@ const CHATROOM_MESSAGE_SUBSCRIPTION= gql`
     }
   }
 `
+// # Estimated messages count*
+// # Graphcool doesn't support sort by aggregation (_allMessagesMeta) yet, 
+// # so we need to store count in order to sort them (e.g. top 100)
+
+// # this value will be updated at the same time as one of the user submit new message (to save # of requests to the server)
+// # The 'estimatedCount' is directly retrieved from the current local cache of messages in that room +1 
+// # (which won't reflect the actual count, e.g, but close enough).
+
+// # A better (but additional request) would be to query the count first, +1, then update, but that's 2 requests per new message
 
 const CREATE_MESSAGE_MUTATION = gql`
-  mutation createMessage($text: String!, $chatroomId: ID!, $createdByUserId: String!, $updatedAt: DateTime!) {
+  mutation createMessage($text: String!, $chatroomId: ID!, $createdByUserId: String!, $updatedAt: DateTime!, $estimatedMessagesCount: Int!) {
     createMessage (
       text: $text,
       chatroomId: $chatroomId,
@@ -491,7 +508,7 @@ const CREATE_MESSAGE_MUTATION = gql`
       createdByUserId
     }
 
-    updateChatroom(id: $chatroomId, latestMessagesAt: $updatedAt) {
+    updateChatroom(id: $chatroomId, latestMessagesAt: $updatedAt, estimatedMessagesCount: $estimatedMessagesCount,) {
       id
     }
   }

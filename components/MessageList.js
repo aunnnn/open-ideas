@@ -32,31 +32,70 @@ class MessageList extends Component {
   scrollToBottom = () => {
     this.messagesEnd.scrollIntoView()
   }
-  
-  render() {        
+
+  renderMessagesForParticipant = () => {
     const { messages, currentUserId, authorId } = this.props
     return (
       <div>
         {messages.map(m => {
-          const isCurrentUser = m.createdByUserId === currentUserId
+          const isCurrentUserMessage = m.createdByUserId === currentUserId
+          const isAuthor = m.createdByUserId === authorId
+          const anotherUserFace = !isCurrentUserMessage && currentUserId !== authorId ? 'plato-red.png' : 'plato.png'
+          return (
+            <div
+              key={m.id} className="msg-list"
+              style={{ marginLeft: isCurrentUserMessage ? '40%' : '0', marginRight: isCurrentUserMessage ? '0' : '40%' }}
+            >
+              {!isCurrentUserMessage && <img src={`/static/${anotherUserFace}`} alt="Platonos" className="plato" />}
+              <div style={{ marginBottom: '15px' }}>
+                <p style={{ color: isAuthor ? Colors.main : '#000', marginBottom: '3px' }}>{m.text}</p>
+                <p style={{ fontSize: '10px', fontStyle: 'italic' }} >
+                  {moment(m.createdAt).fromNow()}
+                </p> 
+              </div>   
+            </div>          
+          )
+        })}
+      </div>
+    )
+  }
+
+  renderMessagesForPublic = () => {
+    const { messages, authorId } = this.props
+    return (
+      <div>
+        {messages.map(m => {
           const isAuthor = m.createdByUserId === authorId
           const platoFace = isAuthor ? 'plato-red.jpg' : 'plato.jpg'
           return (
             <div
               key={m.id} className="msg-list"
-              style={{ marginLeft: isCurrentUser ? '40%' : '0', marginRight: isCurrentUser ? '0' : '40%' }}
+              style={{ marginLeft: isAuthor ? '40%' : '0', marginRight: isAuthor ? '0' : '40%' }}
             >
-              {!isCurrentUser && <img src={`/static/${platoFace}`} alt="Platonos" className="plato" />}
+              <img src={`/static/${platoFace}`} alt="Platonos" className="plato" />
               <div style={{ marginBottom: '15px' }}>
                 <p style={{ color: isAuthor ? Colors.main : '#000', marginBottom: '3px' }}>{m.text}</p>
                 <p style={{ fontSize: '10px', fontStyle: 'italic' }} >
-                  {/* Maybe using this for reactivity? https://gist.github.com/aortbals/48fa1e3526e42698f24dc58c2f03bf74 */}
                   {moment(m.createdAt).fromNow()}
                 </p> 
               </div> 
             </div>          
           )
         })}
+      </div>
+    )
+  }
+  
+  render() {
+    const { currentUserId, userIds } = this.props
+    return (
+      <div>
+        {
+          userIds.indexOf(currentUserId) > -1 ?
+          this.renderMessagesForParticipant()
+          :
+          this.renderMessagesForPublic()
+        }
         {this.props.isClosed && 
           <div>
             <br />
@@ -66,23 +105,23 @@ class MessageList extends Component {
         <div style={{ float:"left", clear: "both" }}
              ref={(el) => { this.messagesEnd = el; }}>
         </div>
-        <style jsx scoped>{`
+        <style jsx global>{`
           .msg-list {
             display: flex;
             flex-direction: row;
             word-break: break-word;
-          }
-          .plato {
-            flex: 0 0;
-            width: 37px;
-            height: 52px;
-            margin-right: 10px;
           }
           .end-of-chat {
             font-style: italic;
             font-size: 14px;
             color: gray;
             text-align: center;
+          }
+          .plato {
+            flex: 0 0;
+            width: 37px;
+            height: 52px;
+            margin-right: 10px;
           }
         `}</style>
       </div>

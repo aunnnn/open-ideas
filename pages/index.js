@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Head from 'next/head'
 import Link from 'next/link'
 import Router from 'next/router'
+import moment from 'moment'
 
 import connectAuth from '../lib/connectAuth'
 import { graphql, gql, compose } from 'react-apollo'
@@ -31,7 +32,12 @@ class IndexPage extends Component {
     this.state = {
       title: '',
       renderInitialChat: true,
+      sortedBy: 'new',
     }    
+
+    this.onSortedByNew = this.onSortedBy('new')
+    this.onSortedByUpdated = this.onSortedBy('updated')
+    this.onSortedByMessages = this.onSortedBy('#messages')
   }
 
   goToChatroom = (slug) => {
@@ -43,9 +49,49 @@ class IndexPage extends Component {
     Router.push(`/?slug=${slug}`, `/read/${slug}`, { shallow: true })
   }
 
+  onSortedBy = (sortedBy) => (e) => {
+    e.preventDefault()
+    this.setState({
+      sortedBy,
+    })
+  }
+
+  sortedByToGraphQLOrderBy = (sortedBy) => {
+    let sortedByToGraphQLOrderBy;
+    switch (sortedBy) {
+      case 'new': 
+        sortedByToGraphQLOrderBy = 'createdAt_DESC'
+        break
+      case 'updated': 
+        sortedByToGraphQLOrderBy = 'updatedAt_DESC'
+        break
+      case '#messages': 
+        sortedByToGraphQLOrderBy = 'estimatedMessagesCount_DESC'
+        break
+      default: sortedByToGraphQLOrderBy = 'createdAt_DESC'
+    }
+    return sortedByToGraphQLOrderBy
+  }
+
+  getDisplayDateOnChatList = (chat) => {
+    const sortedBy = this.state.sortedBy
+    switch (sortedBy) {
+      case 'new': 
+        return moment(chat.createdAt).fromNow()
+      case 'updated': 
+        return `Updated: ${moment(chat.updatedAt).fromNow()}`
+      case '#messages': 
+        return moment(chat.createdAt).fromNow()
+      default: 
+        return null
+    }
+  }
+
   render() {    
     // This works after redirect to first page after login
     const { currentUserId, currentUsername } = this.props
+    const { sortedBy } = this.state
+    
     const currentRoomId = this.props.url.query.slug ? chatroomIDFromSlug(this.props.url.query.slug) : null
 
     const initialChatroom = this.props.initialChatroom
@@ -69,17 +115,30 @@ class IndexPage extends Component {
           {/* TALK PANEL  */}
           <div className="talk-list">
             <div className="header">
-              <h5>
-                <span className="button">new</span>|
-                <span className="button">updated</span>|
-                <span className="button">messages</span>
-              </h5>
+              <div className="left-pane">
+                <span 
+                  className={`button ${sortedBy === 'new' && 'active'}`} 
+                  onClick={this.onSortedByNew}>new</span>|
+                <span 
+                  className={`button ${sortedBy === 'updated' && 'active'}`}
+                  onClick={this.onSortedByUpdated}>updated</span>|
+                <span 
+                  className={`button ${sortedBy === '#messages' && 'active'}`}
+                  onClick={this.onSortedByMessages}
+                  >#messages</span>
+              </div>
+              {/* <div className="right-pane">
+                <p>refresh</p>
+              </div> */}
             </div>
             <div style={{ height: '45px' }} />
             <ChatList 
               onClickChatroom={this.goToChatroom} 
               currentRoomId={currentRoomId} 
-              initialChatroom={initialChat} />
+              initialChatroom={initialChat} 
+              sortedBy={this.sortedByToGraphQLOrderBy(sortedBy)}
+              dateDisplayFunction={this.getDisplayDateOnChatList}
+            />
           </div>
           
           { /* TALK ROOM */
@@ -143,6 +202,9 @@ class IndexPage extends Component {
             background-color: #fff;
             border-bottom: 1px solid #ddd;
             border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
           }
           .header h5 {
             font-weight: 400;
@@ -151,12 +213,25 @@ class IndexPage extends Component {
             font-size: 16px;
             cursor: pointer;
             margin: 0 4px;
+            color: gray;
           }
           .header .button:hover {
             background-color: ${Colors.lightGrey};
           }
+          .header .button.active {
+            font-weight: bold;
+            color: black;
+          }
           .please-join {
             font-size: 14px;
+          }
+
+          .header .left-pane {
+            flex-grow: 1;
+          }
+
+          .right-pane {
+            cursor: pointer;
           }
 
           .new-chat {

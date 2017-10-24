@@ -148,13 +148,13 @@ class ChatroomEmptyMessage extends Component {
         <div>
           <div>
             <img src="/static/plato-red.jpg" alt="👤" className="plato" />
-            <h3 className="title"> Someone invites you to chat!</h3>
+            <h3 className="title"> Someone invites you to talk!</h3>
           </div>
           <br />
           <p className="question">Do you want to talk?</p>
           {/* <br /> */}
           <div className="invitation-actions-container">
-            <a onClick={this.onAccept} style={{ color: 'blue' }}>✔ Yes, start this chat.</a>
+            <a onClick={this.onAccept} style={{ color: 'blue' }}>✔ Yes, start this talk.</a>
             <a onClick={this.onDeny} style={{ color: 'blue' }}>✖ No, I don't want to discuss this topic.</a>
             {/* <a onClick={this.onReport} style={{ color: '#d87511', fontSize: '14px' }}>🙁 Report, this topic seems inappropriate, random or not suitable to the community.</a> */}
           </div>

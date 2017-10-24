@@ -33,7 +33,7 @@ const renderItemByStateType = (props) => {
   return (
     <div className="main">
       <p className="chat-item">{title} <span>({count})</span></p>
-      <p className="date">{moment(displayDate).fromNow()}
+      <p className="date">{displayDate}
         {
           stateType 
           &&
