@@ -242,11 +242,13 @@ class Chatroom extends Component {
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <div className="header-wrapper">
           <div className="header">
-          <div 
-            className={`button ${isSavedByCurrentUser ? 'remove-button' : 'save-button'}`} 
-            onClick={this.state.mutatingSavedTalk ? null : (() => this.onSaveOrRemoveChatroom(!isSavedByCurrentUser))}>
-              {isSavedByCurrentUser? 'remove' : 'save' }
-          </div>              
+            {currentUserId &&
+              <div 
+                className={`button ${isSavedByCurrentUser ? 'remove-button' : 'save-button'}`} 
+                onClick={this.state.mutatingSavedTalk ? null : (() => this.onSaveOrRemoveChatroom(!isSavedByCurrentUser))}>
+                  {isSavedByCurrentUser? 'remove' : 'save' }
+              </div>
+            }
             {canChat && isActiveChat && <div className="end-chat-button" onClick={this.onEndChatroom} >(End this chat)</div>}
           </div>
           <h2>{chatroomTitle}<span style={{ fontSize: '13px' }}> ({messages.length})</span></h2>
@@ -299,7 +301,7 @@ class Chatroom extends Component {
               </button>}
           </form>
         }        
-        <style jsx scoped>{`
+        <style jsx>{`
           .header-wrapper {
             flex-shrink: 0;
             padding: 0 10px 10px;
