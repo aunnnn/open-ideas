@@ -47,16 +47,18 @@ class AboutPage extends Component {
               <h3>Why?</h3>
               <br/>
               <p>
-                We all have thoughts, beliefs, something brewing deep inside us that are rarely shared with others.
-                The reason could be that it is simply weird to bring up such topics, and this is sad, since they are very personal, original, and meaningful.
-                This is a recurring problem for many generations despite our technological advance.
-                Knowing what others think about them helps us grow intellectually.
+                We all have thoughts, beliefs, something brewing deep inside us.
+                They are very personal, original, and meaningful.
+                However, we rearely share them with others probably simply because it is weird to bring up such topics.
+                Despite our technological advances, this is still a problem today.
+                Knowing what others think about our thoughts helps us grow intellectually.
+                Platonos is an experimental platform that aims to change this.
               </p>
               <br/>
               <p>
                 Any talk is rewarding if participants are open-minded and thoughtful. 
                 Any topic, without jargons, can be explained so that anyone could appreciate it.
-                That is why everyone is worth talking with.
+                Everyone is worth talking with.
               </p>
             </div>
           </div>
