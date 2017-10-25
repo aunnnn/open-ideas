@@ -47,12 +47,12 @@ class AboutPage extends Component {
               <h3>Why?</h3>
               <br/>
               <p>
-                We all have thoughts, beliefs, something brewing deep inside us.
+                We all have thoughts, beliefs, and something brewing deep inside us.
                 They are very personal, original, and meaningful.
-                However, we rearely share them with others probably simply because it is weird to bring up such topics.
+                However, we rarely share them with others, simply because it is weird to them bring up.
                 Despite our technological advances, this is still a problem today.
                 Knowing what others think about our thoughts helps us grow intellectually.
-                Platonos is an experimental platform that aims to change this.
+                Platonos is an experimental platform that aims to achieve that.
               </p>
               <br/>
               <p>
