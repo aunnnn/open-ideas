@@ -28,8 +28,9 @@ class AboutPage extends Component {
               <br/>
               <ol>
                 <li>An author initiates a topic.</li>
-                <li>A random match is assigned.</li>
-                <li>The match either accepts or rejects the talk. If accept, the talk starts immediately. If reject, another user is assigned.</li>
+                <li>A random match is invited.</li>
+                <li>The match either accepts or rejects the talk. If accept, the talk starts immediately. If reject, another user is invited.</li>
+                <li>The talk ends if any participant ends it.</li>
               </ol>
               <div className="icon-explained">
                 <div className="author">
