@@ -18,7 +18,7 @@ class AboutPage extends Component {
             <h1>What is Platonos?</h1>
             <br/>
             <p>
-              Platonos finds a random user to discuss on your topic.
+              Platonos finds a random user to discuss with you.
               <strong> All talks are public and everyone is anonymous.</strong>
             </p>
             <br/>
