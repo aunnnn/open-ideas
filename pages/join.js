@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import Router from 'next/router'
+import { Router as CustomRouter } from '../routes'
 import { connect } from 'react-redux';
 
 import { graphql, gql, compose } from 'react-apollo'
 import Head from 'next/head'
-import Router from 'next/router'
 
 import { loggedIn } from '../lib/authActions'
 
@@ -12,10 +13,18 @@ import withData from '../lib/withData'
 import { logEvent } from '../lib/analytics'
 
 class LoginPage extends Component {
+
+  static async getInitialProps({ asPath }) {
+    // Either user comes throguh '/join' or '/login'
+    return {
+      isInitialLoginMode: asPath === '/login'
+    }
+  }
+
   constructor(props) {
     super(props)
     this.state = {
-      loginMode: true,
+      loginMode: props.isInitialLoginMode ? true : false,
       email: '',
       password: '',
       username: '',
@@ -123,6 +132,8 @@ class LoginPage extends Component {
                   className="change-mode-button"
                   onClick={() => {
                     logEvent('Join', this.state.loginMode ? 'Signup' : 'Login')
+                    const nextPath = this.state.loginMode ? '/join' : '/login'
+                    CustomRouter.pushRoute(nextPath)
                     this.setState({ loginMode: !this.state.loginMode })
                   }}
                 >
