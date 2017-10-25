@@ -3,11 +3,13 @@ import PropTypes from 'prop-types'
 import { withApollo, gql } from 'react-apollo'
 import fetch from 'isomorphic-fetch'
 import some from 'lodash/some'
+import moment from 'moment'
 
 import { FIRSTLOAD_USER_CHATROOMS_QUERY } from '../graphql/UserChatrooms'
-import { CHATROOM_STATE_TYPES, PLATONOS_API_ENDPOINT, MAXIMUM_TOPIC_CHARACTERS_LENGTH } from '../constants'
+import { CHATROOM_STATE_TYPES, PLATONOS_API_ENDPOINT, MAXIMUM_TOPIC_CHARACTERS_LENGTH, DAILY_CREATE_CHAT_QUOTA } from '../constants'
 import { computeSlugFromChatTitleAndID } from '../utils/misc'
 import UserChatroomFragment from '../graphql/UserChatroomFragment'
+import { CHECK_USER_TOTAL_CREATED_CHATS, GET_USER_AND_CHECK_USER_TOTAL_CREATED_CHATS } from '../graphql/UserQuery'
 
 class NewChat extends Component {
   
@@ -51,6 +53,22 @@ class NewChat extends Component {
       if (!anotherUser.user) {
         throw "Something wrong. We can't find another user right now, please try again later."
       }
+
+      const date_gte = moment().startOf('day').toISOString()
+      const date_lte = moment().endOf('day').toISOString()
+      const { data: { _allChatroomsMeta: { count: totalChatroomsCreatedToday } } } = await this.props.client.query({
+        query: CHECK_USER_TOTAL_CREATED_CHATS,
+        variables: {
+          userId: currentUserId,
+          date_gte,
+          date_lte,
+        }
+      })
+
+      if (totalChatroomsCreatedToday >= DAILY_CREATE_CHAT_QUOTA) {
+        throw "Sorry, you have no quota left to create a talk today. Please try again tomorrow."
+      }
+
       const anotherUserId = anotherUser.user.gc_id   
       const dateString = (new Date()).toISOString()
       const { data: { createChatroom: { id } } } = await this.props.client.mutate({
@@ -108,6 +126,7 @@ class NewChat extends Component {
             deniedByUserIds: [],
             stateType: CHATROOM_STATE_TYPES.invited,
             latestMessagesAt: dateString,
+            savedByUsers: [],
           }
         },
         update: (store, { data: { createChatroom }}) => {
@@ -154,6 +173,30 @@ class NewChat extends Component {
           updateChatroomsQuery(FIRSTLOAD_USER_CHATROOMS_QUERY, {
             forUserId: currentUserId,
           })
+
+          // Update total count
+          try {
+            const data = store.readQuery({
+              query: GET_USER_AND_CHECK_USER_TOTAL_CREATED_CHATS,
+              variables: {
+                userId: currentUserId,
+                date_gte,
+                date_lte,
+              }
+            })
+            data._allChatroomsMeta.count += 1
+            store.writeQuery({
+              query: GET_USER_AND_CHECK_USER_TOTAL_CREATED_CHATS,
+              variables: {
+                userId: currentUserId,
+                date_gte,
+                date_lte,
+              },
+              data,
+            })
+          } catch (err) {
+            console.log('Err updating store: ', err)
+          }
         },
       })
       
@@ -167,6 +210,17 @@ class NewChat extends Component {
       })
       const newChatroomSlug = computeSlugFromChatTitleAndID(title, id)
       this.props.onCreateNewChatroom(newChatroomSlug)
+      
+      const totalChatroomsLeft = DAILY_CREATE_CHAT_QUOTA - (totalChatroomsCreatedToday+1)
+      let leftMessage
+      if (totalChatroomsLeft === 0) {
+        leftMessage = 'You have no quota left to create a talk today.'
+      } else if (totalChatroomsLeft === 1) {
+        leftMessage = 'You can create one more talk today.'
+      } else {
+        leftMessage = `You have ${totalChatroomsLeft} talks left for today.`
+      }
+      alert(`Successfully create new talk! ${leftMessage}`)
     } catch(err) {
       if (err.graphQLErrors) {
         alert("Oops: " + err.graphQLErrors[0].functionError || err.graphQLErrors[0].message);

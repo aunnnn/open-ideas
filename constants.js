@@ -10,3 +10,4 @@ export const CHATROOM_STATE_TYPES = {
 
 export const MAXIMUM_TOPIC_CHARACTERS_LENGTH = 150
 export const PLATONOS_API_ENDPOINT = 'https://api.platonos.com'
+export const DAILY_CREATE_CHAT_QUOTA = 5

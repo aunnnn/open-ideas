@@ -4,11 +4,12 @@ import React, { Component } from 'react';
 import { graphql, compose } from 'react-apollo'
 import moment from 'moment'
 
-import CURRENT_USER_QUERY from '../graphql/UserQuery'
+import { GET_USER_AND_CHECK_USER_TOTAL_CREATED_CHATS } from '../graphql/UserQuery'
 import Page from "../layouts/main"
 import withData from '../lib/withData'
 import connectAuth from '../lib/connectAuth'
 import { computeSlugFromChatTitleAndID } from '../utils/misc'
+import { DAILY_CREATE_CHAT_QUOTA } from '../constants'
 class ProfilePage extends Component {
 
   onClickSavedListItem = (title, id) => {
@@ -17,7 +18,7 @@ class ProfilePage extends Component {
   }
 
   renderLoaded = () => {
-    const { currentUserQuery: { User, error } } = this.props
+    const { currentUserQuery: { User, _allChatroomsMeta: { count: totalChatsCreatedToday }, error } } = this.props
     if (error) {
       return (
         <div>
@@ -27,12 +28,14 @@ class ProfilePage extends Component {
     }
     return (
       <div className="main">
-        <p className="create-date">Your account was created {moment(User.createdAt).fromNow()}</p>
+        <br/>
+        <p>
+          Talks left: <span className="talks-left">{DAILY_CREATE_CHAT_QUOTA - totalChatsCreatedToday} / {DAILY_CREATE_CHAT_QUOTA}</span>
+          <span className="renew-date">({moment().startOf('day').format('DD/MM/YYYY')})</span>
+        </p>
         <br/>
         {
-          User.savedChatrooms.length === 0 ?
-          <div>No saved talks.</div>
-          :
+          User.savedChatrooms.length !== 0 &&
           <div>
             <h3>Saved ({User.savedChatrooms.length})</h3>
             <div className="saved-list">
@@ -45,8 +48,8 @@ class ProfilePage extends Component {
           </div>
         }
         <style jsx>{`
-          .create-date {
-            font-size: 14px;
+          .talks-left {
+            font-size: 18px;
           }
           .saved-list {
             margin-top: 4px;
@@ -61,6 +64,11 @@ class ProfilePage extends Component {
           }
           .saved-list-item span {
             font-size: 12px;
+          }
+          .renew-date {
+            font-size: 12px;
+            color: gray;
+            margin-left: 18px;
           }
         `}</style>
       </div>
@@ -95,12 +103,14 @@ class ProfilePage extends Component {
 }
 
 const ProfilePageWithGraphQLAndAuth = connectAuth(compose(
-  graphql(CURRENT_USER_QUERY, { 
+  graphql(GET_USER_AND_CHECK_USER_TOTAL_CREATED_CHATS, { 
     name: "currentUserQuery",
     options: props => {
       return {
         variables: {
           userId: props.currentUserId,
+          date_gte: moment().startOf('day').toISOString(),
+          date_lte: moment().endOf('day').toISOString(),
         }
       }
     },

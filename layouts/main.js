@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import Link from 'next/link'
 import Router from 'next/router'
 import { withRouter } from 'next/router'
+import NoSSR from 'react-no-ssr'
 import fetch from 'isomorphic-fetch'
 import debounce from 'lodash/debounce'
 
@@ -72,11 +73,12 @@ class MainLayout extends Component {
             <div className="upper-pane">
               <Link prefetch href="/"><a className={pathname === '/' && 'active'}>Read</a></Link>
               <Link prefetch href="/talk"><a className={pathname === '/talk' && 'active'}>Talk</a></Link>
-              {isLoggedIn &&
-                <Link prefetch href="/profile"><a className={pathname === '/profile' && 'active'}>Profile</a></Link>
-              }
               {isLoggedIn ?
-                <a onClick={this.onClickLogout}>Logout</a>
+                // Fix the wrong reuse component ssr problems (without this, profile won't get highlighted when you go to the page directly.)
+                <NoSSR>
+                  <Link prefetch href="/profile"><a className={pathname === '/profile' && 'active'}>Profile</a></Link>
+                  <a onClick={this.onClickLogout}>Logout</a>
+                </NoSSR>
                 :
                 <Link prefetch href="/join"><a className={pathname === '/join' && 'active'}>Join</a></Link>}                        
             </div>
