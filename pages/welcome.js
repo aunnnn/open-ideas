@@ -17,7 +17,7 @@ class WelcomePage extends Component {
         <div id="main">
           <div id="content">
             {/* <img src="/static/plato-red.jpg" /> */}
-            <h1>Platonos</h1>
+            <h1>Platonos<sub id="beta">beta</sub></h1>
             <h2>Fostering Your Ideas</h2>
             <div id="bg-wrapper">
               <img src="/static/loginfooterbg.png" />
@@ -90,7 +90,14 @@ class WelcomePage extends Component {
             font-size: 50px;
             color: ${Colors.main};
           }
+
+          #beta {
+            font-size: 14px;
+            color: black;
+          }
+
           #content h2 {
+            margin-top: 8px;
             font-weight: normal;
             color: gray;
           }
