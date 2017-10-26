@@ -80,11 +80,11 @@ class MainLayout extends Component {
                   <a onClick={this.onClickLogout}>Logout</a>
                 </NoSSR>
                 :
-                <Link prefetch href="/join"><a className={pathname === '/join' && 'active'}>Join</a></Link>}                        
+                <Link prefetch href="/join"><a className={pathname === '/join' && 'active'}>Join</a></Link>
+              } 
             </div>
-            <div className="lower-pane">
-              <Link prefetch href="/about"><a className={pathname === '/about' && 'active'}>About</a></Link>
-            </div>
+            <div className="flex-space"></div>
+            <Link prefetch href="/about"><a className={pathname === '/about' && 'active'}>About</a></Link>
           </div>
         </div>
         <div className="world">
@@ -126,15 +126,15 @@ class MainLayout extends Component {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-          }
-          .button-wrapper .upper-pane a {
-            height: 50px;
+            overflow-y: auto;
           }
           .button-wrapper .upper-pane {
             display: flex;
             flex-direction: column;
+            min-height: 200px;
           }
           .button-wrapper a {
+            height: 50px;
             color: #000;
             display: block;
             text-align: center;
@@ -151,12 +151,9 @@ class MainLayout extends Component {
             border-top: 1px solid #ddd;
             border-bottom: 1px solid #ddd;
           }
-          .lower-pane {
-            margin-top: auto;
-            margin-bottom: 30px;
-          }
-          .lower-pane a {
-            font-size: .9em !important;
+          .flex-space {
+            flex: 1;
+            min-height: 1px;
           }
           .world {
             flex: 1 1 auto;
