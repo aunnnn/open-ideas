@@ -127,6 +127,7 @@ class MainLayout extends Component {
             flex-direction: column;
             flex-grow: 1;
             overflow-y: auto;
+            padding-bottom: 30px;
           }
           .button-wrapper .upper-pane {
             display: flex;
