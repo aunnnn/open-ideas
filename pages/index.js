@@ -244,7 +244,7 @@ class IndexPage extends Component {
           .talk-list {
             z-index: 1;
             flex: 0 0 calc(50vw - 98px);
-            overflow-y: scroll;
+            overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             position: relative;
             border-right: 1px solid rgba(0, 0, 0, .20);
