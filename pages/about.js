@@ -62,6 +62,10 @@ class AboutPage extends Component {
                 Everyone is worth talking with.
               </p>
             </div>
+            
+            <div id="contact">
+              <p>Contact us at <a href="mailto:hi@platonos.com">hi@platonos.com</a></p>
+            </div>
           </div>
         </div>
         <style jsx>{`
@@ -92,6 +96,11 @@ class AboutPage extends Component {
           .icon-explained p {
             font-weight: bold;
             text-align: center;
+          }
+
+          #contact {
+            margin-top: 30px;
+            margin-bottom: 12px;
           }
         `}</style>
       </Page>
