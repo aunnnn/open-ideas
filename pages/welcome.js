@@ -20,7 +20,7 @@ class WelcomePage extends Component {
             <h1>Platonos<sub id="beta">beta</sub></h1>
             <h2>Fostering Your Ideas</h2>
             <div id="bg-wrapper">
-              <img src="/static/loginfooterbg.png" />
+              <img src="/static/loginfooterbg.jpg" />
             </div>
             <div>
               <Link prefetch href="/"><a className="go-button">{"I'M IN"}</a></Link>
