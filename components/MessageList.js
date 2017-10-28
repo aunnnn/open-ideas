@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment'
 import Colors from '../utils/Colors'
+import { insert_anchor } from '../utils/regex';
 
 class MessageList extends Component {
 
@@ -48,7 +49,7 @@ class MessageList extends Component {
             >
               {!isCurrentUserMessage && <img src={`/static/${anotherUserFace}`} alt="Platonos" className="plato" />}
               <div style={{ marginBottom: '15px' }}>
-                <p style={{ color: isAuthor ? Colors.main : '#000', marginBottom: '3px' }}>{m.text}</p>
+                <p style={{ color: isAuthor ? Colors.main : '#000', marginBottom: '3px' }} dangerouslySetInnerHTML={{ __html: insert_anchor(m.text) }}></p>
                 <p style={{ fontSize: '10px', fontStyle: 'italic' }} >
                   {moment(m.createdAt).fromNow()}
                 </p> 
@@ -74,7 +75,7 @@ class MessageList extends Component {
             >
               <img src={`/static/${platoFace}`} alt="Platonos" className="plato" />
               <div style={{ marginBottom: '15px' }}>
-                <p style={{ color: isAuthor ? Colors.main : '#000', marginBottom: '3px' }}>{m.text}</p>
+                <p style={{ color: isAuthor ? Colors.main : '#000', marginBottom: '3px' }} dangerouslySetInnerHTML={{ __html: insert_anchor(m.text) }}></p>
                 <p style={{ fontSize: '10px', fontStyle: 'italic' }} >
                   {moment(m.createdAt).fromNow()}
                 </p> 
