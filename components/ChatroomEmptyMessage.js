@@ -152,7 +152,6 @@ class ChatroomEmptyMessage extends Component {
           </div>
           <br />
           <p className="question">Do you want to talk?</p>
-          {/* <br /> */}
           <div className="invitation-actions-container">
             <a onClick={this.onAccept} style={{ color: 'blue' }}>✔ Yes, start this talk.</a>
             <a onClick={this.onDeny} style={{ color: 'blue' }}>✖ No, I don't want to discuss this topic.</a>
