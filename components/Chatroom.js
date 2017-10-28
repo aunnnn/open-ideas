@@ -201,7 +201,7 @@ class Chatroom extends Component {
   }
 
   onSaveOrRemoveChatroom = async (isSave) => {
-    if (!confirm(isSave ? "Save this talk? You can view all saved talks at Profile." : "Remove this talk?")) return
+    if (!confirm(isSave ? "Save this talk? You can view all saved talks at Profile." : "Remove this talk from your saved list?")) return
     const { roomId, currentUserId } = this.props
     this.setState({
       mutatingSavedTalk: true
