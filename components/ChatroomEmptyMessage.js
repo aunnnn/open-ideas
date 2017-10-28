@@ -147,7 +147,7 @@ class ChatroomEmptyMessage extends Component {
       return (
         <div>
           <div>
-            <img src="/static/plato.jpg" alt="👤" className="plato" />
+            <img src="/static/plato-red.jpg" alt="👤" className="plato" />
             <h3 className="title"> Someone invites you to talk!</h3>
           </div>
           <br />
