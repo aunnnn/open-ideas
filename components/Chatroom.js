@@ -10,7 +10,7 @@ import { Router } from '../routes'
 import MessageList from './MessageList'
 
 import Colors from '../utils/Colors'
-import { insert_anchor } from '../utils/regex';
+import { insert_anchor } from '../utils/transform';
 
 import { FIRSTLOAD_CHATROOMS_QUERY } from './ChatList'
 import { FIRSTLOAD_USER_CHATROOMS_QUERY } from './UserChatList'
@@ -243,7 +243,7 @@ class Chatroom extends Component {
     const canChat = chatroom.stateType === CHATROOM_STATE_TYPES.active && (currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id)
     const isActiveChat = chatroom.stateType === CHATROOM_STATE_TYPES.active
     const isClosedChat = chatroom.stateType === CHATROOM_STATE_TYPES.closed
-    const chatroomTitle = chatroom.title
+    const chatroomTitle = insert_anchor(chatroom.title)
     const isSavedByCurrentUser = chatroom.savedByUsers.map(u => u.id).indexOf(currentUserId) > -1
     
     const canSubmitMessage = this.state.textInput !== ''
@@ -260,7 +260,7 @@ class Chatroom extends Component {
             }
             {canChat && isActiveChat && <div className="end-chat-button" onClick={this.onEndChatroom} >(End this chat)</div>}
           </div>
-          <h2><span dangerouslySetInnerHTML={{ __html: insert_anchor(chatroomTitle) }} /><span style={{ fontSize: '13px' }}> ({messages.length})</span></h2>
+          <h2>{chatroomTitle}<span style={{ fontSize: '13px' }}> ({messages.length})</span></h2>
           {/* <p style={{ fontSize: '13px', fontStyle: 'italic' }}>{usersInChat.map(u => u.username).join(', ')}</p> */}
         </div>
         

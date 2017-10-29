@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import Head from 'next/head'
 import { withApollo, gql } from 'react-apollo'
 import fetch from 'isomorphic-fetch'
 import some from 'lodash/some'
@@ -24,7 +25,7 @@ class NewChat extends Component {
   onCreateChat = async (e) => {
     e.preventDefault()
 
-    // Trim whitespaces
+    // Trim whitespaces & sanitize
     const topic = this.state.title.replace(/^[ ]+|[ ]+$/g,'')
 
     if (!confirm(`Are you sure to submit this topic?\n"${topic}"`)) return
@@ -241,6 +242,9 @@ class NewChat extends Component {
     
     return (
       <div>
+        <Head>
+          <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/1.0.2/purify.min.js" />
+        </Head>
         <form className="main" onSubmit={confirmDisabled ? null : this.onCreateChat}>
           <input
               value={this.state.title}
