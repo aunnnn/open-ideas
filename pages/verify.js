@@ -45,7 +45,7 @@ class VerifyPage extends Component {
       })      
       const username = result.data.verifyUser.username
       alert(`Successfully verify ${username || ''}. Proceed to login.`)
-      Router.push('/join')
+      Router.push('/login')
       this.setState({
         isVerifying: false,
         error: null,
