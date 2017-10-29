@@ -32,7 +32,7 @@ const urlRegex = new RegExp(
     "(?::\\d{2,5})?" +
     // resource path
     "(?:[/?#]\\S*)?" +
-  "$", "ig"
+  "", "ig"
 );
 
 export const breakpoint = ':$%_reserved_breakpoint_+^:'
