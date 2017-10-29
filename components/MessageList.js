@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment'
 import Colors from '../utils/Colors'
-import urlRegex from 'url-regex'
 import { insert_anchor } from '../utils/transform';
 
 class MessageList extends Component {

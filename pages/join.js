@@ -87,7 +87,7 @@ class LoginPage extends Component {
   }
 
   render() { 
-    const pageTitle = this.state.loginMode ? 'Login' : 'Sign Up'
+    const pageTitle = this.state.loginMode ? 'Login' : 'Join Platonos'
     const confirmDisabled = !this.state.email || !this.state.password || (!this.state.loginMode && !this.state.username)
     return (
       <Page>
