@@ -56,6 +56,9 @@ class Chatroom extends Component {
       if (this.unsubscribe) {
         // Check if props have changed and, if necessary, stop the subscription
         if (this.props.chatroomQuery.Chatroom.id !== nextProps.chatroomQuery.Chatroom.id) {
+          this.setState({
+            textInput: '',
+          })
           this.unsubscribe()
           // console.log('-> unsubscribe from ', this.props.chatroomQuery.Chatroom.title)
         } else {
@@ -243,7 +246,7 @@ class Chatroom extends Component {
     const canChat = chatroom.stateType === CHATROOM_STATE_TYPES.active && (currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id)
     const isActiveChat = chatroom.stateType === CHATROOM_STATE_TYPES.active
     const isClosedChat = chatroom.stateType === CHATROOM_STATE_TYPES.closed
-    const chatroomTitle = insert_anchor(chatroom.title)
+    const chatroomTitle = this.props.linkedChatroomTitle
     const isSavedByCurrentUser = chatroom.savedByUsers.map(u => u.id).indexOf(currentUserId) > -1
     
     const canSubmitMessage = this.state.textInput !== ''
@@ -556,6 +559,17 @@ export default compose(
         },
         pollInterval: 15000,
       }
+    },
+    props(receivedProps) {
+      if (receivedProps.ownProps.chatroomQuery.Chatroom) {
+        const chatroomTitle = receivedProps.ownProps.chatroomQuery.Chatroom.title
+        const linkedChatroomTitle = insert_anchor(chatroomTitle)
+        return {
+          ...receivedProps,
+          linkedChatroomTitle
+        }
+      }
+      return receivedProps
     }
 }),
 )(Chatroom)
