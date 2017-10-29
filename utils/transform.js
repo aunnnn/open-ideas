@@ -37,19 +37,20 @@ const urlRegex = new RegExp(
 
 export const breakpoint = ':$%_reserved_breakpoint_+^:'
 
-export function insert_anchor(text) {
+export function insert_anchor(text, baseKey=null) {
   return text.replace(urlRegex, (match) => {
     return `${breakpoint}${match}${breakpoint}`
   })
     .split(breakpoint)
-    .map(splited => {
+    .map((splited, ind) => {
+      const componentKey = `${baseKey}_${ind}`
       if (splited.match(urlRegex)) {
         let url = splited
         if (!splited.match(/^[a-zA-Z]+:\/\//)) {
           url = 'http://' + url
         }
-        return <a href={url} target="__blank" rel="noopener noreferrer">{splited}</a>
+        return <a key={componentKey} href={url} target="__blank" rel="noopener noreferrer">{splited}</a>
       }
-      return splited
+      return <span key={componentKey}>{splited}</span>
     })
 }

@@ -38,17 +38,17 @@ class MessageList extends Component {
     const { messages, currentUserId, authorId } = this.props
     return (
       <div>
-        {messages.map(m => {
+        {messages.map(m => {          
           const isCurrentUserMessage = m.createdByUserId === currentUserId
           const isAuthor = m.createdByUserId === authorId
           const anotherUserFace = !isCurrentUserMessage && currentUserId !== authorId ? 'plato-red.jpg' : 'plato.jpg'
 
-          const text = insert_anchor(m.text)
+          const text = insert_anchor(m.text, m.id)
 
           return (
             <div
-              key={m.id} className="msg-list"
-              style={{ marginLeft: isCurrentUserMessage ? '40%' : '0', marginRight: isCurrentUserMessage ? '0' : '40%' }}
+              key={m.id}
+              style={{ display: 'flex', flexDirection: 'row', wordBreak: 'break-word', marginLeft: isCurrentUserMessage ? '40%' : '0', marginRight: isCurrentUserMessage ? '0' : '40%' }}
             >
               {!isCurrentUserMessage && <img src={`/static/${anotherUserFace}`} alt="Platonos" className="plato" />}
               <div style={{ marginBottom: '15px' }}>
@@ -76,8 +76,8 @@ class MessageList extends Component {
 
           return (
             <div
-              key={m.id} className="msg-list"
-              style={{ marginLeft: isAuthor ? '40%' : '0', marginRight: isAuthor ? '0' : '40%' }}
+              key={m.id}
+              style={{ display: 'flex', flexDirection: 'row', wordBreak: 'break-word',  marginLeft: isAuthor ? '40%' : '0', marginRight: isAuthor ? '0' : '40%' }}
             >
               <img src={`/static/${platoFace}`} alt="Platonos" className="plato" />
               <div style={{ marginBottom: '15px' }}>
