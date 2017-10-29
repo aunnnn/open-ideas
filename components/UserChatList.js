@@ -146,7 +146,7 @@ export default graphql(FIRSTLOAD_USER_CHATROOMS_QUERY, {
     let noMore = false;
     if (allChatrooms) {      
       cursor = allChatrooms.length > 0 ? allChatrooms[allChatrooms.length-1].id : null
-      noMore = allChatrooms.length === _allChatroomsMeta.count
+      noMore = allChatrooms.length >= _allChatroomsMeta.count
     }
     const orderedChatrooms = orderedUserChatrooms(allChatrooms)
     return {

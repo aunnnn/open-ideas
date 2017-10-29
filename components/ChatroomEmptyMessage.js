@@ -148,7 +148,8 @@ class ChatroomEmptyMessage extends Component {
         <div>
           <div>
             <img src="/static/plato-red.jpg" alt="👤" className="plato" />
-            <h3 className="title"> Someone invites you to talk!</h3>
+            <h4 className="title"> Someone invites you to talk!</h4>
+            <h2 className="title">{`"${chatroom.title}"`}</h2>
           </div>
           <br />
           <p className="question">Do you want to talk?</p>
@@ -161,6 +162,7 @@ class ChatroomEmptyMessage extends Component {
             .title {
               padding: 8px;
               text-align: center;
+              padding-top: 4px;
             }
             .plato {
               margin: 12px auto;
@@ -192,7 +194,8 @@ class ChatroomEmptyMessage extends Component {
       return (
         <div>
           <img src="/static/plato.jpg" alt="👤" className="plato" />
-          <h3 className="title">Your match is already invited.</h3>
+          <h4 className="title">Your match is already invited.</h4>
+          <h2 className="title">{`"${chatroom.title}"`}</h2>
           <br/>
           <p><b>Your match can...</b></p>
           <p>• accept, and the talk will start immediately,</p>
@@ -213,6 +216,7 @@ class ChatroomEmptyMessage extends Component {
             }
             .title {
               text-align: center;
+              padding-top: 4px;
             }
           `}</style>
         </div>
