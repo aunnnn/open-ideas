@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Head from "next/head"
 import Router from "next/router"
+import { Router as CustomRouter } from '../routes'
 import { graphql, gql } from 'react-apollo'
 
 import Page from "../layouts/main"
@@ -45,7 +46,7 @@ class VerifyPage extends Component {
       })      
       const username = result.data.verifyUser.username
       alert(`Successfully verify ${username || ''}. Proceed to login.`)
-      Router.push('/login')
+      CustomRouter.pushRoute('/login')
       this.setState({
         isVerifying: false,
         error: null,
