@@ -110,7 +110,7 @@ class Chatroom extends Component {
         return
       }
 
-      const estimatedMessagesCount = chatroomQuery.Chatroom._messagesMeta.count
+      const estimatedMessagesCount = chatroomQuery.Chatroom._messagesMeta.count + 1
 
       await createMessageMutation({
         variables: {
