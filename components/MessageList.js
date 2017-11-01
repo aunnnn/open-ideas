@@ -39,12 +39,14 @@ class MessageList extends Component {
     return (
       <div>
         {messages.map(m => {
+          console.log(currentUserId)
+          console.log(m.createdByUserId)
           const isCurrentUserMessage = m.createdByUserId === currentUserId
           const isAuthor = m.createdByUserId === authorId
           const anotherUserFace = !isCurrentUserMessage && currentUserId !== authorId ? 'plato-red.jpg' : 'plato.jpg'
 
           const text = insert_anchor(m.text)
-
+          {/* console.log(isCurrentUserMessage) */}
           return (
             <div
               key={m.id} className="msg-list"
@@ -69,11 +71,12 @@ class MessageList extends Component {
     return (
       <div>
         {messages.map(m => {
+          console.log(authorId)
           const isAuthor = m.createdByUserId === authorId
           const platoFace = isAuthor ? 'plato-red.jpg' : 'plato.jpg'
 
           const text = insert_anchor(m.text)
-
+          
           return (
             <div
               key={m.id} className="msg-list"
