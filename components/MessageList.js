@@ -43,7 +43,7 @@ class MessageList extends Component {
     const { currentUserId, userIds, messages, authorId } = this.props
     const renderForParticipants = userIds.indexOf(currentUserId) > -1
     return (
-      <div className="main">
+      <div>
          <div>
           {messages.map(m => {         
             const isAuthor = m.createdByUserId === authorId             
