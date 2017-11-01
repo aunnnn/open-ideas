@@ -38,6 +38,7 @@ const urlRegex = new RegExp(
 export const breakpoint = ':$%_reserved_breakpoint_+^:'
 
 export function insert_anchor(text, baseKey=null) {
+  if (!text) return []
   return text.replace(urlRegex, (match) => {
     return `${breakpoint}${match}${breakpoint}`
   })

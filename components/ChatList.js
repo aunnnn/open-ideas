@@ -35,7 +35,7 @@ class ChatList extends Component {
     } = this.props;
 
     if (loading) return <div style={{ margin: '8px'}}>Loading</div>
-    if (error) return <div style={{ margin: '8px'}}>Error: {error}</div>
+    if (error) return <div style={{ margin: '8px'}}>Error</div>
     if (allChatrooms) {
       if (allChatrooms.length === 0) return <div>No chats yet 😂</div>
       return (

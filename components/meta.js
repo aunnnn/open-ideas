@@ -41,6 +41,8 @@ export default () => (
       background-color: grey;
       cursor: default;
     }
+    .hidden { display:none; }
+    .show { display:initial; }
   `}</style>
   </div>
 );
