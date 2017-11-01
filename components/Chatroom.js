@@ -656,16 +656,27 @@ class Chatroom extends Component {
     const messages = this.props.chatroomMessageQuery.allMessages
     const chatroom = this.props.chatroomQuery.Chatroom
 
-    if (chatroomLoading) return <div style={{ margin: '8px'}}>Loading chatroom...</div>
-    if ((chatroomLoading && !chatroom) || (messagesLoading && !messages)) return <div style={{ margin: '8px'}}>Loading</div>    
+    if (chatroomLoading 
+      || (chatroomLoading && !chatroom) 
+      || (messagesLoading && !messages)
+      // *** OMG, TAKE ME HOURS HERE: must check if status 2 (variablesChanged), as ''messages' DOESN'T REFLECT variables in the query,
+      // so there will be invalid state, and cause flashing when changing chatrooms ***
+      // 
+      // http://dev.apollodata.com/react/api-queries.html#graphql-query-data-networkStatus
+      || (messagesLoading && messages && this.props.chatroomMessageQuery.networkStatus === 2)) 
+      {
+        return <div style={{ margin: '8px'}}>Loading</div>
+      }
 
     if (!chatroom) return <div style={{ margin: '8px'}}>This chatroom does not exist.</div>
 
     const isPrivateChat = (chatroom.stateType !== CHATROOM_STATE_TYPES.active && chatroom.stateType !== CHATROOM_STATE_TYPES.closed)
     const currentUserCanView = this.props.currentUserId && some(chatroom.users, { id: this.props.currentUserId })
-    if (isPrivateChat && !currentUserCanView) return <div style={{ margin: '8px'}}>This chatroom is not available for public yet.</div>
+
+    if (isPrivateChat && !currentUserCanView) return <div style={{ margin: '8px'}}>This chatroom is not available yet.</div>
     if (chatroom && messages) return this.renderChatroom(chatroom, messages)
-    return <div>Something wrong, this shouldn't show.</div>
+
+    return <div>Something wrong, this shouldn't show.</div> 
   }
 }
 
@@ -715,7 +726,7 @@ export default compose(
         variables: {
           chatroomId: props.roomId
         },
-        pollInterval: 15000,
+        pollInterval: 20000,      
       }
     },
     props(receivedProps) {
