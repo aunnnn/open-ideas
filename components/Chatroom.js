@@ -416,10 +416,10 @@ class Chatroom extends Component {
     const messagesError = this.props.chatroomMessageQuery.error
     
     if (chatroomError) { 
-      return <div>Error: {chatroomError}</div> 
+      return <div>{`${chatroomError}`}</div> 
     }
     if (messagesError) {
-      return <div>Error: {messagesError}</div>
+      return <div>{`${messagesError}`}</div>
     }
     const messages = this.props.chatroomMessageQuery.allMessages
     const chatroom = this.props.chatroomQuery.Chatroom

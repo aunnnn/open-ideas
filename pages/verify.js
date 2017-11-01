@@ -71,7 +71,7 @@ class VerifyPage extends Component {
           <title>Platonos</title>
         </Head>
         <div>{isVerifying && "Verifying user..."}</div>
-        <div>{error && "" + error}</div>
+        <div>{error && `${error}`}</div>
       </Page>
     );
   }

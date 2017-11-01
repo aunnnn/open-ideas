@@ -22,7 +22,7 @@ class ProfilePage extends Component {
     if (error) {
       return (
         <div>
-          <p>Oops! An error occurred: {error}</p>
+          <p>Oops! An error occurred: {`${error}`}</p>
         </div>
       )
     }

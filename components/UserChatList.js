@@ -84,7 +84,7 @@ class UserChatList extends Component {
   render() {
     const { loading, error, allChatrooms, _allChatroomsMeta, onClickChatroom, loadMoreEntries, noMore, currentRoomId, forUserId } = this.props;
     if (loading) return <div style={{ margin: '8px'}}>Loading</div>
-    if (error) return <div style={{ margin: '8px'}}>Error: {error}</div>
+    if (error) return <div style={{ margin: '8px'}}>{`${error}`}</div>
     if (allChatrooms) {
       if (allChatrooms.length === 0) return <div style={{ margin: '8px'}}>No chats yet 😂</div>
       return (
