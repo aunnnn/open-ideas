@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment'
-import Colors from '../utils/Colors'
-import { insert_anchor } from '../utils/transform';
+import MessageListItem from './MessageListItem'
+import { insert_anchor } from '../utils/transform'
 
 class MessageList extends Component {
 
@@ -19,7 +19,8 @@ class MessageList extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     const newMessages = nextProps.messages
     const messages = this.props.messages
-    return !this.arraysEqual(newMessages, messages)
+    const shouldUpdate = !this.arraysEqual(newMessages, messages)
+    return shouldUpdate
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -34,42 +35,32 @@ class MessageList extends Component {
     this.messagesEnd.scrollIntoView()
   }
 
+  generateTextComponentFromMessage = (m) => {
+    return insert_anchor(m.text, m.id)
+  }
+
   render() {
     const { currentUserId, userIds, messages, authorId } = this.props
     const renderForParticipants = userIds.indexOf(currentUserId) > -1
     return (
-      <div>
+      <div className="main">
          <div>
           {messages.map(m => {         
-            const isAuthor = m.createdByUserId === authorId 
-            let renderMessageRightSide, platoFace;
+            const isAuthor = m.createdByUserId === authorId             
+            const renderMessageRightSide = !renderForParticipants ? isAuthor : m.createdByUserId === currentUserId
 
-            if (renderForParticipants) {
-              renderMessageRightSide = m.createdByUserId === currentUserId
-              platoFace = !renderMessageRightSide && currentUserId !== authorId ? 'plato-red.jpg' : 'plato.jpg'
-            } else {
-              renderMessageRightSide = isAuthor
-              platoFace = isAuthor ? 'plato-red.jpg' : 'plato.jpg'
-            }
-  
-            const text = insert_anchor(m.text, m.id)
-
+            // show plato face on public message or the other user
+            const showPlatoFace = !renderForParticipants || !renderMessageRightSide
             return (
-              <div
-                key={m.id}
-                className={`msg-list ${renderMessageRightSide ? 'right-side':'left-side' }`}
-              >
-                {renderForParticipants ? 
-                  (!renderMessageRightSide && <img src={`/static/${platoFace}`} alt="Platonos" className="plato" />)
-                  :
-                  <img src={`/static/${platoFace}`} alt="Platonos" className="plato" />}
-                <div style={{ marginBottom: '15px' }}>
-                  <p style={{ color: isAuthor ? Colors.main : '#000', marginBottom: '3px' }}>{text}</p>
-                  <p style={{ fontSize: '10px', fontStyle: 'italic' }} >
-                    {moment(m.createdAt).fromNow()}
-                  </p> 
-                </div>   
-              </div>          
+              <div key={m.id} className={renderMessageRightSide ? 'msg-right-side' : 'msg-left-side'}>
+                <MessageListItem 
+                  mid={m.id}
+                  isAuthorStyle={isAuthor}
+                  showPlatoFace={showPlatoFace}
+                  text={m.text}
+                  subText={moment(m.createdAt).fromNow()}
+                /> 
+              </div>
             )
           })}
         </div>
@@ -90,25 +81,12 @@ class MessageList extends Component {
             text-align: center;
           }
 
-          .msg-list .plato {
-            flex: 0 0;
-            width: 37px;
-            height: 52px;
-            margin-right: 10px;
-          }
-
-          .msg-list {
-            display: flex;
-            flex-direciton: row;
-            word-break: break-word;
-          }
-
-          .msg-list.left-side {
+          .msg-left-side {
             margin-left: 0%;
             margin-right: 40%;
           }
           
-          .msg-list.right-side {
+          .msg-right-side {
             margin-left: 40%;
             margin-right: 0%;
           }

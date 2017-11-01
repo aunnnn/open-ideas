@@ -23,6 +23,8 @@ const UserChatroomFragment = gql`
     savedByUsers {
       id
     }
+    isAuthorTyping
+    isMatchTyping
   }
 `
 

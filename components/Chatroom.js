@@ -3,11 +3,14 @@ import PropTypes from 'prop-types'
 import { graphql, gql, compose } from 'react-apollo'
 import findIndex from 'lodash/findIndex'
 import some from 'lodash/some'
+import debounce from 'lodash/debounce'
+import throttle from 'lodash/throttle'
 
 import { CHATROOM_STATE_TYPES } from '../constants'
 
 import { Router } from '../routes'
 import MessageList from './MessageList'
+import MessageListItem from './MessageListItem'
 
 import Colors from '../utils/Colors'
 import { insert_anchor } from '../utils/transform';
@@ -18,6 +21,18 @@ import ChatroomEmptyMessage from './ChatroomEmptyMessage'
 import UserChatroomFragment from '../graphql/UserChatroomFragment'
 import CHATROOM_STATETYPE_MUTATION from '../graphql/ChatroomStateTypeMutation'
 import CURRENT_USER_QUERY from '../graphql/UserQuery'
+
+import {
+  CREATE_MESSAGE_MUTATION,
+  SAVE_CHATROOM_MUTATION,
+  UPDATE_AUTHOR_TYPING_MUTATION,
+  UPDATE_MATCH_TYPING_MUTATION,
+  REMOVE_FROM_SAVED_CHATROOM_MUTATION,
+
+  CHATROOM_MESSAGE_SUBSCRIPTION,
+  CHATROOM_PARTICIPANT_TYPING_SUBSCRIPTION,
+  CHATROOM_PUBLIC_TYPING_SUBSCRIPTION,
+} from '../graphql/ChatroomMutations'
 
 class Chatroom extends Component {
 
@@ -32,17 +47,37 @@ class Chatroom extends Component {
     this.state = {
       textInput: '',
       mutatingSavedTalk: false,
+      isAuthorTyping: false,
+      isMatchTyping: false,
     }
+
+    // #######################
+    // # Typing... Indicator
+    // #######################
+    //
+    // 1. We focus on (throttled) typing signal, then let client interpret showing/hiding. 
+    //    It's reliable than totally check the show/hide value via WebSocket.
+    //
+    //    NOTE: When a user submit message, we will cancel all debounce/throttle receiving mechanism then hide typing... immediately.
+    this._emitStartTyping = throttle(this.emitStartTyping, 1200)
+    this._emitStopTyping = debounce(this.emitStopTyping, 2000)
+
+    // 2.1 If client receive more typing signals in 1.3s --> show typing ...
+    this.start_locallyReflectTyping = debounce(this.locallyReflectTyping(true), 1300, {
+      leading: true,
+    })
+
+    // 2.2 If client doesn't receive more typing signals in 2.0s --> hide typing...
+    this.stop_locallyReflectTyping = debounce(this.locallyReflectTyping(false), 2000)
+
+    // Public
+    // Just hide all if we don't receive any signals for 2s
+    this.stop_locallyReflectTypingForPublic = debounce(this.locallyReflectTypingForPublic, 2000)
   }
 
   componentDidMount() {
-    if (!process.browser) return
-    if (!this.props.chatroomQuery.Chatroom) return
-    const chatroom = this.props.chatroomQuery.Chatroom
-    const usersInChat = chatroom.users
-    const currentUserId = this.props.currentUserId
-    const canChat = currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id    
-    if (!canChat && this.props.talkMode) {
+    // If not participants & comes through talk page => redirect to /read/
+    if (!this.props.canChat && this.props.talkMode) {
       Router.pushRoute(`/read/${this.props.roomId}`)
     }
   }
@@ -53,22 +88,29 @@ class Chatroom extends Component {
     if(!nextProps.chatroomQuery.loading
       && nextProps.chatroomQuery.Chatroom) {
       // Check for existing subscription      
-      if (this.unsubscribe) {
+      if (this.unsubscribeNewMessages && this.unsubscribeTypingUsers) {
         // Check if props have changed and, if necessary, stop the subscription
         if (this.props.chatroomQuery.Chatroom.id !== nextProps.chatroomQuery.Chatroom.id) {
           this.setState({
             textInput: '',
           })
-          this.unsubscribe()
-          // console.log('-> unsubscribe from ', this.props.chatroomQuery.Chatroom.title)
+
+          this.unsubscribeNewMessages()
+          this.unsubscribeTypingUsers()
         } else {
-          // console.log('-> same roomId, do nothing')
           return
         }
       }
+      const chatroom = nextProps.chatroomQuery.Chatroom
+      const chatroomId = chatroom.id
+      const authorId = chatroom.createdBy.id
+      const currentUserId = nextProps.currentUserId
+
       // Subscribe
-      // console.log('...subscribe messages of', nextProps.chatroomQuery.Chatroom.id, `(${nextProps.chatroomQuery.Chatroom.title})`)
-      this.unsubscribe = this.subscribeToNewMessages(nextProps.chatroomQuery.Chatroom.id)
+      if (chatroom.stateType === CHATROOM_STATE_TYPES.active) {
+        this.unsubscribeNewMessages = this.subscribeToNewMessages(chatroomId)
+        this.unsubscribeTypingUsers = this.subscribeToTypingUsers(chatroomId, authorId, currentUserId, nextProps.canChat)
+      }
     }
   }
 
@@ -80,6 +122,10 @@ class Chatroom extends Component {
       },
       onError: (err) => console.error(err),
       updateQuery: (previous, { subscriptionData }) => {
+
+        this.locallyReflectTyping(false)(true)
+        this.locallyReflectTyping(false)(false)
+
         const newMessage = subscriptionData.data.Message.node
         if (some(previous.allMessages, { id: newMessage.id })) {
           return previous
@@ -95,6 +141,87 @@ class Chatroom extends Component {
     })
   }
   
+  subscribeToTypingUsers = (roomId, createdByUserId, currentUserId, canChat) => {
+    let sub;
+    if (canChat) {
+      // talking mode
+
+      // not author -> listening to author
+      const listeningToAuthorTyping = createdByUserId !== currentUserId
+
+      sub = this.props.chatroomQuery.subscribeToMore({
+
+        // Listening to another participant only
+        document: CHATROOM_PARTICIPANT_TYPING_SUBSCRIPTION(listeningToAuthorTyping),
+        variables: {
+          chatroomId: roomId,
+        },
+        updateQuery: (previous, { subscriptionData }) => { 
+          if (listeningToAuthorTyping) {
+            if (subscriptionData.data.Chatroom.node.isAuthorTyping) {
+              // received typing true
+              this.start_locallyReflectTyping(true)
+              this.stop_locallyReflectTyping(true)
+            } else {
+              // *received typing false --> force STOP
+              this.start_locallyReflectTyping.cancel()
+              this.stop_locallyReflectTyping.cancel()
+              this.locallyReflectTyping(false)(true)
+            }
+          } else {
+            if (subscriptionData.data.Chatroom.node.isMatchTyping) {
+              this.start_locallyReflectTyping(false)
+              this.stop_locallyReflectTyping(false)            
+            } else {
+              this.start_locallyReflectTyping.cancel()
+              this.stop_locallyReflectTyping.cancel()
+              this.locallyReflectTyping(false)(false)
+            }
+          }
+          return previous
+        }
+      })
+    } else {
+      // public mode
+      sub = this.props.chatroomQuery.subscribeToMore({
+        document: CHATROOM_PUBLIC_TYPING_SUBSCRIPTION,
+        variables: {
+          chatroomId: roomId,
+        },
+        updateQuery: (previous, { subscriptionData }) => { 
+          const isAuthorTyping = subscriptionData.data.Chatroom.node.isAuthorTyping
+          const isMatchTyping = subscriptionData.data.Chatroom.node.isMatchTyping
+
+          // For public: just reflect realtime, directly
+          this.locallyReflectTypingForPublic(isAuthorTyping, isMatchTyping)
+          
+          // If not receive anymore, just hide all
+          this.stop_locallyReflectTypingForPublic(false, false)
+          return previous
+        }
+      })
+    }
+    return sub
+  }
+
+  locallyReflectTyping = (isTyping) => (isAuthor) => {
+    if (isAuthor) {
+      this.setState({
+        isAuthorTyping: isTyping,
+      })
+    } else {
+      this.setState({
+        isMatchTyping: isTyping,
+      })
+    }
+  }
+
+  locallyReflectTypingForPublic = (isAuthorTyping, isMatchTyping) => {
+    this.setState({
+      isAuthorTyping,
+      isMatchTyping,
+    })
+  }
   onCreateMessage = async (e) => {
     e.preventDefault()
     const { textInput } = this.state
@@ -124,6 +251,10 @@ class Chatroom extends Component {
       this.setState({
         textInput: ''
       })
+
+      this._emitStartTyping.cancel()
+      this.emitStopTyping()
+
     } catch (err) {
       alert("Oops: " + err.graphQLErrors[0].message);
     }
@@ -240,16 +371,114 @@ class Chatroom extends Component {
     })
   }
 
+  onTextInputChange = (e) => {
+    // emit only increment of texts
+    if (e.target.value.length > this.state.textInput.length) this._emitStartTyping()
+    this.setState({ textInput: e.target.value })
+    this._emitStopTyping()
+  }           
+
+  emitStartTyping = () => {
+    const currentUserId = this.props.currentUserId
+    if (!currentUserId) return;
+    const authorId = this.props.chatroomQuery.Chatroom.createdBy.id
+    if (authorId === currentUserId) {
+      this.props.updateAuthorTypingMutation({
+        variables: {
+          chatroomId: this.props.roomId,
+          isAuthorTyping: true,
+        }
+      })
+    } else {
+      this.props.updateMatchTypingMutation({
+        variables: {
+          chatroomId: this.props.roomId,
+          isMatchTyping: true,
+        }
+      })
+    }
+  }
+
+  emitStopTyping = () => {
+    const currentUserId = this.props.currentUserId
+    if (!currentUserId) return;
+    const authorId = this.props.chatroomQuery.Chatroom.createdBy.id
+    if (authorId === currentUserId) {
+      this.props.updateAuthorTypingMutation({
+        variables: {
+          chatroomId: this.props.roomId,
+          isAuthorTyping: false,
+        }
+      })
+    } else {
+      this.props.updateMatchTypingMutation({
+        variables: {
+          chatroomId: this.props.roomId,
+          isMatchTyping: false,
+        }
+      })
+    }
+  }
+
+  renderTyping = (chatroom) => {
+    const currentUserId = this.props.currentUserId
+    const canChat = this.props.canChat
+    const authorId = chatroom.createdBy.id
+
+    return (
+      <div style={{ minHeight: '52px' }}>
+      {this.state.isAuthorTyping
+        &&
+        <div className={!canChat ? 'msg-right-side' : authorId !== currentUserId ? 'msg-left-side' : ''}>
+          <MessageListItem
+            key="author-typing"
+            showPlatoFace={!canChat || authorId !== currentUserId }
+            isAuthorStyle
+            text={'Typing...'}
+            linkDetectionEnabled={false}
+            mid="author-typing"
+            customTextStyle={{
+              color: Colors.main,
+              fontSize: '12px',
+              fontStyle: 'italic',
+              padding: '10px 0',
+            }}
+          />
+        </div>
+      }
+      {this.state.isMatchTyping 
+        && 
+        <div className={!canChat ? 'msg-left-side' : authorId === currentUserId ? 'msg-left-side' : '' }>
+          <MessageListItem
+            key="match-typing"
+            showPlatoFace={true || !canChat || authorId === currentUserId }
+            isAuthorStyle={false}
+            text={'Typing...'}
+            linkDetectionEnabled={false}
+            mid="match-typing"
+            customTextStyle={{
+              color: 'black',
+              fontSize: '12px',
+              fontStyle: 'italic',
+              padding: '10px 0',
+            }}
+          />
+        </div>
+      }
+    </div>    
+    )
+  }
   renderChatroom = (chatroom, messages) => {
-    const { currentUserId } = this.props
     const usersInChat = chatroom.users
-    const canChat = chatroom.stateType === CHATROOM_STATE_TYPES.active && (currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id)
-    const isActiveChat = chatroom.stateType === CHATROOM_STATE_TYPES.active
-    const isClosedChat = chatroom.stateType === CHATROOM_STATE_TYPES.closed
+
+    const { currentUserId } = this.props
+    const canChat = this.props.canChat
+    const isActiveChat = this.props.isActiveChat
+    const isClosedChat = this.props.isClosedChat
     const chatroomTitle = this.props.linkedChatroomTitle
-    const isSavedByCurrentUser = chatroom.savedByUsers.map(u => u.id).indexOf(currentUserId) > -1
-    
+    const isSavedByCurrentUser = this.props.isSavedByCurrentUser
     const canSubmitMessage = this.state.textInput !== ''
+
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <div className="header-wrapper">
@@ -275,13 +504,16 @@ class Chatroom extends Component {
                 chatroom={chatroom} 
               />
               :
-              <MessageList 
-                messages={messages} 
-                currentUserId={currentUserId} 
-                userIds={usersInChat.map(u => u.id)} 
-                authorId={chatroom.createdBy.id}
-                isClosed={isClosedChat}
-              />   
+              <div>
+                <MessageList 
+                  messages={messages} 
+                  currentUserId={currentUserId} 
+                  userIds={usersInChat.map(u => u.id)} 
+                  authorId={chatroom.createdBy.id}
+                  isClosed={isClosedChat}
+                />
+                {this.renderTyping(chatroom)}
+              </div>
           }
         </div>
 
@@ -290,7 +522,7 @@ class Chatroom extends Component {
             <textarea
               className="input"
               type="text"
-              onChange={(e) => this.setState({ textInput: e.target.value })}
+              onChange={this.onTextInputChange}
               onKeyPress={(e) => {
                 if (e.key === 'Enter') {
                   if (!e.shiftKey && !e.altKey) {
@@ -468,86 +700,12 @@ const CHATROOM_MESSAGE_QUERY = gql`
   }
 `
 
-const CHATROOM_MESSAGE_SUBSCRIPTION= gql`
-  subscription onNewMessages($chatroomId: ID!) {
-    Message(
-      filter: {
-        mutation_in: [CREATED],
-        node: {
-          chatroom: {
-            id: $chatroomId
-          }
-        }        
-      }
-    ) {
-      node {
-        id
-        text
-        createdAt
-        createdByUserId
-      }
-    }
-  }
-`
-// # Estimated messages count*
-// # Graphcool doesn't support sort by aggregation (_allMessagesMeta) yet, 
-// # so we need to store count in order to sort them (e.g. top 100)
-
-// # this value will be updated at the same time as one of the user submit new message (to save # of requests to the server)
-// # The 'estimatedCount' is directly retrieved from the current local cache of messages in that room +1 
-// # (which won't reflect the actual count, e.g, but close enough).
-
-// # A better (but additional request) would be to query the count first, +1, then update, but that's 2 requests per new message
-
-const CREATE_MESSAGE_MUTATION = gql`
-  mutation createMessage($text: String!, $chatroomId: ID!, $createdByUserId: String!, $updatedAt: DateTime!, $estimatedMessagesCount: Int!) {
-    createMessage (
-      text: $text,
-      chatroomId: $chatroomId,
-      createdByUserId: $createdByUserId,
-    ) {
-      id
-      text
-      createdAt
-      createdByUserId
-    }
-
-    updateChatroom(id: $chatroomId, latestMessagesAt: $updatedAt, estimatedMessagesCount: $estimatedMessagesCount,) {
-      id
-    }
-  }
-`
-
-const SAVE_CHATROOM_MUTATION = gql`
-  mutation saveChatroom($userId: ID!, $chatroomId: ID!) {
-    addToUserSavedChatrooms(
-      savedByUsersUserId: $userId,
-      savedChatroomsChatroomId: $chatroomId,
-    ) {
-      savedByUsersUser {
-        id
-      }
-    }
-  }
-`
-
-const REMOVE_FROM_SAVED_CHATROOM_MUTATION = gql`
-  mutation removeChatroom($userId: ID!, $chatroomId: ID!) {
-    removeFromUserSavedChatrooms(
-      savedByUsersUserId: $userId, 
-      savedChatroomsChatroomId: $chatroomId
-    ) {
-      savedByUsersUser {
-        id
-      }
-    }
-  }
-`
-
 export default compose(
   graphql(CHATROOM_QUERY, { name: 'chatroomQuery' }),
   graphql(CREATE_MESSAGE_MUTATION, { name: 'createMessageMutation' }),
   graphql(SAVE_CHATROOM_MUTATION, { name: 'saveChatroomMutation' }),
+  graphql(UPDATE_AUTHOR_TYPING_MUTATION, { name: 'updateAuthorTypingMutation' }),
+  graphql(UPDATE_MATCH_TYPING_MUTATION, { name: 'updateMatchTypingMutation' }),
   graphql(REMOVE_FROM_SAVED_CHATROOM_MUTATION, { name: 'removeFromSavedChatroomsMutation' }),
   graphql(CHATROOM_STATETYPE_MUTATION(CHATROOM_STATE_TYPES.closed), { name: 'endChatroomMutation' }),
   graphql(CHATROOM_MESSAGE_QUERY, { 
@@ -562,11 +720,26 @@ export default compose(
     },
     props(receivedProps) {
       if (receivedProps.ownProps.chatroomQuery.Chatroom) {
-        const chatroomTitle = receivedProps.ownProps.chatroomQuery.Chatroom.title
+        const chatroom = receivedProps.ownProps.chatroomQuery.Chatroom
+
+        const chatroomTitle = chatroom.title
+
+        const usersInChat = chatroom.users
+        const currentUserId = receivedProps.ownProps.currentUserId
+        const canChat = currentUserId ? (chatroom.stateType === CHATROOM_STATE_TYPES.active && (currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id)) : false
         const linkedChatroomTitle = insert_anchor(chatroomTitle)
+
+        const isActiveChat = chatroom.stateType === CHATROOM_STATE_TYPES.active
+        const isClosedChat = chatroom.stateType === CHATROOM_STATE_TYPES.closed
+        const isSavedByCurrentUser = chatroom.savedByUsers.map(u => u.id).indexOf(currentUserId) > -1
+
         return {
           ...receivedProps,
-          linkedChatroomTitle
+          linkedChatroomTitle,
+          canChat,
+          isActiveChat,
+          isClosedChat,
+          isSavedByCurrentUser,
         }
       }
       return receivedProps
