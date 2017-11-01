@@ -1,7 +1,5 @@
-// import urlRegex from 'url-regex'
-
 const urlRegex = new RegExp(
-  "^" +
+  // "^" +
     // protocol identifier
     "(?:(?:https?|ftp)://)?" +
     // user:pass authentication
@@ -34,7 +32,7 @@ const urlRegex = new RegExp(
     "(?::\\d{2,5})?" +
     // resource path
     "(?:[/?#]\\S*)?" +
-  "$", "i"
+  "", "ig"
 );
 
 export const breakpoint = ':$%_reserved_breakpoint_+^:'

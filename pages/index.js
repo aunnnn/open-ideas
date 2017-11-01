@@ -12,6 +12,7 @@ import withData from '../lib/withData'
 import Page from '../layouts/main'
 import ChatList from '../components/ChatList'
 import Chatroom from '../components/Chatroom'
+import WelcomeJumpbotron from '../components/WelcomeJumbotron'
 
 import Colors from '../utils/Colors'
 import { chatroomIDFromSlug } from '../utils/misc'
@@ -149,6 +150,7 @@ class IndexPage extends Component {
               </div>
             || 
               <div style={{ margin: '8px' }}>
+                {/* <WelcomeJumpbotron /> */}
                 <h2>Welcome to Platonos{currentUsername && `, ${currentUsername}`}!</h2>
                 <br/>
                 {

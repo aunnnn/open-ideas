@@ -27,7 +27,7 @@ class WelcomePage extends Component {
             </div>
           </div>
         </div>
-
+        <p className="text">"Platonos finds a random user for you to discuss. All talks are public and everyone is anonymous."</p>
         <style jsx global>{`
           * {
             margin: 0;
@@ -100,6 +100,14 @@ class WelcomePage extends Component {
             margin-top: 8px;
             font-weight: normal;
             color: gray;
+          }
+          .text {
+            padding: 0 10px;
+            color: gray;
+            position: fixed;
+            bottom: 30px;
+            width: 100vw;
+            text-align: center;
           }
         `}</style>
       </div>
