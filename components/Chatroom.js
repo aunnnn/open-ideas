@@ -230,14 +230,14 @@ class Chatroom extends Component {
       return
     }
     try {
-      const { createMessageMutation, roomId, currentUserId, chatroomQuery } = this.props
+      const { createMessageMutation, roomId, currentUserId, chatroomQuery, chatroomMessageQuery: { allMessages } } = this.props
 
       if (!chatroomQuery.Chatroom) {
         alert('Please wait...')
         return
       }
 
-      const estimatedMessagesCount = chatroomQuery.Chatroom._messagesMeta.count + 1
+      const estimatedMessagesCount = allMessages.length + 1
 
       await createMessageMutation({
         variables: {
