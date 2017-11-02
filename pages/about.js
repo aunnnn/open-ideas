@@ -64,7 +64,11 @@ class AboutPage extends Component {
             </div>
             
             <div id="contact">
-              <p>Contact us at <a href="mailto:hi@platonos.com">hi@platonos.com</a></p>
+              <h3>Contact us</h3>
+              <p>
+                Platonos is in a very early stage.
+                Any feedbacks, feature requests, or just saying hi :) are very welcomed.</p>
+              <p>Just shoot it here: <a href="mailto:hi@platonos.com">hi@platonos.com</a></p>
             </div>
           </div>
         </div>
