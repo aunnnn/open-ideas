@@ -77,8 +77,9 @@ class Chatroom extends Component {
 
   componentDidMount() {
     // If not participants & comes through talk page => redirect to /read/
-    if (!this.props.canChat && this.props.talkMode) {
+    if (typeof this.props.isParticipant !== 'undefined' && !this.props.isParticipant && this.props.talkMode) {
       Router.pushRoute(`/read/${this.props.roomId}`)
+      return
     }
   }
 
@@ -420,6 +421,18 @@ class Chatroom extends Component {
     }
   }
 
+  // ***Inline object seems to break VSCODE!!! (e.g., try putting this style block  {...} directly in customTextStyle={{...}})
+  typingTextStyleGenerator = (authorStyle) => {
+    return (
+      {
+        color: authorStyle ? Colors.main : 'black',
+        fontSize: '12px',
+        fontStyle: 'italic',
+        padding: '10px 0',
+      }
+    )
+  }
+
   renderTyping = (chatroom) => {
     const currentUserId = this.props.currentUserId
     const canChat = this.props.canChat
@@ -437,12 +450,7 @@ class Chatroom extends Component {
             text={'Typing...'}
             linkDetectionEnabled={false}
             mid="author-typing"
-            customTextStyle={{
-              color: Colors.main,
-              fontSize: '12px',
-              fontStyle: 'italic',
-              padding: '10px 0',
-            }}
+            customTextStyle={typingTextStyleGenerator(true)}
           />
         </div>
       }
@@ -456,12 +464,7 @@ class Chatroom extends Component {
             text={'Typing...'}
             linkDetectionEnabled={false}
             mid="match-typing"
-            customTextStyle={{
-              color: 'black',
-              fontSize: '12px',
-              fontStyle: 'italic',
-              padding: '10px 0',
-            }}
+            customTextStyle={typingTextStyleGenerator(false)}
           />
         </div>
       }
@@ -737,7 +740,9 @@ export default compose(
 
         const usersInChat = chatroom.users
         const currentUserId = receivedProps.ownProps.currentUserId
-        const canChat = currentUserId ? (chatroom.stateType === CHATROOM_STATE_TYPES.active && (currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id)) : false
+        const canChat = currentUserId ? (chatroom.stateType === CHATROOM_STATE_TYPES.active && (currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id)) : false        
+        const isParticipant = currentUserId ? (currentUserId === usersInChat[0].id || currentUserId === usersInChat[1].id) : false
+
         const linkedChatroomTitle = insert_anchor(chatroomTitle)
 
         const isActiveChat = chatroom.stateType === CHATROOM_STATE_TYPES.active
@@ -748,6 +753,7 @@ export default compose(
           ...receivedProps,
           linkedChatroomTitle,
           canChat,
+          isParticipant,
           isActiveChat,
           isClosedChat,
           isSavedByCurrentUser,
