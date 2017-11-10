@@ -48,12 +48,16 @@ class AboutPage extends Component {
               <h3>Why?</h3>
               <br/>
               <p>
-                We all have thoughts, beliefs, and something brewing deep inside us.
+                {/* We all have thoughts, beliefs, and something brewing deep inside us.
                 They are very personal, original, and meaningful.
                 However, we rarely share them with others, simply because it is weird to them bring up.
                 Despite our technological advances, this is still a problem today.
                 Knowing what others think about our thoughts helps us grow intellectually.
-                Platonos is an experimental platform that aims to achieve that.
+                Platonos is an experimental platform that aims to achieve that. */}
+                Some of us love to get our minds bent.
+                Sharing our deepest thoughts and getting them challenged is a great way to do that.
+                However, certain social constraints often prevent us from doing that freely.
+                Platonos is a platform for intellectual expressions, only your thoughts are your identity.
               </p>
               <br/>
               <p>
@@ -65,9 +69,10 @@ class AboutPage extends Component {
             
             <div id="contact">
               <h3>Contact us</h3>
+              <br/>
               <p>
-                Platonos is in a very early stage.
-                Any feedbacks, feature requests, or just saying hi :) are very welcomed.</p>
+                Platonos is in an early stage.
+                Any feedback, feature requests, and saying hi are very welcomed :)</p>
               <p>Just shoot it here: <a href="mailto:hi@platonos.com">hi@platonos.com</a></p>
             </div>
           </div>
