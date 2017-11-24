@@ -450,7 +450,7 @@ class Chatroom extends Component {
             text={'Typing...'}
             linkDetectionEnabled={false}
             mid="author-typing"
-            customTextStyle={typingTextStyleGenerator(true)}
+            customTextStyle={this.typingTextStyleGenerator(true)}
           />
         </div>
       }
@@ -464,7 +464,7 @@ class Chatroom extends Component {
             text={'Typing...'}
             linkDetectionEnabled={false}
             mid="match-typing"
-            customTextStyle={typingTextStyleGenerator(false)}
+            customTextStyle={this.typingTextStyleGenerator(false)}
           />
         </div>
       }
